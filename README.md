@@ -1,3 +1,7 @@
+> **Script consolidation (2026-11-03):** Selected utility scripts from this repository were integrated into [Learning_Modules/tools/neo4j-sefaria](https://github.com/MeiRR17/Learning_Modules/tree/main/tools/neo4j-sefaria), via [PR #4](https://github.com/MeiRR17/Learning_Modules/pull/4). The import includes source provenance and CI syntax/content checks. The original repository remains accessible, may contain additional data or configuration, and has **not been archived or deleted**. Consult the consolidated README for exclusions and portability changes.
+
+---
+
 # רשת ידע פילוסופיה יהודית — Neo4j Knowledge Graph
 
 פרויקט זה בונה גרף ידע של קשרי ציטוט בין חיבורים פילוסופיים יהודיים, מבוסס על נתוני Sefaria ומנותח עם Neo4j.
