@@ -25,7 +25,7 @@ class DvirOSContractTests(unittest.TestCase):
     def test_all_paths_are_constrained_to_public_read_endpoints(self):
         from services.research_api.app import create_app
         import re
-        api_paths = {re.sub(r"\\{[^}]+\\}", "{id}", path): operations
+        api_paths = {re.sub(r"\{[^}]+\}", "{id}", path): operations
                      for path, operations in create_app().openapi()["paths"].items()}
         self.assertEqual(len(self.contract["resources"]), 12)
         self.assertEqual(len({item["path"] for item in self.contract["resources"]}), 12)
