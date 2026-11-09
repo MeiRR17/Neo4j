@@ -51,6 +51,16 @@ jobs:
           python scripts/migrate.py apply
           python scripts/migrate.py check
           python scripts/ontology_smoke.py --allow-synthetic
+      - name: Sefaria metadata quality and idempotent graph integration (synthetic only)
+        run: |
+          python scripts/ingest_sefaria.py plan-csv \
+            --input tests/fixtures/sefaria_links_synthetic.csv \
+            --source-uri https://storage.googleapis.com/sefaria-export/links/links0.csv \
+            --output local_staging/fixture --fixture
+          python scripts/ingest_sefaria.py apply \
+            --input local_staging/fixture --ack-unreviewed --ci-fixture
+          python scripts/ingest_sefaria.py apply \
+            --input local_staging/fixture --ack-unreviewed --ci-fixture
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
       - name: Stop local test environment

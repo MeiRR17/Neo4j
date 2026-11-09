@@ -9,14 +9,19 @@ or a Learning_Modules feature.
 - [System integration architecture](docs/architecture/0001-DVIROS-INTEGRATION.md)
 - [Canonical ontology / evidence contract](docs/architecture/0002-CANONICAL-ONTOLOGY.md)
 - [Safe local operations](docs/operations/LOCAL_DEV.md)
+- [Sefaria link metadata ingestion](docs/operations/SEFARIA_INGESTION.md)
+- [v0.3 pipeline diagram](docs/architecture/v0.3-pipeline.svg)
 - [Changelog](CHANGELOG.md)
 
-## Current implementation: v0.2.0 ontology and migrations
+## Current implementation: v0.3.0 Sefaria metadata pipeline
 
 The foundation has a pinned Neo4j Community image, loopback-only ports,
 Docker Secrets, persistent named volumes and verified CI startup/restart.
-v0.2 adds canonical identity rules, an evidence-bound relationship contract
-and versioned schema migrations. It is **not** a deployed production product.
+v0.2 added canonical identities, evidence-bound edges and versioned schema
+migrations. v0.3 adds an **opt-in**, bounded Sefaria link metadata pipeline,
+quality quarantine, resumable GCS downloads, API fallback, immutable input
+checksums, provenance manifests and idempotent Neo4j metadata writes.
+It is **not** a deployed production product or a licensed text corpus.
 
 **Requirements:** Python 3.10+, Docker Compose v2, Docker Engine/Desktop.
 
@@ -27,6 +32,7 @@ python scripts/smoke.py
 python scripts/migrate.py dry-run
 python scripts/migrate.py apply
 python scripts/migrate.py check
+python scripts/ingest_sefaria.py --help
 python -m unittest discover -s tests -v
 ```
 
@@ -45,12 +51,17 @@ guide for Windows ACLs, stop/restart, security and upgrade details.
 - `:HUMAN_CLAIM` and `:SUGGESTED_RELATION` remain explicitly distinct.
 - Graph relations require evidence and review metadata; suggestions cannot
   silently promote themselves to approved knowledge.
-- No real source text is distributed by this schema implementation.
+- Sefaria link metadata is **unreviewed**, orientation is not inferred and
+  edition IDs use an explicit no-edition sentinel; no source text is imported.
+- Import requires an explicit `apply --ack-unreviewed` after an inspected plan
+  with zero quarantined records and a checked migration schema.
+- No licensed full text or scholarly verdict is distributed in v0.3.
 
 The legacy `scripts/02_acquire_sefaria_data.py` and original Cypher demos
 are **historical prototypes**, not validated research pipelines. Do not
-import their output as trustworthy source evidence. v0.3–v0.4 replace the
-ingestion workflow and add rights-reviewed pilot texts.
+import their output as trustworthy source evidence. The new
+`scripts/ingest_sefaria.py` replaces link **metadata** ingestion; v0.4 will
+add per-edition rights review and a curated scholarly pilot.
 
 An unrelated utility snapshot in Learning_Modules is left unchanged and
 is not developed here. The eventual research UI belongs **inside DvirOS**,
