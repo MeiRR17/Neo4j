@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0] — 2026-11-09 (implementation candidate)
+
+### Added
+- Opt-in Sefaria-Export GCS link shard download with bounded bytes, ETag/Content-Range validation, safe partial resume and receipt checksums.
+- Curated REST links API fallback using `with_text=0`, strict allowlisted endpoints, request size/time limits and quarantined unresolved mappings.
+- Streaming CSV adapter supporting upstream `Conection Type` header, canonical full passages and source snapshot hashes; no inferred citation direction.
+- Deterministic JSONL planning, immutable checksum manifest, quality gate and zero-quarantine requirement before metadata writes.
+- Explicit local-only parameterized Neo4j upserts with reviewed schema, unreviewed SourceRecord/Evidence/Work/Edition/Passage graph records, 50,000 edge pilot limit and rerun-safe identity.
+- Synthetic data tests, CI integration, source contracts, operations docs and pipeline SVG.
+
+### Deferred
+- License-cleared editions/actual text passages, scholarly review and seed corpus remain v0.4; no independent DvirOS UI, GraphRAG or public deployment.
+
 ## [0.2.0] — 2026-11-09 (implementation candidate)
 
 ### Added

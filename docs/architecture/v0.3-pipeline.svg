@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="360" viewBox="0 0 1120 360">
+<rect width="1120" height="360" rx="16" fill="#101827"/>
+<text x="40" y="50" fill="#f8fafc" font-size="27" font-family="Arial,sans-serif" font-weight="bold">DvirOS / Neo4j - v0.3 Sefaria Ingestion</text>
+<text x="40" y="77" fill="#94a3b8" font-size="17" font-family="Arial,sans-serif">Implemented metadata path - diagram, not a deployed UI screenshot</text>
+<g font-family="Arial,sans-serif" font-size="16" fill="white" text-anchor="middle">
+<rect x="30" y="120" width="200" height="95" rx="12" fill="#1e40af"/><text x="130" y="158" font-weight="bold">Sefaria GCS / API</text><text x="130" y="183" font-size="13">links only, no texts</text>
+<rect x="282" y="120" width="200" height="95" rx="12" fill="#1e40af"/><text x="382" y="157" font-weight="bold">Parser + canonical IDs</text><text x="382" y="182" font-size="13">exact refs, no guessing</text>
+<rect x="534" y="120" width="200" height="95" rx="12" fill="#7c3aed"/><text x="634" y="157" font-weight="bold">Quality gate</text><text x="634" y="182" font-size="13">quarantine + hashes</text>
+<rect x="786" y="120" width="300" height="95" rx="12" fill="#047857"/><text x="936" y="156" font-weight="bold">Neo4j metadata graph</text><text x="936" y="182" font-size="13">explicit approval + evidence</text>
+</g>
+<g stroke="#93c5fd" stroke-width="3" fill="none">
+<path d="M230 167 L282 167"/><path d="M482 167 L534 167"/><path d="M734 167 L786 167"/>
+<path d="M273 161 L282 167 L273 173"/><path d="M525 161 L534 167 L525 173"/><path d="M777 161 L786 167 L777 173"/>
+</g>
+<text x="560" y="265" text-anchor="middle" fill="#cbd5e1" font-size="18" font-family="Arial,sans-serif">SOURCE_LINK = observed relationship, not a proved quotation or influence</text>
+<text x="560" y="301" text-anchor="middle" fill="#86efac" font-size="16" font-family="Arial,sans-serif">Immutable plan hashes - exact passage refs - reviewer gate - idempotent imports</text>
+</svg>

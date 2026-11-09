@@ -1,0 +1,1 @@
+"""Source metadata ingestion for DvirOS research graph (no licensed full text)."""
