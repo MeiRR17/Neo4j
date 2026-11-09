@@ -2,7 +2,7 @@ name: Foundation checks
 
 on:
   push:
-    branches: [main, "feature/**"]
+    branches: [main]
   pull_request:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
 jobs:
   foundation:
     runs-on: ubuntu-latest
-    timeout-minutes: 6
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -34,3 +34,12 @@ jobs:
           assert "neo4j_auth_file" in config["services"]["neo4j"]["secrets"][0]["source"]
           print("Compose validated: local-only ports + Docker secret.")
           PY
+      - name: Start isolated Neo4j and verify authentication
+        run: |
+          docker compose up -d --wait --wait-timeout 180
+          python scripts/smoke.py --timeout 30
+      - name: Verify actual data persistence across restart
+        run: python scripts/persistence_smoke.py
+      - name: Stop local test environment
+        if: always()
+        run: docker compose down
