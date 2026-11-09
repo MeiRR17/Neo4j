@@ -14,10 +14,17 @@ from services.research_api.config import load_token
 if __name__ == "__main__":
     from scripts.bootstrap import DEFAULT_SECRET_PATH, load_auth
     from scripts.migrate import LocalQueryClient, load_migrations, applied_checksum
+    from services.research_api.signature import signature_key_path
+    from services.research_api.config import load_token
+    import os
     import uvicorn
 
     try:
         load_token()
+        # The CLI runner always requires signed DvirOS backend identity.
+        # Unsigned local TestClient harness is limited to explicit test use.
+        os.environ["DVIROS_REQUIRE_SIGNED_CALLS"] = "1"
+        load_token(signature_key_path())
         load_auth(DEFAULT_SECRET_PATH)
         client = LocalQueryClient("http://127.0.0.1:7474", DEFAULT_SECRET_PATH)
         for migration in load_migrations():

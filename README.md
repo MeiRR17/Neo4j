@@ -12,12 +12,14 @@ or a Learning_Modules feature.
 - [Sefaria link metadata ingestion](docs/operations/SEFARIA_INGESTION.md)
 - [Scholarly seed corpus and human review](docs/operations/SEED_CORPUS.md)
 - [Private Research API quickstart and contract](docs/operations/RESEARCH_API.md)
+- [Signed DvirOS integration contract](docs/integrations/RESEARCH-BRIDGE-v1.json)
+- [v0.6 cross-repository bridge setup](docs/integrations/DVIROS-BRIDGE-v0.6.md)
 - [Research API architecture illustration](docs/architecture/v0.5-research-api.svg)
 - [v0.4 scholarly quality diagram](docs/architecture/v0.4-scholarly-pilot.svg)
 - [v0.3 pipeline diagram](docs/architecture/v0.3-pipeline.svg)
 - [Changelog](CHANGELOG.md)
 
-## Current implementation: v0.5.0 private typed Research API
+## Current implementation: v0.6.0 signed DvirOS service bridge
 
 The foundation has a pinned Neo4j Community image, loopback-only ports,
 Docker Secrets, persistent named volumes and verified CI startup/restart.
@@ -32,6 +34,10 @@ v0.5 adds a loopback-only FastAPI read service, OpenAPI, bearer-token
 authentication, bounded evidence-grounded graph queries, safe typed responses,
 cursor pagination, correlation IDs, readiness based on real schema validation,
 and true empty-state reporting while the corpus remains under review.
+v0.6 adds a versioned, signed server-to-server contract for an opt-in DvirOS
+BFF adapter, using a separate HMAC key, timestamp, nonce and anti-replay
+check on top of the existing backend bearer. A local runner requires
+both credentials; no browser client can directly access Neo4j.
 
 **No candidate edition or scholarly link has been automatically approved.**
 The human rights and scholarly review acceptance gates are **not yet complete**,
@@ -51,6 +57,7 @@ python scripts/migrate.py check
 python scripts/ingest_sefaria.py --help
 python scripts/seed_corpus.py --help
 python scripts/api_bootstrap.py
+python scripts/api_signature_bootstrap.py
 python scripts/run_research_api.py
 python -m unittest discover -s tests -v
 ```

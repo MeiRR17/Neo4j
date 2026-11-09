@@ -7,6 +7,7 @@ will be implemented at the cross-repo integration boundary (v0.6/0.14).
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import uuid
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
@@ -17,6 +18,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from research_graph.ontology import CLAIM_KINDS, REVIEW_STATUSES, require_canonical_id
 from scripts.migrate import load_migrations
 from services.research_api.config import check_bearer
+from services.research_api.contract import RESEARCH_CONTRACT
+from services.research_api.signature import ReplayGuard, verify_signed_request
 from services.research_api.db import DatabaseUnavailable, ReadOnlyQueryClient
 from services.research_api.models import (
     Concept, ErrorResponse, EvidenceLink, Neighborhood, Page, Passage, Person, Readiness,
@@ -105,7 +108,8 @@ def page_from_rows(rows: list[dict], model: type, limit: int) -> dict:
     }
 
 
-def create_app(*, backend=None, token_path: Path | None = None) -> FastAPI:
+def create_app(*, backend=None, token_path: Path | None = None,
+               signature_path: Path | None = None) -> FastAPI:
     """Construction accepts a backend injection for tests only, never web clients."""
     app = FastAPI(
         title="DvirOS Jewish Philosophy Research API",
@@ -116,6 +120,7 @@ def create_app(*, backend=None, token_path: Path | None = None) -> FastAPI:
         responses={code: {"model": ErrorResponse} for code in (400, 401, 403, 404, 422, 503)},
     )
     store = backend if backend is not None else ReadOnlyQueryClient()
+    replay_guard = ReplayGuard()
 
     @app.middleware("http")
     async def request_metadata(request: Request, call_next):
@@ -156,6 +161,7 @@ def create_app(*, backend=None, token_path: Path | None = None) -> FastAPI:
         return JSONResponse(status_code=503, content=error_payload(request, 503))
 
     async def require_service_token(
+        request: Request,
         authorization: HTTPAuthorizationCredentials | None = Depends(security),
     ) -> None:
         if authorization is None:
@@ -165,6 +171,24 @@ def create_app(*, backend=None, token_path: Path | None = None) -> FastAPI:
                 raise_http(403)
         except ValueError:
             raise_http(503)
+        mode = os.getenv("DVIROS_REQUIRE_SIGNED_CALLS", "0")
+        if mode not in ("0", "1"):
+            raise_http(503)
+        if mode == "1":
+            raw_path = request.scope.get("raw_path", b"")
+            query_bytes = request.scope.get("query_string", b"")
+            try:
+                target = raw_path.decode("ascii")
+                if query_bytes:
+                    target += "?" + query_bytes.decode("ascii")
+                verified = verify_signed_request(
+                    request.headers, target, path=signature_path,
+                    guard=replay_guard,
+                )
+            except (ValueError, OSError, UnicodeError):
+                raise_http(503)
+            if not verified:
+                raise_http(403)
 
     def fetch(operation: str, params: dict | None = None) -> list[dict]:
         return store.query(operation, params or {})
@@ -198,6 +222,11 @@ def create_app(*, backend=None, token_path: Path | None = None) -> FastAPI:
             "review_status": review_status,
         }
         return page_from_rows(fetch(operation, params), PAGE_CLASSES[kind], limit)
+
+    @app.get("/v1/integration/contract", tags=["Integration"],
+             dependencies=[Depends(require_service_token)])
+    def integration_contract():
+        return dict(RESEARCH_CONTRACT)
 
     @app.get("/v1/works", response_model=Page[Work], tags=["Research"],
              dependencies=[Depends(require_service_token)])

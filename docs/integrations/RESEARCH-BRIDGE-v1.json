@@ -1,0 +1,16 @@
+{
+  "contract_version": "1.0",
+  "service_id": "dviros.neo4j.philosophy",
+  "api_version": "0.6.0",
+  "schema_version": "0.5.0",
+  "minimum_client": "dvir-os/0.6.0",
+  "capabilities": [
+    "works", "persons", "passages", "concepts", "links",
+    "graph/neighborhood", "data/status", "sources"
+  ],
+  "source_trail_required": true,
+  "research_corpus_status": "human_review_pending",
+  "human_approval_required": true,
+  "full_text_available": false,
+  "writes_allowed": false
+}
