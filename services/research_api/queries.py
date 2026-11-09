@@ -158,3 +158,47 @@ DETAIL_KINDS = {
     "work": "work", "person": "person", "passage": "passage",
     "concept": "concept", "source": "source",
 }
+
+
+# v0.8.2: deterministic, read-only candidate scans over metadata fields.
+# The API folds Hebrew niqqud/Latin accents after reading a strict 50-record
+# window, with explicit scan-incomplete flags and a cursor.
+READ_OPERATIONS["metadata_works"] = """
+MATCH (n:Work)
+WHERE ($cursor = '' OR n.id > $cursor)
+  AND ($language = '' OR EXISTS {
+    MATCH (n)-[:HAS_EDITION]->(ed:Edition)
+    WHERE ed.language = $language
+  })
+RETURN n.id AS id, n.title AS title, n.provider_ref AS source_anchor,
+       [(n)-[:HAS_ALIAS]->(a:NameAlias) | coalesce(a.label, a.value, a.name)][..8] AS aliases
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
+
+READ_OPERATIONS["metadata_persons"] = """
+MATCH (n:Person)
+WHERE ($cursor = '' OR n.id > $cursor)
+RETURN n.id AS id, n.display_name AS title, null AS source_anchor,
+       [] AS aliases
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
+
+READ_OPERATIONS["metadata_passages"] = """
+MATCH (n:Passage)
+WHERE ($cursor = '' OR n.id > $cursor)
+RETURN n.id AS id, n.source_ref AS title, n.source_ref AS source_anchor,
+       [] AS aliases
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
+
+READ_OPERATIONS["metadata_concepts"] = """
+MATCH (n:Concept)
+WHERE ($cursor = '' OR n.id > $cursor)
+RETURN n.id AS id, n.preferred_label AS title, null AS source_anchor,
+       [] AS aliases
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()

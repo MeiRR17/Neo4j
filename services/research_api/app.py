@@ -23,11 +23,13 @@ from services.research_api.signature import ReplayGuard, verify_signed_request
 from services.research_api.db import DatabaseUnavailable, ReadOnlyQueryClient
 from services.research_api.models import (
     Concept, ErrorResponse, EvidenceLink, Neighborhood, Page, Passage, Person, Readiness,
-    SourceRecord, Work,
+    SourceRecord, Work, MetadataSearchPage,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
 )
+from services.research_api.metadata_search import search_metadata, validate_search
+
 
 security = HTTPBearer(auto_error=False)
 SCHEMA_VERSION = "0.5.0"
@@ -256,6 +258,28 @@ def create_app(*, backend=None, token_path: Path | None = None,
                  cursor: str | None = None,
                  limit: int = Query(default=20, ge=1, le=50)):
         return list_entities("concepts", query, cursor, limit)
+
+    @app.get("/v1/search/metadata", response_model=MetadataSearchPage,
+             tags=["Research"], dependencies=[Depends(require_service_token)])
+    def metadata_search(request: Request,
+                        kind: str = Query(...),
+                        query: str = Query(default="", max_length=100),
+                        cursor: str | None = None,
+                        limit: int = Query(default=10, ge=1, le=20),
+                        language: str = ""):
+        # FastAPI normally ignores unknown query keys. Fail closed instead:
+        # unsupportable rights/author/facet filters must NEVER be silently dropped.
+        provided = [key for key, _ in request.query_params.multi_items()]
+        allowed = {"kind", "query", "cursor", "limit", "language"}
+        if (len(provided) > len(allowed) or len(set(provided)) != len(provided)
+                or any(key not in allowed for key in provided)):
+            raise_http(422)
+        try:
+            validate_search(kind, query, cursor, limit, language)
+        except (ValueError, TypeError):
+            raise_http(422)
+        return search_metadata(store, kind=kind, query=query, cursor=cursor,
+                               limit=limit, language=language)
 
     @app.get("/v1/links", response_model=Page[EvidenceLink], tags=["Research"],
              dependencies=[Depends(require_service_token)])

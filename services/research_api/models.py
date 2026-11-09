@@ -121,3 +121,32 @@ class ErrorDetail(StrictModel):
 
 class ErrorResponse(StrictModel):
     error: ErrorDetail
+
+
+class MetadataHit(StrictModel):
+    id: str
+    kind: Literal["work", "person", "passage", "concept"]
+    title: str
+    source_anchor: str | None
+    match_basis: Literal["canonical_id", "title", "alias"]
+    review_status: Literal["unreviewed"] = "unreviewed"
+    source_verification: Literal["NOT_VERIFIED"] = "NOT_VERIFIED"
+    rights_status: Literal["NOT_ASSESSED"] = "NOT_ASSESSED"
+    text_available: Literal[False] = False
+
+
+class MetadataSearchPage(StrictModel):
+    schema_version: Literal["0.8.2"] = "0.8.2"
+    kind: Literal["works", "persons", "passages", "concepts"]
+    items: list[MetadataHit]
+    next_cursor: str | None = None
+    has_more: bool
+    search_complete: bool
+    scanned_candidates: int
+    candidate_window_limit: Literal[50] = 50
+    corpus_status: Literal["unreviewed_metadata_only"] = "unreviewed_metadata_only"
+    match_order: Literal["canonical_id_scan_not_relevance_ranked"] = "canonical_id_scan_not_relevance_ranked"
+    normalization: Literal["unicode_nfkd_casefold_marks_punctuation"] = "unicode_nfkd_casefold_marks_punctuation"
+    text_available: Literal[False] = False
+    source_trail_verified: Literal[False] = False
+    full_text_indexed: Literal[False] = False
