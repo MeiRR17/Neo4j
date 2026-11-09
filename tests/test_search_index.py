@@ -122,7 +122,7 @@ class IndexSearchTests(unittest.TestCase):
             {**sample, "review_status": "approved"},
             {**sample, "aliases": ["Invented"]},
             {**sample, "id": P},
-            {**sample, "title": "לא מתאים"},
+            {**sample, "title": "מורה" + "א" * 301},
         ):
             with self.subTest(mutated=mutated):
                 self.store.data = [mutated]
