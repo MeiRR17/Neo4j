@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.0] — 2026-11-09 (engineering implementation; human scholarly gates BLOCKED)
+
+### Added
+- Candidate inventory of 18 Jewish philosophy/ethics/thought works; exact indices are verified at runtime, never assumed available or licensed.
+- Opt-in metadata-only Sefaria versions discovery; bounded HTTPS response, source snapshot checksums, edition/language/version IDs, quarantine of invalid mappings.
+- Per-edition rights review contract bound to inventory checksum, explicit human reviewer, dated rationale, license, rights evidence and attribution.
+- Source-link review queue with deterministic 100–500 candidate sampling, separate human adjudication, immutable queue hash and no inferred citation direction.
+- Research quality audit: work/edition coverage, 100+ inspected links, missing anchors/evidence, collisions, unresolved titles and incomplete rights.
+- Local-only Neo4j upserts for reviewed **version metadata only** with evidence, rights status and deterministic provenance; no full-text downloads or AI review.
+- CI synthetic-only metadata upsert smoke, offline negative tests, operations runbook, architecture diagram.
+
+### Outstanding human acceptance gates
+- No real Sefaria edition has yet been approved by this change.
+- 100+ real source link adjudications, actual edition license/attribution review for 12–20 works, unresolved candidate names and independent scholarly signoff remain necessary.
+- v0.4 is *code-complete for the review workflow*, not a populated, licensed research corpus or production GA.
+
 ## [0.3.0] — 2026-11-09 (implementation candidate)
 
 ### Added

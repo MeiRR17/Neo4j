@@ -61,6 +61,10 @@ jobs:
             --input local_staging/fixture --ack-unreviewed --ci-fixture
           python scripts/ingest_sefaria.py apply \
             --input local_staging/fixture --ack-unreviewed --ci-fixture
+      - name: Scholarly seed edition metadata smoke (synthetic only)
+        run: |
+          python scripts/seed_corpus.py --help
+          python scripts/seed_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
       - name: Stop local test environment

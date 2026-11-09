@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" width="1200" height="650" role="img" aria-label="DvirOS Neo4j scholarly seed corpus v0.4 quality and human rights review">
+<rect width="1200" height="650" rx="18" fill="#0d1526"/>
+<text x="50" y="68" fill="#fff" font-size="31" font-weight="700" font-family="Arial,sans-serif">DvirOS / Neo4j — Scholarly Seed Corpus v0.4</text>
+<text x="50" y="99" fill="#a5b4c8" font-size="17" font-family="Arial,sans-serif">Implemented code paths · illustrative diagram, not a deployed research UI</text>
+<g stroke="#9db3d0" stroke-width="3" fill="none">
+<path d="M340 220 H438"/><path d="M765 220 H862"/><path d="M340 446 H438"/><path d="M765 446 H862"/>
+<path d="M1080 274 V405"/><path d="M990 370 H990 V405"/>
+</g>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="50" y="150" rx="15" width="290" height="125" fill="#1e40af"/>
+<text x="195" y="189" fill="white" font-size="22" font-weight="bold">18 work candidates</text>
+<text x="195" y="216" fill="#dbeafe" font-size="15">Sefaria Versions API</text>
+<text x="195" y="243" fill="#dbeafe" font-size="15">No text bodies downloaded</text>
+<rect x="438" y="150" rx="15" width="327" height="125" fill="#7c3aed"/>
+<text x="602" y="190" fill="white" font-size="22" font-weight="bold">Edition rights review</text>
+<text x="602" y="218" fill="#ede9fe" font-size="15">License, attribution, evidence</text>
+<text x="602" y="244" fill="#ede9fe" font-size="15">Real human decision required</text>
+<rect x="862" y="150" rx="15" width="288" height="125" fill="#0f766e"/>
+<text x="1006" y="189" fill="white" font-size="22" font-weight="bold">Neo4j evidence graph</text>
+<text x="1006" y="216" fill="#ccfbf1" font-size="15">Work / Edition / Source</text>
+<text x="1006" y="243" fill="#ccfbf1" font-size="15">Metadata-only upserts</text>
+<rect x="50" y="380" rx="15" width="290" height="125" fill="#1e40af"/>
+<text x="195" y="422" fill="white" font-size="22" font-weight="bold">Observed source links</text>
+<text x="195" y="451" fill="#dbeafe" font-size="15">v0.3 provenance snapshot</text>
+<text x="195" y="478" fill="#dbeafe" font-size="15">Exact passage references</text>
+<rect x="438" y="380" rx="15" width="327" height="125" fill="#7c3aed"/>
+<text x="602" y="423" fill="white" font-size="22" font-weight="bold">100+ evidence reviews</text>
+<text x="602" y="452" fill="#ede9fe" font-size="15">Deterministic review queue</text>
+<text x="602" y="479" fill="#ede9fe" font-size="15">No inferred influence</text>
+<rect x="862" y="380" rx="15" width="288" height="125" fill="#92400e"/>
+<text x="1006" y="420" fill="white" font-size="22" font-weight="bold">Quality and release gate</text>
+<text x="1006" y="448" fill="#fef3c7" font-size="15">Collisions, missing refs, licenses</text>
+<text x="1006" y="476" fill="#fef3c7" font-size="15">BLOCKED until review complete</text>
+</g>
+<rect x="52" y="560" width="1096" height="52" rx="12" fill="#1e293b"/>
+<text x="600" y="591" fill="#e2e8f0" font-family="Arial,sans-serif" font-size="18" text-anchor="middle">Source observed ≠ citation proven  |  Edition discovered ≠ redistribution rights  |  Review pending ≠ production ready</text>
+</svg>
