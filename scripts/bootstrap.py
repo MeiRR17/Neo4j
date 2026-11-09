@@ -21,8 +21,11 @@ def load_auth(path: Path = DEFAULT_SECRET_PATH) -> tuple[str, str]:
     path = Path(path)
     if path.is_symlink() or not path.is_file():
         raise ValueError("Authentication secret missing or not a regular file.")
-    if os.name != "nt" and (stat.S_IMODE(path.stat().st_mode) & 0o077):
-        raise ValueError("Authentication secret must not be accessible by group/others (chmod 600).")
+    if os.name != "nt":
+        if stat.S_IMODE(path.parent.stat().st_mode) & 0o077:
+            raise ValueError("Secret directory must be owner-only (chmod 700).")
+        if stat.S_IMODE(path.stat().st_mode) != 0o444:
+            raise ValueError("Compose file-based secret must be read-only mode 0444 inside a 0700 directory.")
     value = path.read_text(encoding="utf-8").rstrip("\r\n")
     if "\r" in value or "\n" in value or not value.startswith("neo4j/"):
         raise ValueError("Expected a single neo4j/<password> line in the local secret.")
@@ -38,6 +41,8 @@ def create_secret(path: Path = DEFAULT_SECRET_PATH) -> bool:
     if path.parent.is_symlink():
         raise ValueError("Refusing a symlinked secret directory.")
     path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if os.name != "nt" and (stat.S_IMODE(path.parent.stat().st_mode) & 0o077):
+        raise ValueError("Refusing to store a secret in a group/world-accessible directory.")
     if path.is_symlink() or path.exists():
         load_auth(path)
         return False
@@ -50,6 +55,11 @@ def create_secret(path: Path = DEFAULT_SECRET_PATH) -> bool:
     except BaseException:
         path.unlink(missing_ok=True)
         raise
+    # Compose mounts file-backed secrets without changing host file ownership.
+    # Neo4j runs as uid 7474; it must be able to read the mounted secret.
+    # Mode 0444 is safe here because its enclosing host directory is 0700.
+    if os.name != "nt":
+        path.chmod(0o444)
     load_auth(path)
     return True
 

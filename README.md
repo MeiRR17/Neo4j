@@ -28,6 +28,9 @@ python -m unittest discover -s tests -v
 
 This generates a unique local password into ignored file
 `secrets/neo4j_auth.txt`; it does not print the credential.
+On POSIX systems, the enclosing directory is owner-only (0700) and its
+file is read-only (0444) for Docker's non-root secret mount. Do not move
+the file into any shared/public folder.
 The database is accessible **only from this host** at
 `http://127.0.0.1:7474` (Neo4j Browser) and
 `bolt://127.0.0.1:7687` (developer driver).

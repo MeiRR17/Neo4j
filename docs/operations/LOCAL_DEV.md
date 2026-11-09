@@ -30,8 +30,13 @@ file or password into tickets, prompts, screenshots, commits, or logs.
 ## Data and security
 
 - Ports 7474/7687 bind only to `127.0.0.1`, not `0.0.0.0`.
-- Credentials are generated locally with O_EXCL + POSIX mode 0600 and provided
-  as a Docker Compose secret via `NEO4J_AUTH_FILE`. No password is in env.
+- Credentials are generated locally with O_EXCL; the **parent directory** is
+  owner-only mode 0700. The file itself is read-only 0444 so Neo4j's non-root
+  container user can read the Compose file-backed secret (Compose cannot chown
+  file-backed secrets). Other host users cannot traverse the 0700 directory.
+  The credential is passed as a Docker Compose secret via
+  `NEO4J_AUTH_FILE`, never a password environment variable.
+  On Windows, apply owner-only directory ACLs; POSIX bits do not enforce ACLs.
 - Password initialization runs only on a *new* Neo4j data volume. Recreating
   the secret does **not** rotate the password on existing data. Preserve and
   back up your credential securely; rotation and restore drills are scheduled
@@ -60,8 +65,11 @@ authenticated readiness test. Use smoke.py for authenticated readiness.
 - Docker not found: start Docker Desktop/Engine and install Compose v2.
 - Auth error after migration: an existing named volume has its own password.
   Recover its original credential; do not delete volumes to force reinit.
-- File mode error: on Linux/macOS run `chmod 600 secrets/neo4j_auth.txt`.
-  If storage cannot enforce safe permissions, do not run this configuration.
+- Secret file unreadable inside the container: on Linux/macOS verify the
+  directory is mode 0700 and the file is mode 0444
+  (`chmod 700 secrets && chmod 444 secrets/neo4j_auth.txt`).
+  Do **not** put this file in a shared directory; if your filesystem cannot
+  enforce directory permissions, do not use this configuration.
 - Browser opens but smoke fails: check `docker compose logs neo4j` (scrub
   logs before sharing) and rerun the smoke after health reports healthy.
 - Query endpoint must remain local; smoke refuses non-loopback destination.

@@ -26,23 +26,24 @@ class SecretTests(unittest.TestCase):
             self.assertFalse(bootstrap.create_secret(path))
             self.assertEqual(bootstrap.load_auth(path)[1], password)
             if os.name != "nt":
-                self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)
+                self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o444)
+                self.assertEqual(stat.S_IMODE(path.parent.stat().st_mode), 0o700)
 
     def test_existing_bad_secret_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "neo4j_auth.txt"
             path.write_text("neo4j/short\n", encoding="utf-8")
             if os.name != "nt":
-                path.chmod(0o600)
+                path.chmod(0o444)
             with self.assertRaises(ValueError):
                 bootstrap.create_secret(path)
 
     @unittest.skipIf(os.name == "nt", "POSIX permission check")
-    def test_group_access_to_credentials_is_rejected(self):
+    def test_accessible_secret_directory_is_rejected(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "neo4j_auth.txt"
             bootstrap.create_secret(path)
-            path.chmod(0o640)
+            path.parent.chmod(0o750)
             with self.assertRaises(ValueError):
                 bootstrap.load_auth(path)
 
