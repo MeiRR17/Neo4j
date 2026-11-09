@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased 0.6.0] — 2026-11-09 (DvirOS service contract; live approval pending)
+
+- Added explicit versioned BFF route and security contract, synthetic offline fixture and route OpenAPI compatibility tests.
+- Added DvirOS integration states and service-to-service authorization boundary documentation; research API schema remains 0.5.0.
+- Live integration, DvirOS identity/session issuer, TLS and production deployment remain blocked; no source text or rights claims.
+
 ## [0.5.0] — 2026-11-09 (private typed Research API implementation)
 
 ### Added

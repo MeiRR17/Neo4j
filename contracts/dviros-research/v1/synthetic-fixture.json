@@ -1,0 +1,35 @@
+{
+  "synthetic": true,
+  "schema_version": "0.5.0",
+  "work_page": {
+    "schema_version": "0.5.0",
+    "corpus_status": "unreviewed_metadata_only",
+    "next_cursor": null,
+    "items": [
+      {
+        "id": "work:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "title": "Synthetic work — demonstration only",
+        "provider_ref": "synthetic-fixture",
+        "provider": "fixture",
+        "edition_count": 0
+      }
+    ]
+  },
+  "data_status": {
+    "schema_version": "0.5.0",
+    "corpus_status": "human_review_pending",
+    "human_quality_release_approved": false,
+    "texts_available": false,
+    "counts": {
+      "works": 0,
+      "passages": 0,
+      "evidence_records": 0,
+      "editions": 0
+    }
+  },
+  "source_trail": {
+    "claim_kind": "OBSERVED_SOURCE_LINK",
+    "review_status": "unreviewed",
+    "note": "Structural link is not proven influence or a verified quotation."
+  }
+}
