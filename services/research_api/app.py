@@ -261,13 +261,19 @@ def create_app(*, backend=None, token_path: Path | None = None,
 
     @app.get("/v1/search/metadata", response_model=MetadataSearchPage,
              tags=["Research"], dependencies=[Depends(require_service_token)])
-    def metadata_search(kind: str = Query(...),
+    def metadata_search(request: Request,
+                        kind: str = Query(...),
                         query: str = Query(default="", max_length=100),
                         cursor: str | None = None,
                         limit: int = Query(default=10, ge=1, le=20),
                         language: str = ""):
-        # Unsupported kinds/facets are rejected; no arbitrary Cypher or text.
-        # ValueError in this path is user input (422), not a configuration error.
+        # FastAPI normally ignores unknown query keys. Fail closed instead:
+        # unsupportable rights/author/facet filters must NEVER be silently dropped.
+        provided = [key for key, _ in request.query_params.multi_items()]
+        allowed = {"kind", "query", "cursor", "limit", "language"}
+        if (len(provided) > len(allowed) or len(set(provided)) != len(provided)
+                or any(key not in allowed for key in provided)):
+            raise_http(422)
         try:
             validate_search(kind, query, cursor, limit, language)
         except (ValueError, TypeError):
