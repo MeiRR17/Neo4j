@@ -1,0 +1,36 @@
+name: Foundation checks
+
+on:
+  push:
+    branches: [main, "feature/**"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dependency-free unit and security policy tests
+        run: python -m unittest discover -s tests -v
+      - name: Validate Docker Compose model (no image pull)
+        run: |
+          python scripts/bootstrap.py
+          docker compose config --quiet
+          docker compose config --format json > /tmp/neo4j-compose-config.json
+          python - <<'PY'
+          import json
+          with open("/tmp/neo4j-compose-config.json", encoding="utf-8") as f:
+              config = json.load(f)
+          published = config["services"]["neo4j"]["ports"]
+          assert len(published) == 2
+          assert all(item.get("host_ip") == "127.0.0.1" for item in published)
+          assert "neo4j_auth_file" in config["services"]["neo4j"]["secrets"][0]["source"]
+          print("Compose validated: local-only ports + Docker secret.")
+          PY
