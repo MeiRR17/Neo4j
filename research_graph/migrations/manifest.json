@@ -1,0 +1,23 @@
+{
+  "schema_version": "0.2.0",
+  "migrations": [
+    {
+      "id": "001",
+      "path": "001_node_constraints.cypher",
+      "description": "Canonical IDs and migration bookkeeping for all research entities",
+      "reversible": false
+    },
+    {
+      "id": "002",
+      "path": "002_lookup_indexes.cypher",
+      "description": "Non-identity indexes for bilingual search, metadata and provenance",
+      "reversible": false
+    },
+    {
+      "id": "003",
+      "path": "003_edge_constraints.cypher",
+      "description": "Relationship IDs for provenance-bearing domain edges",
+      "reversible": false
+    }
+  ]
+}

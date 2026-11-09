@@ -1,63 +1,57 @@
 # DvirOS · Jewish Philosophy Research Engine (Neo4j)
 
-**Canonical service repository** for the philosophy and Jewish thought
-knowledge graph inside [DvirOS](https://github.com/MeiRR17/dvir-os).
+**Canonical service repository** for the Jewish philosophy knowledge graph in
+[DvirOS](https://github.com/MeiRR17/dvir-os).
 This is a **research platform component**, not a teaching demonstration
 or a Learning_Modules feature.
 
 - [Full production roadmap](docs/ROADMAP.md)
-- [DvirOS integration architecture](docs/architecture/0001-DVIROS-INTEGRATION.md)
+- [System integration architecture](docs/architecture/0001-DVIROS-INTEGRATION.md)
+- [Canonical ontology / evidence contract](docs/architecture/0002-CANONICAL-ONTOLOGY.md)
 - [Safe local operations](docs/operations/LOCAL_DEV.md)
-- [Release history](CHANGELOG.md)
+- [Changelog](CHANGELOG.md)
 
-## Current implementation: v0.1.0 engineering foundation
+## Current implementation: v0.2.0 ontology and migrations
 
-The local graph database has a pinned Neo4j Community image, loopback-only
-ports, Docker Secret authentication, persistent named volumes, an offline
-test suite and a credential-checked smoke test. This is **not a deployed
-production product**. User-facing research in DvirOS is still on the roadmap.
+The foundation has a pinned Neo4j Community image, loopback-only ports,
+Docker Secrets, persistent named volumes and verified CI startup/restart.
+v0.2 adds canonical identity rules, an evidence-bound relationship contract
+and versioned schema migrations. It is **not** a deployed production product.
 
 **Requirements:** Python 3.10+, Docker Compose v2, Docker Engine/Desktop.
 
 ```sh
 python scripts/bootstrap.py
-docker compose up -d
+docker compose up -d --wait
 python scripts/smoke.py
+python scripts/migrate.py dry-run
+python scripts/migrate.py apply
+python scripts/migrate.py check
 python -m unittest discover -s tests -v
 ```
 
-This generates a unique local password into ignored file
-`secrets/neo4j_auth.txt`; it does not print the credential.
-On POSIX systems, the enclosing directory is owner-only (0700) and its
-file is read-only (0444) for Docker's non-root secret mount. Do not move
-the file into any shared/public folder.
-The database is accessible **only from this host** at
-`http://127.0.0.1:7474` (Neo4j Browser) and
-`bolt://127.0.0.1:7687` (developer driver).
-Never expose the Browser or Bolt port publicly or to end users. Never
-commit/share the secret file. Use `docker compose down` to stop without
-deleting data. See [local operations](docs/operations/LOCAL_DEV.md)
-for Windows, recovery restrictions and upgrades.
+The unique password lives in ignored file `secrets/neo4j_auth.txt`.
+The host `secrets/` directory is owner-only (0700) and the secret
+file is read-only (0444) to permit Docker's non-root secret mount.
+No password is printed or put in the repository. See the local operations
+guide for Windows ACLs, stop/restart, security and upgrade details.
 
-## Research scope and epistemic boundaries
+## Scholarly correctness and privacy
 
-Target entities: Work, Passage, Thinker, Concept, Source, Evidence,
-Edition and reviewed claims. Human-reviewed interpretations and model
-suggestions must remain separate from observed source links. Similarity,
-co-citation and graph centrality are **hypotheses/structural measures**,
-not automatically historical influence, scholarly authority or agreement.
+- `:Work` is keyed by immutable provider ID, **not** translated title.
+- `:Passage` is keyed by edition ID + exact full reference; no string split.
+- `:Evidence` preserves exact provider reference, version and rights tag.
+- `:SOURCE_LINK` means an observed cross-reference, **not** proven citation.
+- `:HUMAN_CLAIM` and `:SUGGESTED_RELATION` remain explicitly distinct.
+- Graph relations require evidence and review metadata; suggestions cannot
+  silently promote themselves to approved knowledge.
+- No real source text is distributed by this schema implementation.
 
-The legacy files `scripts/02_acquire_sefaria_data.py`,
-`cypher/03_import_to_neo4j.cypher` and
-`cypher/04_analytics_queries.cypher` remain available as historical
-prototypes. They contain known title-normalization, link semantics and
-provenance limitations. Do **not** use their output as validated evidence.
-New data acquisition and canonical graph migrations are v0.2–v0.4 work.
+The legacy `scripts/02_acquire_sefaria_data.py` and original Cypher demos
+are **historical prototypes**, not validated research pipelines. Do not
+import their output as trustworthy source evidence. v0.3–v0.4 replace the
+ingestion workflow and add rights-reviewed pilot texts.
 
-## Separation from Learning_Modules
-
-An old script snapshot exists in Learning_Modules. It is not relevant to
-this product and is **not** the target for new code, tests or deployment.
-This repository owns research data models, ingestion and query services.
-The research workspace and authentication will be integrated **inside**
-DvirOS, not as a competing independent user-facing application.
+An unrelated utility snapshot in Learning_Modules is left unchanged and
+is not developed here. The eventual research UI belongs **inside DvirOS**,
+not in an independent application. See the roadmap for the API and UI phases.

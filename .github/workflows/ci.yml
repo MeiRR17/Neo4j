@@ -1,4 +1,4 @@
-name: Foundation checks
+name: Research graph checks
 
 on:
   push:
@@ -44,6 +44,13 @@ jobs:
             exit 1
           fi
           python scripts/smoke.py --timeout 30
+      - name: Apply and validate versioned graph migrations
+        run: |
+          python scripts/migrate.py dry-run
+          python scripts/migrate.py apply
+          python scripts/migrate.py apply
+          python scripts/migrate.py check
+          python scripts/ontology_smoke.py --allow-synthetic
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
       - name: Stop local test environment
