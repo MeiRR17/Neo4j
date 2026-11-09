@@ -1,3 +1,10 @@
+> **DvirOS Research Engine — new product direction (2026-11-09).**
+> This repository is the canonical Jewish Philosophy Knowledge Graph research service for DvirOS, **not** a Learning_Modules educational tool.
+> [Full production roadmap](docs/ROADMAP.md) · [DvirOS integration contract](docs/architecture/0001-DVIROS-INTEGRATION.md).
+> **Security warning:** The legacy Docker/PowerShell instructions below include demonstration credentials and unsafe defaults. **Do not deploy the current Compose to a public or production environment.** v0.1.0 replaces these defaults.
+>
+---
+
 > **Script consolidation (2026-11-03):** Selected utility scripts from this repository were integrated into [Learning_Modules/tools/neo4j-sefaria](https://github.com/MeiRR17/Learning_Modules/tree/main/tools/neo4j-sefaria), via [PR #4](https://github.com/MeiRR17/Learning_Modules/pull/4). The import includes source provenance and CI syntax/content checks. The original repository remains accessible, may contain additional data or configuration, and has **not been archived or deleted**. Consult the consolidated README for exclusions and portability changes.
 
 ---
