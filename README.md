@@ -17,9 +17,21 @@ or a Learning_Modules feature.
 - [Research API architecture illustration](docs/architecture/v0.5-research-api.svg)
 - [v0.4 scholarly quality diagram](docs/architecture/v0.4-scholarly-pilot.svg)
 - [v0.3 pipeline diagram](docs/architecture/v0.3-pipeline.svg)
+- [Draft v0.8.3 indexed metadata search and operator backfill](docs/integrations/METADATA-INDEX-v0.8.3.md)
+- [v0.8.3 index architecture diagram](docs/architecture/metadata-index-v0.8.3.svg)
 - [Changelog](CHANGELOG.md)
 
-## Current implementation: v0.6.0 signed DvirOS service bridge
+## Service baseline and draft research search milestones
+
+The production roadmap has advanced past the signed v0.6.0 service baseline,
+with graph provenance improvements on `main`. **v0.8.2** bounded bilingual
+metadata scanning (PR #18) and **v0.8.3** indexed title-prefix search
+(PR #19) are **separate stacked draft branches, not main releases**.
+The v0.8.3 branch adds an operator-gated metadata-only backfill and a new
+authenticated endpoint. It is explicitly blocked until coverage/freshness
+checks pass; no source rights or scholarly evidence approval is implied.
+
+### v0.6.0 signed DvirOS service bridge baseline
 
 The foundation has a pinned Neo4j Community image, loopback-only ports,
 Docker Secrets, persistent named volumes and verified CI startup/restart.

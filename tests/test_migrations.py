@@ -28,10 +28,10 @@ class MemoryClient:
 
 
 class MigrationTests(unittest.TestCase):
-    def test_manifest_has_exactly_three_ordered_migrations(self):
+    def test_manifest_has_four_ordered_migrations(self):
         items = load_migrations()
-        self.assertEqual([m.id for m in items], ["001", "002", "003"])
-        self.assertEqual([len(m.statements) for m in items], [10, 9, 10])
+        self.assertEqual([m.id for m in items], ["001", "002", "003", "004"])
+        self.assertEqual([len(m.statements) for m in items], [10, 9, 10, 4])
         self.assertTrue(all(len(m.checksum) == 64 for m in items))
 
     def test_idempotency_and_checksum_drift_fail_closed(self):
@@ -40,7 +40,7 @@ class MigrationTests(unittest.TestCase):
         self.assertFalse(migrate(items, client, "check"))
         self.assertTrue(migrate(items, client, "apply"))
         n = len(client.schema_calls)
-        self.assertEqual(n, 29)
+        self.assertEqual(n, 33)
         self.assertTrue(migrate(items, client, "apply"))
         self.assertEqual(len(client.schema_calls), n)
         self.assertTrue(migrate(items, client, "check"))

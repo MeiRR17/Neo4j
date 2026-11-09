@@ -71,6 +71,11 @@ jobs:
         run: |
           python scripts/api_bootstrap.py
           python scripts/api_smoke.py
+      - name: Plan, apply and verify metadata-only search index (isolated CI)
+        run: |
+          python scripts/search_index_backfill.py dry-run --kind works
+          python scripts/search_index_backfill.py apply --kind works --ack-metadata-only
+          python scripts/search_index_backfill.py check --kind works
       - name: Signed DvirOS service identity and live Neo4j bridge
         run: |
           python scripts/api_signature_bootstrap.py

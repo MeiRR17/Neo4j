@@ -108,7 +108,7 @@ class Neighborhood(StrictModel):
 
 class Readiness(StrictModel):
     status: Literal["ready"] = "ready"
-    graph_schema_version: str = "0.2.0"
+    graph_schema_version: str = "0.2.1"
     api_version: str = "0.5.0"
     research_corpus_status: Literal["human_review_pending"] = "human_review_pending"
 
@@ -150,3 +150,20 @@ class MetadataSearchPage(StrictModel):
     text_available: Literal[False] = False
     source_trail_verified: Literal[False] = False
     full_text_indexed: Literal[False] = False
+
+
+class IndexedMetadataSearchPage(StrictModel):
+    schema_version: Literal["0.8.3"] = "0.8.3"
+    kind: Literal["works", "persons", "passages", "concepts"]
+    items: list[MetadataHit]
+    next_cursor: str | None = None
+    has_more: bool
+    search_complete: bool
+    match_order: Literal["indexed_title_prefix_canonical_id"]
+    index_version: Literal["search_key_v1"]
+    index_coverage: dict
+    alias_matching_available: Literal[False] = False
+    full_text_indexed: Literal[False] = False
+    source_trail_verified: Literal[False] = False
+    text_available: Literal[False] = False
+    corpus_status: Literal["unreviewed_metadata_only"] = "unreviewed_metadata_only"

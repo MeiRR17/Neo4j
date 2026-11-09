@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.8.3] — 2026-11-09 (DRAFT — indexed, rights-conservative metadata lookup)
+
+- Added migration 004, four additive range indexes over normalized title keys, and schema-manifest 0.2.1 (IDs and provenance unchanged).
+- Implemented explicit local-only metadata backfill with full preflight, 25-row batches, 50k-per-kind safety cap, conflict checks and freshness tracking.
+- Introduced signed, authenticated `GET /v1/search/metadata/indexed` with a strict title-prefix-only contract; absent, stale or partial indexes fail closed.
+- Verified an isolated CI synthetic Work index migration/backfill/check and signed read; no real scholarly corpus, production backfill or live-site activation.
+- Preserved the v0.8.2 bounded substring/alias scanner as a separate optional path. DvirOS private adapter for v0.8.3 remains pending.
+- Outstanding: SSO/RBAC, licensed editions, human quality review, query-plan latency benchmarking, safe operational rollout. **No main merge.**
+
+
 ## [0.7.1] — 2026-11-09 (bounded graph evidence trail)
 
 - Exposed exact, typed relationship-to-Evidence provenance on each bounded graph neighborhood path: source reference, source URI, link category, rights tag, source-record ID, and separate evidence review status.
