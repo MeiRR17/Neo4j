@@ -2,8 +2,11 @@
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import tempfile
+import time
 import unittest
+from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
@@ -11,6 +14,7 @@ from research_graph.ontology import stable_id
 from services.research_api.app import create_app
 from services.research_api.config import bootstrap_token, load_token
 from services.research_api.db import DatabaseUnavailable
+from services.research_api.signature import CLIENT_ID, sign_request
 from services.research_api.metadata_search import (
     ALLOWED_KINDS, SCAN_LIMIT, fold_metadata, search_metadata, validate_search,
 )
@@ -153,17 +157,22 @@ class NormalizationAndPaging(unittest.TestCase):
             self.assertIn("ORDER BY id", statement)
 
 
-class SignedMetadataEndpoint(unittest.TestCase):
+class PrivateMetadataEndpoint(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         token_file = Path(self.tmp.name) / "private_api_token"
         bootstrap_token(token_file)
+        self.hmac_key = Path(self.tmp.name) / "private_hmac_key"
+        bootstrap_token(self.hmac_key)
         self.store = MetadataStore({"metadata_works":[{
             "id": WORK, "title": "Synthetically named work",
             "source_anchor": "SYNTHETIC:WORK", "aliases": ["מֹורֶה נְבוּכִים"],
         }]})
-        self.client = TestClient(create_app(backend=self.store, token_path=token_file))
+        self.client = TestClient(create_app(
+            backend=self.store, token_path=token_file,
+            signature_path=self.hmac_key,
+        ))
         self.auth = {"Authorization": "Bearer " + load_token(token_file)}
 
     def test_route_requires_backend_auth_before_query(self):
@@ -198,6 +207,24 @@ class SignedMetadataEndpoint(unittest.TestCase):
             result = self.client.get("/v1/search/metadata", params=params, headers=self.auth)
             self.assertIn(result.status_code, (400, 422), result.text)
         self.assertEqual(self.store.calls, [])
+
+    def test_signed_search_requires_hmac_binds_query_and_rejects_replay(self):
+        target = "/v1/search/metadata?kind=works&query=sample"
+        now = int(time.time())
+        nonce = "0123456789abcdef0123456789abcdef"
+        headers = {
+            **self.auth, "X-DvirOS-Client": CLIENT_ID,
+            "X-DvirOS-Timestamp": str(now), "X-DvirOS-Nonce": nonce,
+            "X-DvirOS-Signature": sign_request(
+                load_token(self.hmac_key), "GET", target, now, nonce),
+        }
+        with patch.dict(os.environ, {"DVIROS_REQUIRE_SIGNED_CALLS": "1"}):
+            self.assertEqual(self.client.get(target, headers=self.auth).status_code, 403)
+            signed = self.client.get(target, headers=headers)
+            self.assertEqual(signed.status_code, 200, signed.text)
+            self.assertEqual(self.client.get(target, headers=headers).status_code, 403)
+            changed = target + "&limit=2"
+            self.assertEqual(self.client.get(changed, headers=headers).status_code, 403)
 
     def test_search_api_advertised_but_no_cypher_endpoint(self):
         paths = self.client.get("/openapi.json").json()["paths"]
