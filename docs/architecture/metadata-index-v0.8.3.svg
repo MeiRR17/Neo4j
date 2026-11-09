@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="640" viewBox="0 0 1440 640" role="img" aria-label="Neo4j v0.8.3 indexed metadata read and controlled local backfill">
+  <rect width="1440" height="640" fill="#0a1525"/>
+  <g font-family="Arial,sans-serif" fill="#f3f8fc">
+    <text x="52" y="66" font-size="30" font-weight="bold">Neo4j Research v0.8.3 — normalized metadata index</text>
+    <text x="52" y="102" font-size="16" fill="#b0c9d8">Technical diagram derived from code · not a production browser screenshot</text>
+  </g>
+  <rect x="50" y="147" width="420" height="350" rx="18" fill="#14283d" stroke="#54788c" stroke-width="2"/>
+  <rect x="510" y="147" width="420" height="350" rx="18" fill="#15333b" stroke="#5bc5c4" stroke-width="2"/>
+  <rect x="970" y="147" width="420" height="350" rx="18" fill="#18372f" stroke="#79c4a3" stroke-width="2"/>
+  <g font-family="Arial,sans-serif" fill="#f4fbfe">
+    <text x="80" y="191" font-size="23" font-weight="bold">1 / Controlled backfill</text>
+    <text x="80" y="235" font-size="17">Loopback-only metadata reads</text>
+    <text x="80" y="269" font-size="17">NFKD, casefold, remove niqqud</text>
+    <text x="80" y="303" font-size="17">Validate source and canonical ID</text>
+    <text x="80" y="337" font-size="17">Explicit operator acknowledgement</text>
+    <text x="80" y="371" font-size="17">Up to 50,000 records / kind</text>
+    <text x="80" y="439" font-size="16" fill="#f3cf9b">Never import quotation text</text>
+    <text x="540" y="191" font-size="23" font-weight="bold">2 / Versioned search index</text>
+    <text x="540" y="235" font-size="17">Four additive range indexes</text>
+    <text x="540" y="269" font-size="17">search_key_v1 = normalized title</text>
+    <text x="540" y="303" font-size="17">search_source_v1 = exact source</text>
+    <text x="540" y="337" font-size="17">Coverage and freshness audit</text>
+    <text x="540" y="371" font-size="17">Absent or stale = BLOCKED</text>
+    <text x="540" y="439" font-size="16" fill="#a1e5db">Identity and rights unchanged</text>
+    <text x="1000" y="191" font-size="23" font-weight="bold">3 / Signed prefix lookup</text>
+    <text x="1000" y="235" font-size="17">Bearer + HMAC + replay guard</text>
+    <text x="1000" y="269" font-size="17">Title prefix, up to 20 hits</text>
+    <text x="1000" y="303" font-size="17">Exact canonical cursor</text>
+    <text x="1000" y="337" font-size="17">Unknown facets = REJECTED</text>
+    <text x="1000" y="371" font-size="17">All human claims unreviewed</text>
+    <text x="1000" y="439" font-size="16" fill="#a6e7c4">No full text or fake approval</text>
+  </g>
+  <g stroke="#5bc5c4" stroke-width="4" fill="none">
+    <path d="M470 316 H510"/>
+    <path d="M494 304 L510 316 L494 328"/>
+    <path d="M930 316 H970"/>
+    <path d="M954 304 L970 316 L954 328"/>
+  </g>
+  <rect x="50" y="530" width="1340" height="66" rx="12" fill="#152d40" stroke="#47677d"/>
+  <g font-family="Arial,sans-serif" fill="#c5dce9">
+    <text x="74" y="557" font-size="18">ALLOWED: four metadata kinds · no arbitrary Cypher · no direct browser access</text>
+    <text x="74" y="580" font-size="14">Synthetic CI only; rights and real search relevance are NOT approved or measured</text>
+  </g>
+</svg>
