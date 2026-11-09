@@ -2,7 +2,7 @@
 # NOT a public production deployment or a substitute for the future research API.
 services:
   neo4j:
-    image: neo4j:2026.10.2
+    image: neo4j:2026.10.1
     restart: unless-stopped
     ports:
       - "127.0.0.1:7474:7474"
