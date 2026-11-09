@@ -36,7 +36,13 @@ jobs:
           PY
       - name: Start isolated Neo4j and verify authentication
         run: |
-          docker compose up -d --wait --wait-timeout 180
+          docker compose up -d
+          if ! docker compose up -d --wait --wait-timeout 180; then
+            echo "Neo4j startup diagnostics (credentials redacted):"
+            docker compose ps --all
+            docker compose logs --no-color --tail=80 neo4j | sed -E 's#neo4j/[A-Za-z0-9_-]{16,}#neo4j/[REDACTED]#g'
+            exit 1
+          fi
           python scripts/smoke.py --timeout 30
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
