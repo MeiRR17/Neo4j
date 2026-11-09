@@ -122,12 +122,22 @@ WHERE ALL(r IN relationships(path) WHERE
     MATCH (e:Evidence {id:r.evidence_id})
     WHERE e.claim_kind = r.claim_kind
   })
+WITH path
+LIMIT $fetch_limit
+WITH path, [rel IN relationships(path) | rel.evidence_id] AS evidence_ids
+MATCH (ev:Evidence) WHERE ev.id IN evidence_ids
+WITH path, collect(ev) AS evidence
 RETURN [n IN nodes(path) | {id:n.id, label:head(labels(n)),
   title:coalesce(n.title,n.source_ref,n.display_name,n.preferred_label,'')}] AS nodes,
        [r IN relationships(path) | {id:r.id, type:type(r),
        evidence_id:r.evidence_id, claim_kind:r.claim_kind,
-       review_status:r.review_status}] AS edges
-LIMIT $fetch_limit
+       review_status:r.review_status,
+       source_ref:head([ev IN evidence WHERE ev.id = r.evidence_id | ev.source_ref]),
+       source_uri:head([ev IN evidence WHERE ev.id = r.evidence_id | ev.source_uri]),
+       rights_tag:head([ev IN evidence WHERE ev.id = r.evidence_id | ev.rights_tag]),
+       link_category:head([ev IN evidence WHERE ev.id = r.evidence_id | ev.link_category]),
+       source_record_id:head([ev IN evidence WHERE ev.id = r.evidence_id | ev.source_record_id]),
+       evidence_review_status:head([ev IN evidence WHERE ev.id = r.evidence_id | ev.review_status])}] AS edges
 """.strip()
 
 NEIGHBORHOOD_DEPTH_2 = NEIGHBORHOOD_DEPTH_1.replace("[*1]", "[*1..2]")
