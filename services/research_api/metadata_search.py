@@ -71,7 +71,7 @@ def validate_search(kind: str, query: str, cursor: str | None,
     return folded, clean_cursor, language
 
 
-def _safe_hit(row: dict, kind: str, folded_query: str) -> dict | None:
+def _safe_hit(row: dict, kind: str, folded_query: str, raw_query: str) -> dict | None:
     """Strict projection: never forward arbitrary DB property or source text."""
     prefix, _ = ALLOWED_KINDS[kind]
     if not isinstance(row, dict) or set(row) - ALLOWED_ROW_KEYS:
@@ -91,7 +91,7 @@ def _safe_hit(row: dict, kind: str, folded_query: str) -> dict | None:
             not SAFE_CHARACTER.fullmatch(alias) for alias in aliases
         ):
             raise ValueError("Invalid metadata alias list.")
-        canonical_match = folded_query == entity_id if folded_query else False
+        canonical_match = raw_query.strip() == entity_id if raw_query else False
         fields = [title, *aliases]
         title_match = bool(folded_query and folded_query in fold_metadata(title))
         alias_match = bool(folded_query and any(
@@ -149,7 +149,7 @@ def search_metadata(store: Any, *, kind: str, query: str = "",
         seen.add(entity_id)
         last = entity_id
         scanned += 1
-        hit = _safe_hit(row, kind, folded)
+        hit = _safe_hit(row, kind, folded, query)
         if hit is not None:
             matched.append(hit)
             if len(matched) == limit:
