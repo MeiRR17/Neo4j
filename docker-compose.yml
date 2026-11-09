@@ -1,21 +1,37 @@
-version: '3.8'
-
+# DvirOS Jewish Philosophy Research Engine — local-only development database.
+# NOT a public production deployment or a substitute for the future research API.
 services:
   neo4j:
-    image: neo4j:latest
-    container_name: neo4j-project10
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-    environment:
-      - NEO4J_AUTH=neo4j/password
-      - NEO4J_PLUGINS=["apoc"]
-      - NEO4J_dbms_security_procedures_unrestricted=apoc.*
-      - NEO4J_dbms_memory_heap_initial__size=2G
-      - NEO4J_dbms_memory_heap_max__size=4G
-      - NEO4J_dbms_memory_pagecache_size=2G
-    volumes:
-      - C:\neo4j\data:/data
-      - C:\neo4j\import:/var/lib/neo4j/import
-      - C:\neo4j\logs:/logs
+    image: neo4j:2026.10.1
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:7474:7474"
+      - "127.0.0.1:7687:7687"
+    environment:
+      NEO4J_AUTH_FILE: /run/secrets/neo4j_auth_file
+      NEO4J_server_memory_heap_initial__size: ${NEO4J_HEAP_INITIAL:-512m}
+      NEO4J_server_memory_heap_max__size: ${NEO4J_HEAP_MAX:-1G}
+      NEO4J_server_memory_pagecache_size: ${NEO4J_PAGE_CACHE:-512m}
+    secrets:
+      - neo4j_auth_file
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+      - neo4j_import:/import
+    # Local port readiness only. The smoke script validates authentication + query.
+    healthcheck:
+      test: ["CMD-SHELL", "bash -ec 'exec 3<>/dev/tcp/127.0.0.1/7687'"]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 45s
+    stop_grace_period: 90s
+
+secrets:
+  neo4j_auth_file:
+    file: ./secrets/neo4j_auth.txt
+
+volumes:
+  neo4j_data:
+  neo4j_logs:
+  neo4j_import:

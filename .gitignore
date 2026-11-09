@@ -1,0 +1,18 @@
+# Neo4j local state and credentials (never commit)
+secrets/
+.env
+data/
+logs/
+*.dump
+*.backup
+*.csv
+*.json.gz
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.coverage
+.DS_Store
