@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.6.0] — 2026-11-09 (signed DvirOS backend integration)
+
+### Added
+- Versioned `/v1/integration/contract` endpoint with service identity, semantic version, evidence-first flags and human-review-pending status.
+- DvirOS HMAC-SHA256 service identity with exact GET target+query, timestamp ±60s, 128-bit random nonce, constant-time digest comparison and bounded in-process replay cache, layered on existing bearer authentication.
+- Separate local signing-key bootstrap, explicit signed-mode requirement in local API runner, cross-language deterministic HMAC vector and denial tests for modified path/query, replay, stale time and missing authorization.
+- Real Neo4j CI smoke for the signed integration contract and authenticated read access; read-only API from v0.5 remains backward-compatible within isolated test harnesses.
+- Cross-repo integration contract and runbook paired with DvirOS BFF PR.
+
+### Security and deployment caveats
+- No public-facing DvirOS user sessions or graph UI yet. The DvirOS BFF is disabled by default and owner-token guarded.
+- Replay nonce cache and request budgets are per-process; production distributed deployment still requires shared state, PKI/TLS front door, rotation and signed operator review.
+- Human edition licensing and 100+ source adjudications remain pending; research corpus is not GA-ready.
+
 ## [0.5.0] — 2026-11-09 (private typed Research API implementation)
 
 ### Added

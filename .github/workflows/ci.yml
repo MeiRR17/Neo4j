@@ -71,6 +71,10 @@ jobs:
         run: |
           python scripts/api_bootstrap.py
           python scripts/api_smoke.py
+      - name: Signed DvirOS service identity and live Neo4j bridge
+        run: |
+          python scripts/api_signature_bootstrap.py
+          python scripts/bridge_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
       - name: Stop local test environment
