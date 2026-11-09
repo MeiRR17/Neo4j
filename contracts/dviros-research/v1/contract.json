@@ -1,0 +1,123 @@
+{
+  "contract_version": "1.0.0",
+  "source_repository": "MeiRR17/Neo4j",
+  "consumer_repository": "MeiRR17/dvir-os",
+  "upstream_api_schema_version": "0.5.0",
+  "bff_prefix": "/api/research/philosophy",
+  "service_prefix": "/v1",
+  "methods": [
+    "GET"
+  ],
+  "audience": "dviros-server-only",
+  "auth": {
+    "consumer": "DvirOS signed short-lived server-validated session; research:read scope",
+    "upstream": "private bearer token (never sent to browser)",
+    "anonymous_live_access": false,
+    "live_default_enabled": false
+  },
+  "resources": [
+    {
+      "path": "works",
+      "upstream": "/v1/works",
+      "query": [
+        "query",
+        "language",
+        "cursor",
+        "limit"
+      ]
+    },
+    {
+      "path": "works/{id}",
+      "upstream": "/v1/works/{id}",
+      "query": []
+    },
+    {
+      "path": "persons",
+      "upstream": "/v1/persons",
+      "query": [
+        "query",
+        "cursor",
+        "limit"
+      ]
+    },
+    {
+      "path": "persons/{id}",
+      "upstream": "/v1/persons/{id}",
+      "query": []
+    },
+    {
+      "path": "passages",
+      "upstream": "/v1/passages",
+      "query": [
+        "query",
+        "cursor",
+        "limit"
+      ]
+    },
+    {
+      "path": "passages/{id}",
+      "upstream": "/v1/passages/{id}",
+      "query": []
+    },
+    {
+      "path": "concepts",
+      "upstream": "/v1/concepts",
+      "query": [
+        "query",
+        "cursor",
+        "limit"
+      ]
+    },
+    {
+      "path": "concepts/{id}",
+      "upstream": "/v1/concepts/{id}",
+      "query": []
+    },
+    {
+      "path": "links",
+      "upstream": "/v1/links",
+      "query": [
+        "passage_id",
+        "claim_kind",
+        "review_status",
+        "cursor",
+        "limit"
+      ]
+    },
+    {
+      "path": "sources/{id}",
+      "upstream": "/v1/sources/{id}",
+      "query": []
+    },
+    {
+      "path": "graph/neighborhood",
+      "upstream": "/v1/graph/neighborhood",
+      "query": [
+        "entity_id",
+        "depth",
+        "edge_types",
+        "limit"
+      ]
+    },
+    {
+      "path": "data/status",
+      "upstream": "/v1/data/status",
+      "query": []
+    }
+  ],
+  "limits": {
+    "list_limit_max": 50,
+    "graph_limit_max": 20,
+    "graph_depth_max": 2,
+    "query_length_max": 100,
+    "upstream_timeout_ms": 8000,
+    "upstream_json_max_bytes": 2097152
+  },
+  "epistemic_rules": [
+    "Every mock record is explicitly synthetic.",
+    "OBSERVED_SOURCE_LINK is not proof of a direct citation or historical influence.",
+    "Unreviewed metadata cannot be represented as licensed source text.",
+    "Unknown/offline/error/empty are different UI states."
+  ],
+  "response_fixture": "contracts/dviros-research/v1/synthetic-fixture.json"
+}

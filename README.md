@@ -5,6 +5,7 @@
 This is a **research platform component**, not a teaching demonstration
 or a Learning_Modules feature.
 
+- [DvirOS integration contract v1](docs/operations/DVIROS_INTEGRATION_V1.md)
 - [Full production roadmap](docs/ROADMAP.md)
 - [System integration architecture](docs/architecture/0001-DVIROS-INTEGRATION.md)
 - [Canonical ontology / evidence contract](docs/architecture/0002-CANONICAL-ONTOLOGY.md)
