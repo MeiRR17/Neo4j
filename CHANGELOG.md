@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.1] — 2026-11-09 (bounded graph evidence trail)
+
+- Exposed exact, typed relationship-to-Evidence provenance on each bounded graph neighborhood path: source reference, source URI, link category, rights tag, source-record ID, and separate evidence review status.
+- Bounded candidate path selection before Evidence enrichment; retained a fixed parameterized read-only Cypher registry, no text bodies and no inferred citation direction.
+- Extended isolated Neo4j HTTP smoke to verify real linked source metadata and review-state fields.
+- Paired with DvirOS Graph Explorer evidence-inspector hardening in a separate dependent feature branch.
+- No change to signed service identity, licensing or production approval state.
+
 ## [0.6.0] — 2026-11-09 (signed DvirOS backend integration)
 
 ### Added

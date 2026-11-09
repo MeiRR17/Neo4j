@@ -109,6 +109,20 @@ RETURN w.id AS id
             verify(graph, 200)
             if not graph.json()["paths"]:
                 raise RuntimeError("Bounded graph query could not locate fixture edge.")
+            trails = [
+                item for path in graph.json()["paths"]
+                for item in path["edges"]
+                if item["id"] == edge
+            ]
+            if not trails or any(
+                x["evidence_id"] != evidence
+                or x["source_ref"] != "Synthetic Multiword Work, Part 1:1"
+                or x["source_uri"] != "https://example.invalid/test"
+                or x["rights_tag"] != "TEST_FIXTURE"
+                or x["evidence_review_status"] != "unreviewed"
+                for x in trails
+            ):
+                raise RuntimeError("Exact evidence provenance lost from graph path.")
             verify(http.get("/v1/graph/neighborhood", params={
                 "entity_id": passage1, "depth": 3
             }, headers=headers), 422)
