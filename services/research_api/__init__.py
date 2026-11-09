@@ -1,0 +1,1 @@
+"""DvirOS Jewish philosophy private Research API (v0.5.0)."""

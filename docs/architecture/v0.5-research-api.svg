@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="DvirOS research API v0.5 authenticated server side read architecture">
+<rect width="1200" height="630" rx="18" fill="#0c1525"/>
+<text x="60" y="67" font-family="Arial,sans-serif" font-size="32" font-weight="700" fill="#f8fafc">DvirOS — Neo4j Research API v0.5.0</text>
+<text x="60" y="96" font-family="Arial,sans-serif" font-size="17" fill="#a7b4c8">Implemented local backend · explanatory diagram, not a deployed UI screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="50" y="165" width="250" height="190" rx="14" fill="#1e40af"/>
+<text x="175" y="213" fill="#fff" font-size="23" font-weight="700">Private API client</text>
+<text x="175" y="245" fill="#dbeafe" font-size="18">Bearer token</text>
+<text x="175" y="271" fill="#dbeafe" font-size="17">/v1/works</text>
+<text x="175" y="295" fill="#dbeafe" font-size="17">/v1/links</text>
+<text x="175" y="319" fill="#dbeafe" font-size="17">/v1/graph/neighborhood</text>
+<rect x="365" y="165" width="395" height="190" rx="14" fill="#6d28d9"/>
+<text x="562" y="213" fill="#fff" font-size="24" font-weight="700">FastAPI Research Service</text>
+<text x="562" y="247" fill="#ede9fe" font-size="17">Token auth · Typed DTOs</text>
+<text x="562" y="273" fill="#ede9fe" font-size="17">Parameter validation · ID cursor</text>
+<text x="562" y="299" fill="#ede9fe" font-size="17">Fixed Cypher registry · 5s budget</text>
+<text x="562" y="325" fill="#ede9fe" font-size="17">No arbitrary code · No source text</text>
+<rect x="830" y="165" width="320" height="190" rx="14" fill="#047857"/>
+<text x="990" y="212" fill="#fff" font-size="24" font-weight="700">Local Neo4j DB</text>
+<text x="990" y="247" fill="#d1fae5" font-size="17">Work · Edition · Passage</text>
+<text x="990" y="273" fill="#d1fae5" font-size="17">Concept · Person · Evidence</text>
+<text x="990" y="299" fill="#d1fae5" font-size="17">Schema checksum readiness</text>
+<text x="990" y="325" fill="#d1fae5" font-size="17">No real corpus clearance yet</text>
+</g>
+<g stroke="#94a3b8" stroke-width="4" fill="none">
+<path d="M300 260 H365"/><path d="M352 252 L365 260 L352 268"/>
+<path d="M760 260 H830"/><path d="M817 252 L830 260 L817 268"/>
+</g>
+<g font-family="Arial,sans-serif" fill="#e2e8f0" font-size="17" text-anchor="middle">
+<rect x="50" y="408" width="1100" height="145" rx="16" fill="#1e293b"/>
+<text x="600" y="451" font-size="20" font-weight="700">Research integrity and security boundaries</text>
+<text x="600" y="486">All evidence stays explicitly reviewed / unreviewed · exact passage references</text>
+<text x="600" y="514">Community DB credentials are not a read-only role · application only has safe read operations</text>
+</g>
+<text x="600" y="590" font-family="Arial,sans-serif" font-size="18" text-anchor="middle" fill="#94a3b8">DvirOS authenticated BFF and integrated visual explorer are future milestones v0.6–v0.7</text>
+</svg>
