@@ -76,6 +76,19 @@ def main()->int:
         if client.get(unsupported,
                       headers=signed(unsupported,"4"*32)).status_code!=422:
             raise RuntimeError("Unsupported research facet was silently ignored.")
+        indexed="/v1/search/metadata/indexed?kind=works&query=synthetic&limit=5"
+        indexed_response=client.get(indexed,headers=signed(indexed,"5"*32))
+        if indexed_response.status_code!=200:
+            raise RuntimeError(f"Signed indexed search returned HTTP {indexed_response.status_code}")
+        result=indexed_response.json()
+        if (result.get("schema_version")!="0.8.3"
+            or result.get("index_version")!="search_key_v1"
+            or not result.get("index_coverage",{}).get("complete")
+            or result.get("full_text_indexed") is not False
+            or result.get("alias_matching_available") is not False
+            or any(hit.get("review_status")!="unreviewed"
+                   or "excerpt" in hit for hit in result.get("items",[]))):
+            raise RuntimeError("Indexed metadata provenance/rights contract is invalid.")
         if client.get("/v1/works").status_code!=401:
             raise RuntimeError("Unauthenticated request was not blocked.")
     print("[OK] Signed DvirOS service, real Neo4j metadata search, rights and replay guards.")
