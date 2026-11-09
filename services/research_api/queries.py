@@ -202,3 +202,45 @@ RETURN n.id AS id, n.preferred_label AS title, null AS source_anchor,
 ORDER BY id
 LIMIT $fetch_limit
 """.strip()
+
+
+# v0.8.3 — fixed, developer-owned normalized title prefix index operations.
+# The 004 migration creates secondary range indexes; canonical IDs remain
+# unchanged. Never mix indexed title-prefix results with v0.8.2 alias/substring
+# scans without telling the client the matching semantics changed.
+_INDEX_FIELDS = {
+    "works": ("Work", "title", "n.provider_ref"),
+    "persons": ("Person", "display_name", "null"),
+    "passages": ("Passage", "source_ref", "n.source_ref"),
+    "concepts": ("Concept", "preferred_label", "null"),
+}
+for _kind, (_label, _field, _anchor) in _INDEX_FIELDS.items():
+    _language = """AND ($language = '' OR EXISTS {
+    MATCH (n)-[:HAS_EDITION]->(ed:Edition) WHERE ed.language = $language
+  })""" if _kind == "works" else ""
+    READ_OPERATIONS[f"index_candidates_{_kind}"] = f"""
+MATCH (n:{_label})
+WHERE ($cursor = '' OR n.id > $cursor)
+RETURN n.id AS id, n.{_field} AS title,
+       n.search_key_v1 AS search_key, n.search_source_v1 AS search_source
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
+    READ_OPERATIONS[f"index_coverage_{_kind}"] = f"""
+MATCH (n:{_label})
+RETURN count(n) AS total,
+       count(CASE WHEN n.search_key_v1 IS NOT NULL
+         AND n.search_key_v1 <> ''
+         AND n.search_source_v1 = n.{_field} THEN 1 END) AS covered
+""".strip()
+    READ_OPERATIONS[f"indexed_{_kind}"] = f"""
+MATCH (n:{_label})
+WHERE n.search_key_v1 STARTS WITH $prefix
+  AND n.search_source_v1 = n.{_field}
+  AND ($cursor = '' OR n.id > $cursor)
+  {_language}
+RETURN n.id AS id, n.{_field} AS title, {_anchor} AS source_anchor,
+       [] AS aliases
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
