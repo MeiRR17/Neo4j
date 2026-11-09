@@ -83,7 +83,7 @@ class SmokeTests(unittest.TestCase):
 class ComposePolicyTests(unittest.TestCase):
     def test_local_compose_enforces_security_shape(self):
         content = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
-        self.assertIn("image: neo4j:2026.10.2", content)
+        self.assertIn("image: neo4j:2026.10.1", content)
         self.assertIn("127.0.0.1:7474:7474", content)
         self.assertIn("127.0.0.1:7687:7687", content)
         self.assertIn("NEO4J_AUTH_FILE:", content)
