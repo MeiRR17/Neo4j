@@ -13,6 +13,9 @@ logs/
 *.receipt.json
 local_staging/
 _local_data/
+private_research/
+local_research/
+*.snapshots.json
 
 
 # Python caches and local environments

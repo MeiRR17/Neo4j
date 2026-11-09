@@ -10,10 +10,12 @@ or a Learning_Modules feature.
 - [Canonical ontology / evidence contract](docs/architecture/0002-CANONICAL-ONTOLOGY.md)
 - [Safe local operations](docs/operations/LOCAL_DEV.md)
 - [Sefaria link metadata ingestion](docs/operations/SEFARIA_INGESTION.md)
+- [Scholarly seed corpus and human review](docs/operations/SEED_CORPUS.md)
+- [v0.4 scholarly quality diagram](docs/architecture/v0.4-scholarly-pilot.svg)
 - [v0.3 pipeline diagram](docs/architecture/v0.3-pipeline.svg)
 - [Changelog](CHANGELOG.md)
 
-## Current implementation: v0.3.0 Sefaria metadata pipeline
+## Current implementation: v0.4.0 scholarly seed engineering baseline
 
 The foundation has a pinned Neo4j Community image, loopback-only ports,
 Docker Secrets, persistent named volumes and verified CI startup/restart.
@@ -21,7 +23,12 @@ v0.2 added canonical identities, evidence-bound edges and versioned schema
 migrations. v0.3 adds an **opt-in**, bounded Sefaria link metadata pipeline,
 quality quarantine, resumable GCS downloads, API fallback, immutable input
 checksums, provenance manifests and idempotent Neo4j metadata writes.
-It is **not** a deployed production product or a licensed text corpus.
+v0.4 adds 18 scholarly candidate works, Sefaria edition metadata discovery,
+per-version rights-review contracts, a deterministic 100+ source-link review
+queue, quality gates and reviewed-edition *metadata-only* upserts.
+**No candidate edition or scholarly link has been automatically approved.**
+The human rights and scholarly review acceptance gates are **not yet complete**,
+and this is not a deployed production product or a licensed text corpus.
 
 **Requirements:** Python 3.10+, Docker Compose v2, Docker Engine/Desktop.
 
@@ -33,6 +40,7 @@ python scripts/migrate.py dry-run
 python scripts/migrate.py apply
 python scripts/migrate.py check
 python scripts/ingest_sefaria.py --help
+python scripts/seed_corpus.py --help
 python -m unittest discover -s tests -v
 ```
 
@@ -55,13 +63,16 @@ guide for Windows ACLs, stop/restart, security and upgrade details.
   edition IDs use an explicit no-edition sentinel; no source text is imported.
 - Import requires an explicit `apply --ack-unreviewed` after an inspected plan
   with zero quarantined records and a checked migration schema.
-- No licensed full text or scholarly verdict is distributed in v0.3.
+- v0.4 stores rights/edition metadata, not book text. Edition rights
+  require a separate human decision tied to the exact inventory hash.
+- The quality report requires 12–20 approved works and 100+ separately
+  inspected links; a technical CI pass **does not** mean those gates passed.
 
 The legacy `scripts/02_acquire_sefaria_data.py` and original Cypher demos
 are **historical prototypes**, not validated research pipelines. Do not
 import their output as trustworthy source evidence. The new
-`scripts/ingest_sefaria.py` replaces link **metadata** ingestion; v0.4 will
-add per-edition rights review and a curated scholarly pilot.
+`scripts/ingest_sefaria.py` replaces link **metadata** ingestion; v0.4 now supplies edition discovery and a human-reviewed seed-pilot
+workflow. Actual edition clearance and scholarly signoff remain pending.
 
 An unrelated utility snapshot in Learning_Modules is left unchanged and
 is not developed here. The eventual research UI belongs **inside DvirOS**,

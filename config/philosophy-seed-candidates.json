@@ -1,0 +1,25 @@
+{
+  "schema_version": "0.4.0",
+  "status": "CANDIDATES_NOT_VERIFIED",
+  "notice": "Research candidates only. Exact upstream index, edition, provenance and license must be resolved and reviewed. Nothing here represents a downloaded or licensed text.",
+  "works": [
+    {"index_title": "Guide for the Perplexed", "theme": "philosophy"},
+    {"index_title": "The Kuzari", "theme": "philosophy"},
+    {"index_title": "Duties of the Heart", "theme": "ethics"},
+    {"index_title": "Emunot VeDeot", "theme": "philosophy"},
+    {"index_title": "Or Hashem", "theme": "philosophy"},
+    {"index_title": "Sefer HaIkkarim", "theme": "philosophy"},
+    {"index_title": "Nefesh HaChaim", "theme": "thought"},
+    {"index_title": "Derech Hashem", "theme": "thought"},
+    {"index_title": "Mesillat Yesharim", "theme": "ethics"},
+    {"index_title": "Tanya", "theme": "thought"},
+    {"index_title": "Shemonah Perakim", "theme": "ethics"},
+    {"index_title": "Sefer Yetzirah", "theme": "mysticism"},
+    {"index_title": "Akeidat Yitzchak", "theme": "philosophy"},
+    {"index_title": "Shaarei Teshuvah", "theme": "ethics"},
+    {"index_title": "Orot HaTeshuvah", "theme": "thought"},
+    {"index_title": "Sefer HaChinukh", "theme": "thought"},
+    {"index_title": "Horeb", "theme": "thought"},
+    {"index_title": "Chovot HaTalmidim", "theme": "thought"}
+  ]
+}
