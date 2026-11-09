@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.2.0",
+  "schema_version": "0.2.1",
   "migrations": [
     {
       "id": "001",
@@ -17,6 +17,12 @@
       "id": "003",
       "path": "003_edge_constraints.cypher",
       "description": "Relationship IDs for provenance-bearing domain edges",
+      "reversible": false
+    },
+    {
+      "id": "004",
+      "path": "004_search_key_v1_indexes.cypher",
+      "description": "Versioned secondary range indexes for deterministic normalized metadata title-prefix search",
       "reversible": false
     }
   ]
