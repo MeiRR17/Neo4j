@@ -17,7 +17,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Dependency-free unit and security policy tests
+      - name: Install pinned Research API dependencies
+        run: python -m pip install -r requirements/research-api-test.txt
+      - name: Unit, API and security contract tests
         run: python -m unittest discover -s tests -v
       - name: Validate Docker Compose model (no image pull)
         run: |
@@ -65,6 +67,10 @@ jobs:
         run: |
           python scripts/seed_corpus.py --help
           python scripts/seed_smoke.py
+      - name: Authenticated Research API + real Neo4j smoke (synthetic only)
+        run: |
+          python scripts/api_bootstrap.py
+          python scripts/api_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
       - name: Stop local test environment

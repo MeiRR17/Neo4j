@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0] — 2026-11-09 (private typed Research API implementation)
+
+### Added
+- Internal FastAPI read-only Research API with 14 bounded operations covering health, work/person/passage/concept/source reads, provenance links, graph neighborhoods and data status.
+- Generated OpenAPI schema, typed public DTOs, distinct process liveness and real Neo4j/schema-checksum readiness.
+- Dedicated locally generated server-to-server bearer secret; fail-closed authentication on all /v1 routes, request IDs, sanitized errors and no-store headers.
+- Fixed read-only parameterized Cypher registry, 5-second DB query budget, 2 MB response limit, controlled depth 1–2, per-page 1–50 results and canonical keyset pagination.
+- Explicit no-excerpt policy for unlicensed texts, separate research corpus human-review status (never fabricated as GA-ready).
+- Offline FastAPI/security tests and isolated CI integration exercising actual Neo4j with synthetic work/passage/evidence nodes, plus operational runbook and SVG architecture.
+
+### Deferred
+- No real corpus rights clearance or 100+ real human source adjudications yet.
+- No DvirOS BFF/SSO integration, production TLS, Enterprise read-only database principal or public deployment (v0.6/v0.14). Neo4j Community Read routing is not database authorization.
+
 ## [0.4.0] — 2026-11-09 (engineering implementation; human scholarly gates BLOCKED)
 
 ### Added
