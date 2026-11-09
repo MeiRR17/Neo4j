@@ -24,12 +24,14 @@ class DvirOSContractTests(unittest.TestCase):
 
     def test_all_paths_are_constrained_to_public_read_endpoints(self):
         from services.research_api.app import create_app
-        routes = set(create_app().openapi()["paths"])
+        import re
+        api_paths = {re.sub(r"\\{[^}]+\\}", "{id}", path): operations
+                     for path, operations in create_app().openapi()["paths"].items()}
         self.assertEqual(len(self.contract["resources"]), 12)
         self.assertEqual(len({item["path"] for item in self.contract["resources"]}), 12)
         for route in self.contract["resources"]:
-            self.assertIn(route["upstream"], routes)
-            self.assertEqual(list(create_app().openapi()["paths"][route["upstream"]]), ["get"])
+            self.assertIn(route["upstream"], api_paths)
+            self.assertEqual(list(api_paths[route["upstream"]]), ["get"])
             self.assertNotIn("cypher", route["upstream"])
 
     def test_synthetic_data_cannot_imply_rights_or_approved_research(self):
