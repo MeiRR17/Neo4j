@@ -84,7 +84,7 @@ class NormalizationAndPaging(unittest.TestCase):
 
     def test_50_candidate_windows_resume_with_last_scanned_id(self):
         data = [row("work", k, "filler") for k in range(1, 61)]
-        data[-1] = row("work", 60, "לְמִדָּה")
+        data[-1] = row("work", 60, "לְמִידָה")
         store = MetadataStore({"metadata_works": data})
         first = search_metadata(store, kind="works", query="למידה")
         self.assertEqual(first["items"], [])
