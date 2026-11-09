@@ -55,9 +55,30 @@ def main()->int:
         if client.get("/v1/data/status",
                       headers=signed("/v1/data/status","2"*32)).status_code!=200:
             raise RuntimeError("Signed live DB metadata read failed.")
+        # v0.8.2: test the actual allowlisted read operation against real
+        # ephemeral Neo4j, using the same signed service identity.
+        metadata_target="/v1/search/metadata?kind=works&limit=5"
+        metadata=client.get(metadata_target,
+                            headers=signed(metadata_target,"3"*32))
+        if metadata.status_code!=200:
+            raise RuntimeError(f"Signed metadata search returned HTTP {metadata.status_code}")
+        payload=metadata.json()
+        if (payload.get("schema_version")!="0.8.2"
+            or payload.get("full_text_indexed") is not False
+            or payload.get("text_available") is not False
+            or payload.get("candidate_window_limit")!=50
+            or any(hit.get("review_status")!="unreviewed"
+                   or hit.get("text_available") is not False
+                   or "excerpt" in hit for hit in payload.get("items",[]))):
+            raise RuntimeError("Signed metadata search safety contract failed.")
+        # Unrecognized facets must not be ignored as though applied.
+        unsupported=metadata_target+"&author=unreviewed"
+        if client.get(unsupported,
+                      headers=signed(unsupported,"4"*32)).status_code!=422:
+            raise RuntimeError("Unsupported research facet was silently ignored.")
         if client.get("/v1/works").status_code!=401:
             raise RuntimeError("Unauthenticated request was not blocked.")
-    print("[OK] DvirOS v1 signed contract, replay rejection and real Neo4j read.")
+    print("[OK] Signed DvirOS service, real Neo4j metadata search, rights and replay guards.")
     return 0
 
 
