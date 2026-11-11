@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.9.3] — 2026-11-11 (DRAFT — evidence-linked two-Work comparison)
+
+- Added authenticated private GET /v1/analysis/works/compare with two
+  distinct canonical Work IDs and a 1–10 limit per direction.
+- Fixed read-only Work metadata and evidence-backed SOURCE_LINK queries
+  retrieve up to two displayed authors (one extra to expose truncation),
+  with two small ordered directional link windows (one extra to mark has_more).
+- Each returned link carries both Work/passage identities, exact edge and
+  Evidence IDs, source anchors, version/rights tags, and separate internal
+  review states; status counts include explicit sample denominators.
+- Canonical author-ID overlap is classified only as sampled metadata.
+  No approval of authorship, copyright, complete corpus, citation or
+  historical influence is inferred from edge structure.
+- Fail-closed on invalid Work membership, duplicate/unsupported parameters,
+  out-of-scope graph data, malformed year ranges, duplicate evidence,
+  unknown fields and over-budget results. No source text.
+- Nine synthetic API/negative cases plus an isolated real-Neo4j two-Work
+  evidence/author smoke, documentation and committed architecture SVG.
+- Research and production release remains HOLD.
+
+
 ## [0.9.2] — 2026-11-11 (DRAFT — source-link frequencies and author metadata)
 
 - Added authenticated source-link frequency metrics over the first 50

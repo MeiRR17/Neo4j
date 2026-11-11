@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1140 590" role="img" aria-labelledby="title description">
+<title id="title">Neo4j v0.9.3 bounded Work and author comparison architecture</title>
+<desc id="description">An authenticated comparison of two canonical Works retrieves bounded author descriptors, and observes SOURCE_LINK evidence separately from left to right and right to left. Both preserve exact evidence identities and review status. Release remains HOLD.</desc>
+<rect width="1140" height="590" rx="23" fill="#101827"/>
+<text x="45" y="59" fill="#f2f5fb" font-family="Arial,sans-serif" font-size="30" font-weight="700">Neo4j / v0.9.3 — Work comparison</text>
+<text x="45" y="91" fill="#b9c7d9" font-family="Arial,sans-serif" font-size="17">Implementation diagram · not a screenshot of a running UI</text>
+<rect x="42" y="143" width="262" height="119" rx="15" fill="#223c60" stroke="#88a6c8" stroke-width="2"/>
+<text x="61" y="183" fill="#fff" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Authenticated API</text>
+<text x="61" y="213" fill="#dbe6f5" font-family="Arial,sans-serif" font-size="16">Two canonical Work IDs</text>
+<text x="61" y="239" fill="#dbe6f5" font-family="Arial,sans-serif" font-size="16">Limit 1–10 per direction</text>
+<path d="M304 202 L368 202" stroke="#93c6f9" stroke-width="3" fill="none"/>
+<path d="M357 195 L369 202 L357 209" stroke="#93c6f9" stroke-width="3" fill="none"/>
+<rect x="370" y="137" width="330" height="122" rx="15" fill="#194d55" stroke="#59b6ad" stroke-width="2"/>
+<text x="389" y="178" fill="#fff" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Work metadata</text>
+<text x="389" y="207" fill="#d7efeb" font-family="Arial,sans-serif" font-size="16">Titles + provider references</text>
+<text x="389" y="234" fill="#d7efeb" font-family="Arial,sans-serif" font-size="16">2 authors + 1 lookahead each</text>
+<path d="M535 259 V311" stroke="#93c6f9" stroke-width="3" fill="none"/>
+<path d="M528 300 L535 313 L542 300" stroke="#93c6f9" stroke-width="3" fill="none"/>
+<rect x="370" y="313" width="330" height="164" rx="15" fill="#194d55" stroke="#59b6ad" stroke-width="2"/>
+<text x="389" y="351" fill="#fff" font-family="Arial,sans-serif" font-size="18" font-weight="bold">Two observed directions</text>
+<text x="389" y="382" fill="#d7efeb" font-family="Arial,sans-serif" font-size="16">Left → Right SOURCE_LINK</text>
+<text x="389" y="411" fill="#d7efeb" font-family="Arial,sans-serif" font-size="16">Right → Left SOURCE_LINK</text>
+<text x="389" y="442" fill="#d7efeb" font-family="Arial,sans-serif" font-size="16">Separate sample denominators</text>
+<rect x="751" y="196" width="346" height="255" rx="15" fill="#4d3c2e" stroke="#ddb581" stroke-width="2"/>
+<text x="773" y="235" fill="#fff7ea" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Evidence validation</text>
+<text x="773" y="270" fill="#ffe4c2" font-family="Arial,sans-serif" font-size="16">Exact Work + passage IDs</text>
+<text x="773" y="304" fill="#ffe4c2" font-family="Arial,sans-serif" font-size="16">Link ID and Evidence ID</text>
+<text x="773" y="337" fill="#ffe4c2" font-family="Arial,sans-serif" font-size="16">Approved / contested / pending</text>
+<text x="773" y="370" fill="#ffe4c2" font-family="Arial,sans-serif" font-size="16">No licensed text returned</text>
+<text x="773" y="402" fill="#ffe4c2" font-family="Arial,sans-serif" font-size="16">No influence inference</text>
+<path d="M700 393 H751" stroke="#93c6f9" stroke-width="3" fill="none"/>
+<path d="M739 386 L752 393 L739 400" stroke="#93c6f9" stroke-width="3" fill="none"/>
+<rect x="42" y="516" width="1055" height="54" rx="12" fill="#293449" stroke="#7c91b3" stroke-width="2"/>
+<text x="63" y="549" fill="#f6d7ad" font-family="Arial,sans-serif" font-size="18" font-weight="bold">Metadata-only samples. No source rights, historical proof or release approval. HOLD.</text>
+</svg>
