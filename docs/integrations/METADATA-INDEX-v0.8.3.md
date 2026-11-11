@@ -132,3 +132,20 @@ target *authorized* host, and production operational review.
 
 **No main merge or live service activation** should occur merely
 because this infrastructure code passes synthetic tests.
+
+## v0.8.4 additive safety hardening (draft)
+
+The v0.8.3 response schema remains unchanged. The read path now uses the
+fixed read-only `SHOW INDEXES` query before coverage and lookup. An exact
+migration-004 index with matching name/label/property, `RANGE` type,
+`NODE` entity type and `ONLINE` state must exist; absent, populating,
+failed or swapped indexes return the same sanitized 503. This closes the
+v0.8.3 gap where completely backfilled properties could look sufficient
+even after the physical index had been removed.
+
+The check does **not** prove the Neo4j planner chose an index seek, that
+normalized keys match their source titles cryptographically, or that p95
+latency meets production goals. Those still require representative local
+`EXPLAIN`/`PROFILE` benchmarks, human research evaluation, and deployment
+review. Existing CI exercises the signed route against a disposable Neo4j
+instance with migration 004; it never runs a live production backfill.

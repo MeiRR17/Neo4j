@@ -16,7 +16,7 @@ from services.research_api.config import bootstrap_token, load_token
 from services.research_api.db import DatabaseUnavailable
 from services.research_api.queries import READ_OPERATIONS
 from services.research_api.search_index import (
-    INDEX_SCHEMA, verify_coverage, search_indexed_metadata,
+    INDEX_SCHEMA, verify_online_index, verify_coverage, search_indexed_metadata,
 )
 
 A = stable_id("work", "fixture", "a")
@@ -35,6 +35,11 @@ class FakeStore:
     def __init__(self):
         self.calls = []
         self.coverage = {"total": 3, "covered": 3}
+        self.index_rows = [{
+            "name": "work_search_key_v1", "type": "RANGE",
+            "entityType": "NODE", "labelsOrTypes": ["Work"],
+            "properties": ["search_key_v1"], "state": "ONLINE",
+        }]
         self.data = [
             hit(IDENTS[0], "מֹורֶה נבוכים א"),
             hit(IDENTS[1], "מֹורֶה נבוכים ב"),
@@ -44,6 +49,8 @@ class FakeStore:
     def query(self, operation, params=None):
         params = params or {}
         self.calls.append((operation, params))
+        if operation == "index_state":
+            return [dict(row) for row in self.index_rows]
         if operation == "index_coverage_works":
             return [dict(self.coverage)]
         if operation == "indexed_works":
@@ -73,6 +80,31 @@ class IndexSearchTests(unittest.TestCase):
                 self.store.coverage = counts
                 with self.assertRaises(DatabaseUnavailable):
                     verify_coverage(self.store, "works")
+
+    def test_physical_index_missing_invalid_or_offline_blocks_search(self):
+        baseline = dict(self.store.index_rows[0])
+        invalid = [
+            [], [baseline, baseline],
+            [{**baseline, "state": "POPULATING"}],
+            [{**baseline, "state": "FAILED"}],
+            [{**baseline, "type": "FULLTEXT"}],
+            [{**baseline, "name": "other_index"}],
+            [{**baseline, "entityType": "RELATIONSHIP"}],
+            [{**baseline, "labelsOrTypes": ["Passage"]}],
+            [{**baseline, "properties": ["title"]}],
+            [{**baseline, "properties": "search_key_v1"}],
+            [{key: value for key, value in baseline.items() if key != "state"}],
+            [{**baseline, "secret": "unexpected"}],
+        ]
+        for rows in invalid:
+            with self.subTest(rows=rows):
+                self.store.calls.clear()
+                self.store.index_rows = rows
+                with self.assertRaises(DatabaseUnavailable):
+                    search_indexed_metadata(self.store, kind="works", query="מורה")
+                self.assertEqual([op for op, _ in self.store.calls], ["index_state"])
+        self.store.index_rows = [baseline]
+        verify_online_index(self.store, "works")
 
     def test_nonempty_prefix_only_and_pagination(self):
         page = search_indexed_metadata(self.store, kind="works",
@@ -134,6 +166,9 @@ class IndexSearchTests(unittest.TestCase):
             search_indexed_metadata(self.store, kind="works", query="מורה")
 
     def test_index_statements_are_statically_allowlisted_and_read_only(self):
+        self.assertIn("SHOW INDEXES", READ_OPERATIONS["index_state"])
+        self.assertIn("name = $index_name", READ_OPERATIONS["index_state"])
+        self.assertNotIn("CREATE INDEX", READ_OPERATIONS["index_state"])
         for kind in KINDS:
             for prefix in ("index_candidates_", "index_coverage_", "indexed_"):
                 statement = READ_OPERATIONS[prefix + kind]

@@ -244,3 +244,14 @@ RETURN n.id AS id, n.{_field} AS title, {_anchor} AS source_anchor,
 ORDER BY id
 LIMIT $fetch_limit
 """.strip()
+
+
+# v0.8.4: validate the actual Neo4j physical range index before declaring
+# indexed search available. A populated search_key property is not an index.
+# This is a fixed read-only operation; the caller provides only an exact
+# server-owned index name (never a Cypher fragment or dynamic label).
+READ_OPERATIONS["index_state"] = """
+SHOW INDEXES YIELD name, type, entityType, labelsOrTypes, properties, state
+WHERE name = $index_name
+RETURN name, type, entityType, labelsOrTypes, properties, state
+""".strip()
