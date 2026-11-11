@@ -26,50 +26,87 @@ INDEX_DEFINITIONS = {
 }
 
 
-def verify_online_index(store: Any, kind: str) -> None:
-    """Fail closed if the physical Neo4j prefix index is absent or not ONLINE.
+CAPABILITY_SCHEMA = "0.8.5"
 
-    Backfilled properties alone do not guarantee an index exists or is usable.
-    Validate the exact migration-owned index name, entity label, indexed field
-    and RANGE type. Do not leak index inventory to API consumers.
-    """
+
+def physical_index_status(store: Any, kind: str) -> str:
+    """Exact physical index readiness, never raw index metadata."""
     if kind not in INDEX_DEFINITIONS:
         raise ValueError("Unknown metadata kind.")
     name, label = INDEX_DEFINITIONS[kind]
     rows = store.query("index_state", {"index_name": name})
-    if not isinstance(rows, list) or len(rows) != 1:
-        raise DatabaseUnavailable("Metadata index unavailable.")
+    if not isinstance(rows, list) or len(rows) > 1:
+        raise DatabaseUnavailable("Index inventory invalid.")
+    if not rows:
+        return "missing"
     row = rows[0]
     if (not isinstance(row, dict) or set(row) != {
             "name", "type", "entityType", "labelsOrTypes", "properties", "state"
         } or row["name"] != name or row["type"] != "RANGE"
             or row["entityType"] != "NODE"
             or row["labelsOrTypes"] != [label]
-            or row["properties"] != ["search_key_v1"]
-            or row["state"] != "ONLINE"):
+            or row["properties"] != ["search_key_v1"]):
+        raise DatabaseUnavailable("Index definition invalid.")
+    if row["state"] == "ONLINE":
+        return "ready"
+    if row["state"] in ("POPULATING", "FAILED"):
+        return "not_online"
+    raise DatabaseUnavailable("Index state invalid.")
+
+
+def verify_online_index(store: Any, kind: str) -> None:
+    """A full title backfill is not sufficient without the physical index."""
+    if physical_index_status(store, kind) != "ready":
         raise DatabaseUnavailable("Metadata index not ready.")
 
 
-
-def verify_coverage(store: Any, kind: str) -> dict:
-    """Never enable indexed search on absent, partial or stale metadata."""
+def read_coverage(store: Any, kind: str) -> dict:
     if kind not in ALLOWED_KINDS:
         raise ValueError("Unknown metadata kind.")
-    verify_online_index(store, kind)
     rows = store.query(f"index_coverage_{kind}")
     if not isinstance(rows, list) or len(rows) != 1:
         raise DatabaseUnavailable("Search index coverage unavailable.")
     row = rows[0]
     if not isinstance(row, dict) or set(row) != {"total", "covered"}:
-        raise DatabaseUnavailable("Search index coverage format invalid.")
+        raise DatabaseUnavailable("Search index coverage invalid.")
     total, covered = row["total"], row["covered"]
-    if (not isinstance(total, int) or isinstance(total, bool)
-            or not isinstance(covered, int) or isinstance(covered, bool)
+    if (type(total) is not int or type(covered) is not int
             or not 0 <= covered <= total <= 1_000_000):
-        raise DatabaseUnavailable("Search index coverage counts invalid.")
-    if total == 0 or covered != total:
-        raise DatabaseUnavailable("Search index backfill or freshness is incomplete.")
-    return {"total": total, "covered": covered, "complete": True}
+        raise DatabaseUnavailable("Index counts invalid.")
+    return {"total": total, "covered": covered,
+            "complete": total > 0 and covered == total}
+
+
+def verify_coverage(store: Any, kind: str) -> dict:
+    """Every indexed lookup rechecks physical index and source freshness."""
+    verify_online_index(store, kind)
+    coverage = read_coverage(store, kind)
+    if not coverage["complete"]:
+        raise DatabaseUnavailable("Index backfill incomplete.")
+    return coverage
+
+
+def indexed_capability(store: Any, *, kind: str) -> dict:
+    """Point-in-time private DvirOS probe; no content or automatic fallback."""
+    state = physical_index_status(store, kind)
+    coverage = None
+    if state == "ready":
+        coverage = read_coverage(store, kind)
+        if coverage["total"] == 0:
+            state = "empty"
+        elif not coverage["complete"]:
+            state = "incomplete"
+    return {
+        "schema_version": CAPABILITY_SCHEMA,
+        "kind": kind, "index_version": INDEX_VERSION,
+        "index_status": state, "indexed_prefix_ready": state == "ready",
+        "index_coverage": coverage, "bounded_scan_supported": True,
+        "scan_candidate_window_limit": 50,
+        "scan_requires_cursor_completion": True,
+        "alias_matching_on_index": False, "full_text_indexed": False,
+        "source_trail_verified": False, "text_available": False,
+        "corpus_status": "unreviewed_metadata_only",
+    }
 
 
 def search_indexed_metadata(store: Any, *, kind: str,

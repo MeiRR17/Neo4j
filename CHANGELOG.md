@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.8.5] — 2026-11-11 (DRAFT — typed signed indexed-search capability)
+
+- Introduced private typed `GET /v1/search/metadata/indexed/capability`,
+  with exactly one allowlisted kind and the existing bearer/HMAC protection.
+- Returns readiness states ready/missing/not_online/empty/incomplete, validated
+  coverage counts, bounded-scan caveats and explicit metadata-only restrictions.
+- Preserves all per-request index safety checks; capability never authorizes
+  writes, guarantees search success, silently selects fallback or releases text.
+- Added service and HTTP denial/state tests, signed real Neo4j CI smoke, docs
+  and an implementation-derived SVG architecture diagram.
+- Not deployed; rights, human-quality, BFF sessions/RBAC and representative
+  search relevance/EXPLAIN performance remain release blockers.
+
+
 ## [0.8.4] — 2026-11-11 (DRAFT — physical index readiness guard)
 
 - Corrected v0.8.3 indexed metadata search readiness: complete backfilled
