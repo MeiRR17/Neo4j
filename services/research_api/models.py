@@ -232,3 +232,44 @@ class ProvenanceMetadataPage(StrictModel):
     source_bytes_verified: Literal[False] = False
     source_text_available: Literal[False] = False
     corpus_snapshot_isolation: Literal[False] = False
+
+
+# v0.9.0: exploratory evidence-linked metadata only; no inference.
+class AnalysisSourceLink(StrictModel):
+    id: str
+    source_passage_id: str
+    target_passage_id: str
+    evidence_id: str
+    claim_kind: Literal["OBSERVED_SOURCE_LINK"]
+    review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    source_ref: str | None
+    version_id: str | None
+    rights_tag: str | None
+
+
+class AnalysisSharedTarget(StrictModel):
+    candidate_passage_id: str
+    shared_target_passage_id: str
+    focus_evidence_id: str
+    candidate_evidence_id: str
+    focus_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    candidate_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    focus_evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    candidate_evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    focus_source_ref: str | None
+    candidate_source_ref: str | None
+
+
+class AnalysisPage(StrictModel):
+    schema_version: Literal["0.9.0"] = "0.9.0"
+    analysis_kind: Literal["source-links", "shared-targets"]
+    focus_passage_id: str
+    items: list[AnalysisSourceLink | AnalysisSharedTarget]
+    has_more: bool
+    result_window_limit: Literal[20] = 20
+    corpus_completeness_verified: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
