@@ -49,7 +49,7 @@ The account number in the example is *illustrative*, never a trust root.
 `--local-key-file` optionally overrides the local v0.8.11-13 HMAC key
 path. Use restrictive IAM rights:
 `s3:GetObjectVersion`, `s3:GetObjectRetention`, and (when applicable)
-KMS decrypt permission to read object checksums. No PutObject, GetObject
+KMS GenerateDataKey and Decrypt permissions to read object checksums. No PutObject, GetObject
 body, retention changes or bucket modifications are performed.
 
 ## Important boundaries: observed metadata is not immutable history
