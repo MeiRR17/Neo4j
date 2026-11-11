@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 700" role="img" aria-labelledby="title description">
+<title id="title">Neo4j v0.9.7 four-case graph stress matrix architecture</title>
+<desc id="description">Four deterministic CI synthetic fixture cases compare 256 or 512 edges with disjoint passages or one shared high-fanout source. After safety and namespace checks, four fixed PROFILE operations run three times per case. Sanitized cost and scaling data are archived for seven days and all exact synthetic node IDs cleaned. A separate v0.9.6 baseline gate remains. All research and production release claims HOLD.</desc>
+<rect width="1240" height="700" rx="24" fill="#111a2b"/>
+<text x="46" y="61" fill="#f2f6fc" font-family="Arial,sans-serif" font-weight="700" font-size="32">Neo4j  /  v0.9.7 — Fanout-sensitive stress matrix</text>
+<text x="46" y="98" fill="#b7c8de" font-family="Arial,sans-serif" font-size="18">Code-derived visual, not a screenshot of running software</text>
+<rect x="42" y="140" width="255" height="165" rx="16" fill="#263f63" stroke="#8caad4" stroke-width="2"/>
+<text x="64" y="180" fill="#ffffff" font-family="Arial,sans-serif" font-size="21" font-weight="700">CI safety guard</text>
+<text x="64" y="216" fill="#dfebfa" font-family="Arial,sans-serif" font-size="17">Explicit acknowledgment</text>
+<text x="64" y="252" fill="#dfebfa" font-family="Arial,sans-serif" font-size="16">Loopback + absent IDs</text>
+<text x="64" y="281" fill="#dfebfa" font-family="Arial,sans-serif" font-size="16">Synthetic nodes only</text>
+<path d="M297 219 H352" stroke="#91c3f9" stroke-width="4" fill="none"/>
+<path d="M340 211 L354 219 L340 227" stroke="#91c3f9" stroke-width="4" fill="none"/>
+<rect x="354" y="135" width="540" height="261" rx="16" fill="#155360" stroke="#5ebfb0" stroke-width="2"/>
+<text x="381" y="179" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="23">4 repeatable graph fixtures</text>
+<text x="381" y="222" fill="#ddf4ec" font-family="Arial,sans-serif" font-size="18">Disjoint: 256 links  /  512 links</text>
+<text x="381" y="265" fill="#ddf4ec" font-family="Arial,sans-serif" font-size="18">Hub: 256 links  /  512 links</text>
+<text x="381" y="308" fill="#ddf4ec" font-family="Arial,sans-serif" font-size="18">Hub out-degree: 128  /  256</text>
+<text x="381" y="352" fill="#ddf4ec" font-family="Arial,sans-serif" font-size="17">Same 2 Works + authors; unique Evidence</text>
+<path d="M894 261 H954" stroke="#91c3f9" stroke-width="4" fill="none"/>
+<path d="M942 253 L956 261 L942 269" stroke="#91c3f9" stroke-width="4" fill="none"/>
+<rect x="958" y="144" width="234" height="251" rx="16" fill="#4c3b30" stroke="#d4aa83" stroke-width="2"/>
+<text x="979" y="187" fill="#fff4e7" font-family="Arial,sans-serif" font-weight="700" font-size="20">Read-only PROFILE</text>
+<text x="979" y="224" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">4 operations</text>
+<text x="979" y="263" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">3 repeats each</text>
+<text x="979" y="302" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">48 profile calls</text>
+<text x="979" y="341" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">Strict cost budgets</text>
+<path d="M1081 395 V447 H726 V481" stroke="#91c3f9" stroke-width="4" fill="none"/>
+<path d="M718 469 L726 483 L734 469" stroke="#91c3f9" stroke-width="4" fill="none"/>
+<rect x="355" y="484" width="839" height="130" rx="16" fill="#274156" stroke="#8aa7c2" stroke-width="2"/>
+<text x="382" y="527" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="22">Sanitized evidence + exact cleanup</text>
+<text x="382" y="568" fill="#dfeaf9" font-family="Arial,sans-serif" font-size="17">Observed Work-link dbHits: 2,126 / 4,174 disjoint; 1,873 / 3,665 hub</text>
+<text x="382" y="596" fill="#dfeaf9" font-family="Arial,sans-serif" font-size="16">Synthetic cost gate + 7-day evidence; no text, secrets or release claim</text>
+<rect x="43" y="627" width="1150" height="49" rx="12" fill="#343e53" stroke="#8798b4" stroke-width="2"/>
+<text x="65" y="659" fill="#fce3bc" font-family="Arial,sans-serif" font-weight="700" font-size="19">32/128 AND 256/512 synthetic cost guards · no production SLO · HOLD</text>
+</svg>

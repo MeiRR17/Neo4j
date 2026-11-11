@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.9.7] — 2026-11-11 (DRAFT — 256/512-link distributed and hub stress)
+
+- Added reproducible, isolated graph fixtures with 256/512 synthetic
+  SOURCE_LINKs in both disjoint and single-hub high-fanout topologies.
+  The hub has 128/256 directed outgoing links, each with unique Evidence.
+- Added CI-only, explicitly acknowledged graph stress suite that rejects
+  occupied synthetic IDs, verifies all operations' row budgets, profiles
+  four fixed read-only queries three times per shape/size, removes the
+  exact fixture node inventory, and confirms cleanup.
+- Added sanitized topology-aware database-hit, p50/p95 and operator
+  observations plus 256→512 cost growth; no raw query values, private
+  source content, credentials or plans are emitted.
+- First successful CI run #43105105335 observed disjoint cross-Work
+  costs of 2,126/4,174 dbHits at 256/512 links, hub forward-link
+  costs of 1,873/3,665, and hub incident-frequency costs of 1,386/2,666.
+- Added a fail-closed, topology-specific synthetic cost regression gate:
+  bounded per-case dbHits maxima, scan/join denial and 2.8x maximum
+  cost growth for twofold edge growth. No production SLO is inferred.
+- Added 20 focused synthetic contract/security/cleanup/gate tests and CI
+  artifact retention for seven days. The v0.9.6 32/128 cost gate remains.
+- This is neither a production workload nor a source-rights, graph
+  snapshot, authorship or scholarly-quality attestation. HOLD.
+
+
 ## [0.9.6] — 2026-11-11 (DRAFT — index-anchored traversal / pinned costs)
 
 - Measured v0.9.5 synthetic baseline: directed cross-Work link query
