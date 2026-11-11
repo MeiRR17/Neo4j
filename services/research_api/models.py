@@ -432,3 +432,21 @@ class WorkComparison(StrictModel):
     graph_snapshot_isolation_verified: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.9.4: reproducibility receipt for a single bounded observation only.
+class WorkComparisonReceipt(StrictModel):
+    schema_version: Literal["0.9.4"] = "0.9.4"
+    comparison: WorkComparison
+    canonicalization: Literal["json-sort-keys-utf8-v1"]
+    observation_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    fixed_query_templates_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    observed_link_count: int = Field(ge=0, le=20)
+    sample_window_truncated: bool
+    comparison_snapshot_verified: Literal[False] = False
+    verified_corpus_coverage: Literal[False] = False
+    receipt_digitally_signed: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str

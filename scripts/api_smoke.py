@@ -7,6 +7,8 @@ text or prior graph nodes. Does not open any public port.
 from __future__ import annotations
 
 import os
+import statistics
+import time
 from pathlib import Path
 import sys
 ROOT = Path(__file__).resolve().parents[1]
@@ -268,12 +270,48 @@ RETURN w.id AS id
             if (backwards.json()["left_to_right"]["observed_window_denominator"] != 0 or
                     backwards.json()["right_to_left"]["observed_window_denominator"] != 1):
                 raise RuntimeError("Work comparison reversed source direction.")
+            # v0.9.4: repeat a fixed metadata-only comparison 20 times on
+            # the disposable two-Work fixture; this measures only this
+            # synthetic runner and does not certify real-corpus performance.
+            sample_ms = []
+            comparison_digest = None
+            template_digest = None
+            for _ in range(20):
+                started = time.perf_counter_ns()
+                receipt = http.get(
+                    "/v1/analysis/works/compare/receipt",
+                    params={"left_work_id": work, "right_work_id": other_work,
+                            "limit": 2},
+                    headers=headers,
+                )
+                sample_ms.append((time.perf_counter_ns() - started) / 1_000_000)
+                verify(receipt, 200)
+                observed = receipt.json()
+                if (observed["schema_version"] != "0.9.4" or
+                        observed["observed_link_count"] != 1 or
+                        observed["receipt_digitally_signed"] is not False or
+                        observed["comparison_snapshot_verified"] is not False or
+                        observed["research_release_status"] != "HOLD"):
+                    raise RuntimeError("Synthetic comparison receipt scope invalid.")
+                current_digest = observed["observation_sha256"]
+                current_template = observed["fixed_query_templates_sha256"]
+                if comparison_digest is not None and (
+                        comparison_digest != current_digest or
+                        template_digest != current_template):
+                    raise RuntimeError("Identical synthetic Work sample changed digest.")
+                comparison_digest, template_digest = current_digest, current_template
+            p50_ms = statistics.median(sample_ms)
+            p95_ms = sorted(sample_ms)[18]  # nearest-rank p95 at n=20
+            print("[OBSERVED synthetic fixture only] 2 Works, 2 authors, "
+                  "1 direct cross-Work link, 20 repeated receipts, "
+                  f"HTTP p50={p50_ms:.1f}ms, p95={p95_ms:.1f}ms. "
+                  "No production performance or snapshot claim.")
             status = http.get("/v1/data/status", headers=headers)
             verify(status, 200)
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, receipt replay, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0

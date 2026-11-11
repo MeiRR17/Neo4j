@@ -448,10 +448,13 @@ LIMIT 1
 # lookahead to expose ambiguity. No source text or identity assertion.
 READ_OPERATIONS["analysis_work_descriptor"] = """
 MATCH (w:Work {id:$work_id})
+OPTIONAL MATCH (w)<-[:AUTHORED]-(p:Person)
+WITH w, p ORDER BY p.id
+WITH w, collect(p)[..3] AS author_window
 RETURN w.id AS id, w.title AS title, w.provider_ref AS provider_ref,
-       [(w)<-[:AUTHORED]-(p:Person) |
-         {id:p.id, date_from_year:p.date_from_year,
-          date_to_year:p.date_to_year}][..3] AS author_sample
+       [person IN author_window |
+         {id:person.id, date_from_year:person.date_from_year,
+          date_to_year:person.date_to_year}] AS author_sample
 LIMIT 2
 """.strip()
 

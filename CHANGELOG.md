@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.9.4] — 2026-11-11 (DRAFT — bounded comparison receipts / replay evidence)
+
+- Added a private authenticated Work-comparison receipt endpoint returning
+  a stable SHA-256 of sorted-key UTF-8 JSON for the existing bounded
+  v0.9.3 Work comparison, and a separate digest of its two fixed Cypher
+  templates. No signatures, text exports, source rights or release grants.
+- Ordered Person author references by canonical ID before the third-item
+  lookahead, removing a nondeterministic author-window selection.
+- Typed, size-bounded receipts preserve explicit flags for unverified graph
+  snapshot, corpus coverage, source rights and historical influence.
+- Nine negative/replay unit/API tests include 20 distinct synthetic Work
+  sample cases and mutation-sensitive digest tests. Isolated Neo4j CI
+  replays a tiny documented 2-Work/2-author/1-link fixture 20 times,
+  recording descriptive p50/p95 HTTP latency with no production SLA claim.
+- Added operator documentation, updated roadmap and code-derived schematic.
+  v0.9 scholarly and production release gates remain HOLD.
+
+
 ## [0.9.3] — 2026-11-11 (DRAFT — evidence-linked two-Work comparison)
 
 - Added authenticated private GET /v1/analysis/works/compare with two
