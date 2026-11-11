@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.9.8] — 2026-11-11 (DRAFT — unrelated Work selectivity under graph growth)
+
+- Added three fixed synthetic four-Work graph fixtures with 128 chosen
+  SOURCE_LINKs plus 0 / 128 / 512 links between unrelated Works.
+- Added a disposable-CI-only runner for 36 fixed read-only PROFILE
+  observations, with per-operation dbHits ratios against the zero-noise
+  reference, exact inventory checks and fail-closed cleanup.
+- Strict output contains sanitized metadata metrics and fixture hashes,
+  not query rows, user-provided Cypher, credentials or source text.
+- Added 10 synthetic contract/security tests and a short-lived
+  analytics-distractors-v098-synthetic CI evidence artifact.
+- Existing v0.9.6/v0.9.7 cost and topology regression gates remain
+  active. No new fixture ceiling is asserted before measuring CI.
+- Scholarship, author chronology, source rights, SSO/RBAC and public
+  release remain unverified. Research release HOLD.
+
+
 ## [0.9.7] — 2026-11-11 (DRAFT — 256/512-link distributed and hub stress)
 
 - Added reproducible, isolated graph fixtures with 256/512 synthetic
