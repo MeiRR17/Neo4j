@@ -183,7 +183,17 @@ def run_stress(*, cases: tuple[str, ...] = CASES,
         raise ValueError("Full v0.9.7 fixture matrix required.")
     admin = LocalQueryClient(base_url, secret_path)
     profiler = FixedAnalyticsProfiler(base_url, secret_path)
-    results = [run_case(admin, profiler, stress_case(name)) for name in CASES]
+    results = []
+    for name in CASES:
+        try:
+            results.append(run_case(admin, profiler, stress_case(name)))
+        except (PlanEvidenceError, ValueError, OSError, RuntimeError) as exc:
+            # Only controlled case labels and exception CLASS are emitted:
+            # never error bodies, query details, source rows or credentials.
+            raise PlanEvidenceError(
+                "synthetic case " + name + " failed: " +
+                type(exc).__name__
+            ) from None
     return {
         "schema_version": "0.9.7",
         "fixture_version": VERSION,
@@ -219,8 +229,16 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, ensure_ascii=False, sort_keys=True,
                          separators=(",", ":"), allow_nan=False))
         return 0
-    except (PlanEvidenceError, ValueError, OSError, RuntimeError):
-        print("[FAIL] Disposable stress matrix invalid, unsafe or incomplete.")
+    except (PlanEvidenceError, ValueError, OSError, RuntimeError) as exc:
+        # The only PlanEvidenceError strings emitted here originate in the
+        # code-defined case/exception classifier above. Other exception
+        # types emit their class only; no Neo4j query text or server body.
+        diagnostics = (
+            str(exc) if isinstance(exc, PlanEvidenceError) and
+            str(exc).startswith("synthetic case ") else type(exc).__name__
+        )
+        print("[FAIL] Disposable stress matrix: " + diagnostics,
+              file=sys.stderr)
         return 1
 
 
