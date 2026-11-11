@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1130" height="472" viewBox="0 0 1130 472" role="img" aria-label="Neo4j v0.8.14 pinned Ed25519 archive-claim signature verification implementation">
+<rect width="1130" height="472" rx="24" fill="#0d1726"/>
+<text x="35" y="53" font-family="Arial,sans-serif" font-size="28" font-weight="bold" fill="#f8fafc">Neo4j v0.8.14 · Ed25519 archive-claim verification</text>
+<text x="35" y="81" font-family="Arial,sans-serif" font-size="14" fill="#94a3b8">Code-derived implementation architecture — not a production screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="28" y="132" width="250" height="139" rx="14" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="153" y="171" font-size="18" fill="white" font-weight="bold">Local source chain</text>
+<text x="153" y="199" font-size="14" fill="#cbd5e1">v0.8.11 HMAC capture</text>
+<text x="153" y="225" font-size="14" fill="#cbd5e1">v0.8.12 + v0.8.13 proofs</text>
+<text x="153" y="249" font-size="13" fill="#cbd5e1">Exact retained file SHA</text>
+<rect x="307" y="132" width="245" height="139" rx="14" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="430" y="171" font-size="18" fill="white" font-weight="bold">Pinned trust policy</text>
+<text x="430" y="199" font-size="14" fill="#cbd5e1">Archive namespace + role</text>
+<text x="430" y="225" font-size="14" fill="#cbd5e1">Ed25519 public key</text>
+<text x="430" y="249" font-size="13" fill="#cbd5e1">Identity not independently proven</text>
+<rect x="580" y="132" width="240" height="139" rx="14" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+<text x="700" y="171" font-size="18" fill="white" font-weight="bold">Signed archive claim</text>
+<text x="700" y="199" font-size="14" fill="#cbd5e1">S3 version + Object Lock</text>
+<text x="700" y="225" font-size="14" fill="#cbd5e1">SHA256 + byte length</text>
+<text x="700" y="249" font-size="13" fill="#cbd5e1">Verify exact Ed25519 bytes</text>
+<rect x="848" y="132" width="255" height="139" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="975" y="171" font-size="18" fill="white" font-weight="bold">Private audit result</text>
+<text x="975" y="199" font-size="14" fill="#cbd5e1">Pinned signature valid</text>
+<text x="975" y="225" font-size="14" fill="#cbd5e1">External storage UNVERIFIED</text>
+<text x="975" y="249" font-size="13" fill="#cbd5e1">Research release: HOLD</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M278 200h23"/><path d="M552 200h22"/><path d="M820 200h23"/></g>
+<g fill="#94a3b8"><path d="M301 200l-9 -6v12z"/><path d="M574 200l-9 -6v12z"/><path d="M843 200l-9 -6v12z"/></g>
+<rect x="28" y="311" width="1075" height="120" rx="13" fill="#182f48" stroke="#385070"/>
+<text x="51" y="346" fill="white" font-size="19" font-family="Arial,sans-serif" font-weight="bold">Research release: HOLD</text>
+<text x="51" y="377" fill="#cbd5e1" font-size="15" font-family="Arial,sans-serif">Verified signature does not independently validate the signer organization, S3 object existence or retention.</text>
+<text x="51" y="403" fill="#fca5a5" font-size="14" font-family="Arial,sans-serif">Provider-authenticity, source rights, 50 human reviews and production approval still pending.</text>
+</svg>

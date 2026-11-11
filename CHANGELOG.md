@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.8.14] — 2026-11-11 (DRAFT — pinned external archive-claim signature)
+
+- Added an offline **Ed25519** signature verifier for a separately provided
+  archive operator statement, bound to an operator-controlled trust policy
+  and archive namespace. There is NO embedded production trust root or
+  automatic signer enrollment.
+- Strictly binds statement, source record, v0.8.12 retained-byte receipt,
+  v0.8.13 complete source-membership witness, v0.8.11 capture HMAC and an
+  operator-supplied, versioned S3 Object Lock report claim by SHA256.
+- Validates exact report mode and retention claim, content SHA256 and byte
+  length against locally rechecked source bytes. Rejects changed signature,
+  signer/key/namespace mismatch, replay to another source chain, unsafe trust
+  policy, malformed timestamp, malformed archive identity or rights promotion.
+- New private verification report remains explicit:
+  pinned-key signature valid, but signer-organization identity, actual S3
+  object existence/object lock, external archive immutability, provider
+  authenticity and legal rights are NOT independently verified. HOLD.
+- Synthetic ephemeral keys in CI only, negative tests and isolated real
+  Neo4j signed source/capture/receipt/membership/signature smoke. No private
+  keys, credentials or actual source reports committed.
+
+
 ## [0.8.13] — 2026-11-11 (DRAFT — bounded SourceRecord membership witness)
 
 - Added a read-only, signed local SourceRecord set enumerator that replays
