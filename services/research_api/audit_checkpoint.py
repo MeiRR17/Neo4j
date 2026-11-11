@@ -10,6 +10,7 @@ changes, verify rights, or certify historical interpretation.
 from __future__ import annotations
 
 import base64
+from binascii import Error as Base64DecodeError
 from hashlib import sha256
 import hmac
 import json
@@ -127,7 +128,7 @@ def _verify(token: str, *, source: str, target: str, limit: int,
         if not hmac.compare_digest(_mac(secret, raw), pieces[1]):
             raise ValueError
         value = json.loads(raw.decode("ascii"))
-    except (ValueError, UnicodeError, TypeError):
+    except (ValueError, UnicodeError, TypeError, Base64DecodeError):
         raise ValueError("Invalid audit checkpoint.") from None
     if not isinstance(value, dict) or set(value) != TOKEN_KEYS:
         raise ValueError("Invalid audit checkpoint.")
