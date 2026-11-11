@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.8.13] — 2026-11-11 (DRAFT — bounded SourceRecord membership witness)
+
+- Added a read-only, signed local SourceRecord set enumerator that replays
+  every bounded source metadata page through the existing bearer/HMAC API.
+- Recomputes the **exact** v0.8.11 ordered, length-framed source projection
+  SHA256 and missing-checksum count, and checks them against a validated
+  HMAC capture manifest. A v0.8.12 local receipt must refer to an exact
+  metadata row in that captured projection; otherwise fail closed.
+- Generates a private 0600 witness containing the bounded metadata-only
+  source rows, receipt and capture hashes, and a separate domain-specific
+  HMAC; the offline verifier rehashes all rows and the actual retained
+  source file without accessing the network or printing source content.
+- Rejects missing or altered source rows, unsafe extra fields, partial
+  cursor scans, wrong binding, changed file bytes, expired proof context,
+  and forged independent provider/rights claims.
+- Synthetic negative tests and signed real isolated Neo4j membership smoke.
+- **No external provider signature or immutable archive is verified.**
+  Observed API projection membership does not imply a database snapshot,
+  author/licensing provenance, or production approval. Release HOLD.
+
+
 ## [0.8.12] — 2026-11-11 (DRAFT — retained local source receipts)
 
 - Offline issue/verify CLI computes source snapshots from actual retained
