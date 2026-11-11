@@ -458,12 +458,19 @@ RETURN w.id AS id, w.title AS title, w.provider_ref AS provider_ref,
 LIMIT 2
 """.strip()
 
+# v0.9.6: start at :Passage(work_id) via migration 002's existing
+# passage_work_lookup index, then expand only directed SOURCE_LINKs and
+# filter target Work. Do not independently seed both sides of a large
+# potential cross join; preserve exact Evidence membership and ordering.
 # v0.9.3: separate fixed, directed, bounded source-link windows between
 # two canonical Work IDs, with per-link Evidence verification. Query twice
 # with reversed parameters to avoid silently collapsing direction.
 READ_OPERATIONS["analysis_work_cross_links"] = """
-MATCH (a:Passage {work_id:$source_work_id})-[r:SOURCE_LINK]->
-      (b:Passage {work_id:$target_work_id})
+MATCH (a:Passage {work_id:$source_work_id})
+USING INDEX a:Passage(work_id)
+WITH a
+MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
+WHERE b.work_id = $target_work_id
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL
   AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
