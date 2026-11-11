@@ -57,9 +57,17 @@ def main() -> int:
     cross_evidence = evidence_id(source, "Synthetic Multiword Work, Part 1:3",
                                  "synthetic-cross-work", passage3, other_passage)
     cross_edge = stable_id("edge", "SOURCE_LINK", passage3, other_passage, cross_evidence)
+    # An additional synthetic cross-Work edge is created only after all
+    # earlier one-link comparisons and their receipt replay checks.
+    checkpoint_evidence = evidence_id(
+        source, "Synthetic Multiword Work, Part 1:2",
+        "synthetic-checked-audit", passage2, other_passage)
+    checkpoint_edge = stable_id(
+        "edge", "SOURCE_LINK", passage2, other_passage,
+        checkpoint_evidence)
     ids = [work, edition, passage1, passage2, passage3, source, evidence,
            evidence2, author, other_work, other_edition, other_passage,
-           other_author, cross_evidence]
+           other_author, cross_evidence, checkpoint_evidence]
     try:
         seed = """
 MERGE (w:Work {id:$work})
@@ -346,12 +354,82 @@ RETURN w.id AS id
                   "1 direct cross-Work link, 20 repeated receipts, "
                   f"HTTP p50={p50_ms:.1f}ms, p95={p95_ms:.1f}ms. "
                   "No production performance or snapshot claim.")
+            # v0.9.10: two distinct synthetic cross-Work links allow
+            # an actual signed checkpoint to be issued. Verify a prior-page
+            # review mutation returns HTTP 409, then restore and advance.
+            admin.query("""
+MATCH (a:Passage {id:$src}), (b:Passage {id:$dst})
+MERGE (ev:Evidence {id:$evidence})
+  ON CREATE SET ev.claim_kind='OBSERVED_SOURCE_LINK',
+    ev.review_status='unreviewed',
+    ev.source_ref='Synthetic Multiword Work, Part 1:2',
+    ev.source_uri='https://example.invalid/checkpoint',
+    ev.rights_tag='TEST_FIXTURE', ev.source_record_id=$record,
+    ev.version_id='test-only'
+MERGE (a)-[r:SOURCE_LINK {id:$edge}]->(b)
+  ON CREATE SET r.evidence_id=$evidence,
+    r.claim_kind='OBSERVED_SOURCE_LINK', r.review_status='unreviewed'
+RETURN r.id AS edge_id
+""", {
+                "src": passage2, "dst": other_passage,
+                "evidence": checkpoint_evidence, "edge": checkpoint_edge,
+                "record": source,
+            })
+            checked_url = "/v1/analysis/works/links/audit/checked"
+            checked_query = {
+                "source_work_id": work,
+                "target_work_id": other_work,
+                "limit": 1,
+            }
+            first_checked = http.get(
+                checked_url, params=checked_query, headers=headers)
+            verify(first_checked, 200)
+            checked = first_checked.json()
+            witness = checked["checkpoint_token"]
+            if (not isinstance(witness, str) or
+                    checked["page"]["observed_window_denominator"] != 1 or
+                    checked["page"]["has_more"] is not True or
+                    checked["previous_page_reverified"] is not False or
+                    checked["snapshot_consistency_verified"] is not False):
+                raise RuntimeError("Synthetic checked-audit witness not issued.")
+            witness_evidence = checked["page"]["links"][0]["evidence_id"]
+            admin.query("""
+MATCH (ev:Evidence {id:$evidence})
+SET ev.review_status='approved'
+RETURN ev.id AS id
+""", {"evidence": witness_evidence})
+            try:
+                drift = http.get(checked_url, params={
+                    **checked_query, "checkpoint": witness,
+                }, headers=headers)
+                verify(drift, 409)
+                if drift.json()["error"]["code"] != "AUDIT_DRIFT":
+                    raise RuntimeError("Mutated prior Evidence did not trigger drift.")
+            finally:
+                admin.query("""
+MATCH (ev:Evidence {id:$evidence})
+SET ev.review_status='unreviewed'
+RETURN ev.id AS id
+""", {"evidence": witness_evidence})
+            second_checked = http.get(checked_url, params={
+                **checked_query, "checkpoint": witness,
+            }, headers=headers)
+            verify(second_checked, 200)
+            if (second_checked.json()["previous_page_reverified"] is not True or
+                    second_checked.json()["page"]["observed_window_denominator"] != 1 or
+                    second_checked.json()["checkpoint_token"] is not None or
+                    second_checked.json()["research_release_status"] != "HOLD"):
+                raise RuntimeError("Replayed audit checkpoint lost bounded metadata.")
+            verify(http.get(checked_url, params={
+                **checked_query, "checkpoint": witness[:-1] + (
+                    "a" if witness[-1] != "a" else "b"),
+            }, headers=headers), 422)
             status = http.get("/v1/data/status", headers=headers)
             verify(status, 200)
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, keyset link audit, receipt replay, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, signed prior-page drift audit, keyset link audit, receipt replay, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0

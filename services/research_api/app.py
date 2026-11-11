@@ -26,7 +26,7 @@ from services.research_api.models import (
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
     IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
     SourceLinkFrequency, SourceLinkAuthorChronology, WorkComparison,
-    WorkComparisonReceipt, WorkLinkAuditPage,
+    WorkComparisonReceipt, WorkLinkAuditPage, CheckedWorkLinkAuditPage,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -40,6 +40,8 @@ from services.research_api.metric_chronology import link_frequency, author_chron
 from services.research_api.work_comparison import compare_works
 from services.research_api.comparison_receipts import comparison_receipt
 from services.research_api.work_link_audit import audit_work_link_page
+from services.research_api.audit_checkpoint import AuditWindowDrift, checked_audit_page
+from services.research_api.config import load_token
 
 
 security = HTTPBearer(auto_error=False)
@@ -51,6 +53,7 @@ ERROR_MESSAGES = {
     403: ("FORBIDDEN", "Access forbidden."),
     404: ("NOT_FOUND", "Research record not found."),
     405: ("METHOD_NOT_ALLOWED", "Method is not permitted."),
+    409: ("AUDIT_DRIFT", "Previously observed audit page changed; restart audit."),
     422: ("VALIDATION_ERROR", "Invalid or out-of-bounds request."),
     503: ("UNAVAILABLE", "Research storage or configuration unavailable."),
 }
@@ -337,6 +340,35 @@ def create_app(*, backend=None, token_path: Path | None = None,
             raise_http(422)
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/analysis/works/links/audit/checked",
+             response_model=CheckedWorkLinkAuditPage, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def checked_work_links(request: Request,
+                           source_work_id: str = Query(...),
+                           target_work_id: str = Query(...),
+                           checkpoint: str | None = Query(default=None, max_length=1400),
+                           limit: int = Query(default=10, ge=1, le=20)):
+        keys = [key for key, _ in request.query_params.multi_items()]
+        allowed = {"source_work_id", "target_work_id", "checkpoint", "limit"}
+        if (len(keys) != len(set(keys)) or
+                set(keys) - allowed or
+                not {"source_work_id", "target_work_id"}.issubset(keys)):
+            raise_http(422)
+        # Local token availability is a 503 configuration error, not a
+        # user-supplied query error. The bearer has already been verified.
+        signing_secret = load_token(token_path)
+        try:
+            return checked_audit_page(
+                store, source_work_id=source_work_id,
+                target_work_id=target_work_id, checkpoint=checkpoint,
+                limit=limit, secret=signing_secret)
+        except AuditWindowDrift:
+            raise_http(409)
+        except LookupError:
+            raise_http(404)
         except (ValueError, TypeError):
             raise_http(422)
 

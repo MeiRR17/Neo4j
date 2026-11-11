@@ -474,3 +474,20 @@ class WorkLinkAuditPage(StrictModel):
     historical_influence_proven: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.9.10: HMAC-bound, short-lived witness to only the *previous* page.
+class CheckedWorkLinkAuditPage(StrictModel):
+    schema_version: Literal["0.9.10"] = "0.9.10"
+    page: WorkLinkAuditPage
+    checkpoint_token: str | None = Field(default=None, max_length=1400)
+    previous_page_reverified: bool
+    drift_detection_scope: Literal[
+        "immediately_previous_bounded_page_only"
+    ] = "immediately_previous_bounded_page_only"
+    snapshot_consistency_verified: Literal[False] = False
+    entire_audit_chain_reverified: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str

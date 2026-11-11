@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.9.10] — 2026-11-12 (DRAFT — signed bounded prior-page drift witness)
+
+- Added private read-only checked Work-link audit endpoint, retaining
+  v0.9.9's 1–20 evidence-backed metadata page.
+- Added ten-minute domain-separated HMAC-SHA256 checkpoint of canonical
+  Work direction, page size, prior and last Edge IDs, complete visible
+  prior-window metadata digest and fixed Cypher template revision.
+- Continuation re-observes the previous bounded page before advancing;
+  invalid token/scope/expiry returns 422, changed Evidence/status returns
+  sanitized HTTP 409 AUDIT_DRIFT, no graph rows disclosed in errors.
+- 14 targeted contract/security tests and isolated live Neo4j
+  Evidence change → 409 → restore → successful continuation smoke.
+- In unchanged v0.9.8 four-Work synthetic gate, observed incident
+  frequency at 6,425 dbHits with 512 unrelated links (expected 15).
+  Separately bound the selected SOURCE_LINK relationship before the
+  exact Evidence-node join. Maintained original budget and added a
+  query-shape test, with sanitized report retention on failures.
+  Performance repair remains subject to exact-head CI measurements.
+- No cross-request transactional snapshot, historical-rights or
+  complete graph-revision claim. Prior cost gates retained. HOLD.
+
+
 ## [0.9.9] — 2026-11-12 (DRAFT — cursor-based Work evidence review)
 
 - Added authenticated GET /v1/analysis/works/links/audit with a

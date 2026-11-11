@@ -253,13 +253,14 @@ jobs:
                 "not a production SLO, source authenticity or scholarly approval.")
           PY
       - name: Archive sanitized four-Work distractor selectivity measurements
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: analytics-distractors-v098-synthetic
           path: |
             local_staging/analytics-distractors-v098.json
             local_staging/analytics-distractor-gate-v098.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
       - name: Plan, apply and verify metadata-only search index (isolated CI)
         run: |

@@ -410,6 +410,7 @@ MATCH (p:Passage {id:$passage_id})
 USING INDEX p:Passage(id)
 WITH p
 MATCH (p)-[r:SOURCE_LINK]-(q:Passage)
+WITH r
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL
   AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
