@@ -50,7 +50,7 @@ SAFE_AP = re.compile(r"^[a-z0-9][a-z0-9-]{1,49}$")
 SAFE_VPC = re.compile(r"^vpc-[a-f0-9]{8,17}$")
 SAFE_OU = re.compile(r"^ou-[a-z0-9]{4,32}-[a-z0-9]{8,32}$")
 SAFE_ROOT = re.compile(r"^r-[a-z0-9]{4,32}$")
-SAFE_POLICY = re.compile(r"^p-[a-zA-Z0-9]{4,32}$")
+SAFE_POLICY = re.compile(r"^p-[A-Za-z0-9_]{8,128}$")
 SAFE_MARKER = re.compile(r"^[A-Za-z0-9+/=_-]{1,1500}$")
 HEX = re.compile(r"^[a-f0-9]{64}$")
 SCOPE = "bounded_observed_iam_role_scp_ancestry_and_bucket_access_points"
@@ -187,7 +187,7 @@ def _access_points(s3control, *, account: str, bucket: str) -> tuple[int, str]:
     return len(summaries), digest(encode(summaries))
 
 
-def _role(iam, sts, *, account: str) -> tuple[str, bool, int, int, str]:
+def _role(iam, sts, *, account: str, include_entries: bool = False) -> tuple:
     identity = _call(sts, "get_caller_identity")
     arn = identity.get("Arn")
     prefix = "arn:aws:sts::" + account + ":assumed-role/"
@@ -246,11 +246,21 @@ def _role(iam, sts, *, account: str) -> tuple[str, bool, int, int, str]:
         "attached_policy_arns": sorted(managed_ids),
         "inline_policy_names": sorted(inline_ids),
     }))
-    return (digest(arn.encode()), digest(role_arn.encode()),
-            boundary is not None, len(attached), len(inline), fingerprint)
+    summary = (digest(arn.encode()), digest(role_arn.encode()),
+               boundary is not None, len(attached), len(inline), fingerprint)
+    if include_entries:
+        # Returned to the in-process policy analyzer only; never part of the
+        # signed metadata-only census/report.
+        return (*summary, {
+            "role_name": role, "role_arn": role_arn,
+            "permission_boundary": boundary,
+            "attached_policy_arns": sorted(managed_ids),
+            "inline_policy_names": sorted(inline_ids),
+        })
+    return summary
 
 
-def _scp(org, *, account: str) -> tuple[int, int, str]:
+def _scp(org, *, account: str, include_entries: bool = False) -> tuple:
     targets, target = [account], account
     for _ in range(MAX_ORG_DEPTH):
         result = _call(org, "list_parents", ChildId=target)
@@ -295,7 +305,10 @@ def _scp(org, *, account: str) -> tuple[int, int, str]:
     count = sum(len(x["attached_scp_ids"]) for x in all_items)
     if count > MAX_SCP_POLICIES:
         raise AccessAuditError("Total inherited SCP inventory too large.")
-    return len(targets), count, digest(encode(all_items))
+    summary = (len(targets), count, digest(encode(all_items)))
+    if include_entries:
+        return (*summary, all_items)
+    return summary
 
 
 def observe_access_surface(
