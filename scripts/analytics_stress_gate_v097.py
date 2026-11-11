@@ -11,6 +11,11 @@ import argparse
 import json
 from pathlib import Path
 import re
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from scripts.analytics_stress_fixture_v097 import CASES, VERSION, stress_case
 from scripts.analytics_stress_v097 import OPERATIONS, REPEATS
