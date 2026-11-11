@@ -401,8 +401,15 @@ LIMIT $fetch_limit
 
 # v0.9.2: a fixed 50+1 incident source-link metadata sample, ordered by
 # canonical edge ID. This is NOT whole-graph centrality or an inferred citation.
+# v0.9.9 regression fix: anchor the exact Passage.id unique index BEFORE
+# expanding incident SOURCE_LINKs. The old combined pattern could select
+# graph-wide relationship expansion after a plan-cache/planner change,
+# making small synthetic incidence costs grow with unrelated link counts.
 READ_OPERATIONS["analysis_frequency_window"] = """
-MATCH (p:Passage {id:$passage_id})-[r:SOURCE_LINK]-(q:Passage)
+MATCH (p:Passage {id:$passage_id})
+USING INDEX p:Passage(id)
+WITH p
+MATCH (p)-[r:SOURCE_LINK]-(q:Passage)
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL
   AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
