@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.8.19] — 2026-11-11 (DRAFT — policy revision recheck and structural condition indicators)
+
+- Added a read-only, bounded second-pass IAM/SCP policy document inspection
+  to the v0.8.18 signed access-policy report, covering default IAM managed
+  versions, inline policy bodies and all unique inherited SCP documents.
+- Two subsequent complete policy-document passes must reproduce the exact
+  v0.8.18 document projection and agree on managed default-version IDs.
+  Each managed policy's GetPolicy default is rechecked before/after its
+  GetPolicyVersion content request. Changes fail closed.
+- Added condition-structure classification for IfExists, set qualifiers,
+  Null, network/principal/S3 resource context, unknown operators, risky
+  unconditional wildcard IAM allows and NotAction/NotResource. Conditions
+  are NEVER evaluated as permissions or as authorization to use sources.
+- Enumerates explicit unreviewed entry points (resource policies, session
+  policies, trust/permission boundaries, Access Point policy bodies,
+  VPC endpoints, SCP semantics) and refuses to promote AWS trust claims.
+- Private HMAC-only report contains digests/counters, never IAM policy
+  content, AWS identifiers, copyrighted text or credentials; offline
+  verification remains available.
+- Synthetic negative tests cover changes between reads, malformed condition
+  keys/values, missing scope, report tampering and isolated real Neo4j
+  integration with entirely mocked AWS. Research release HOLD.
+
+
 ## [0.8.18] — 2026-11-11 (DRAFT — bounded IAM and SCP policy documents)
 
 - Added an opt-in read-only IAM and Organizations document analyzer bound to

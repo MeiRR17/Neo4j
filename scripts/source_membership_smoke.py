@@ -34,6 +34,7 @@ from scripts.live_s3_version_verify import observe_s3_version, verify_observatio
 from scripts.s3_governance import observe_governance, verify_governance
 from scripts.aws_access_surface import observe_access_surface, verify_access_surface
 from scripts.aws_policy_documents import observe_policy_documents, verify_policy_report
+from scripts.aws_policy_revision import observe_revision, verify_revision
 from services.research_api.app import create_app
 from services.research_api.signature import CLIENT_ID, sign_request
 
@@ -295,13 +296,31 @@ def main() -> int:
         if (document_evidence["research_release_status"] != "HOLD" or
             document_evidence["iam_effective_permissions_calculated"] is not False):
             raise RuntimeError("Synthetic document analysis promoted authorization.")
+        revision_evidence = observe_revision(
+            FakeGovernanceS3(archive_report), FakeSTS(),
+            S3ControlMock(bucket=archive_report["bucket"]),
+            PolicyIAM(), PolicyOrg(),
+            policy=policy, report=archive_report, statement=signed,
+            record=record, receipt=receipt, witness=witness, capture=capture,
+            source_file=FIXTURE, local_key=client.key,
+            account="123456789012", region="il-central-1",
+            observed_at=datetime(2026, 11, 11, 13, tzinfo=timezone.utc))
+        verify_revision(
+            revision_evidence,
+            policy=policy, report=archive_report, statement=signed,
+            record=record, receipt=receipt, witness=witness, capture=capture,
+            source_file=FIXTURE, local_key=client.key,
+            account="123456789012", region="il-central-1")
+        if (revision_evidence["research_release_status"] != "HOLD" or
+            revision_evidence["effective_iam_or_scp_permissions_computed"] is not False):
+            raise RuntimeError("Synthetic revision scan promoted effective access.")
         if (witness["source_record_id"] != ident or
             witness["research_release_status"] != "HOLD" or
             witness["independent_provider_signature_verified"] is not False or
             witness["cross_request_snapshot_isolation"] is not False):
             raise RuntimeError("Source membership overclaimed independent trust.")
-    print("[OK] Isolated Neo4j source chain + mocked IAM/SCP policy JSON;"
-          " no live AWS; authorization unverified; research HOLD.")
+    print("[OK] Isolated Neo4j source chain + mocked IAM/SCP version rechecks;"
+          " no live AWS; effective permissions unverified; research HOLD.")
     return 0
 
 

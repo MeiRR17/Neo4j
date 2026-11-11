@@ -8,3 +8,5 @@ boto3==1.44.0
 # from the existing pinned boto3 package; no additional dependency.
 # v0.8.18 IAM policy-version and Organizations DescribePolicy reads
 # use the existing pinned boto3; never require mutation credentials.
+# v0.8.19 rechecks IAM default versions and SCP content with the existing
+# read-only boto3 dependency; no new runtime package or mutation privilege.
