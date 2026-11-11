@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 import re
 
-from scripts.analytics_stress_fixture_v097 import CASES, stress_case
+from scripts.analytics_stress_fixture_v097 import CASES, VERSION, stress_case
 from scripts.analytics_stress_v097 import OPERATIONS, REPEATS
 
 MAX_INPUT_BYTES = 32_768
@@ -64,6 +64,7 @@ def check_synthetic_stress(report: object) -> dict:
     if not isinstance(report, dict):
         raise StressGateError("Missing synthetic benchmark record.")
     if (report.get("schema_version") != "0.9.7" or
+            report.get("fixture_version") != VERSION or
             report.get("case_order") != list(CASES) or
             report.get("research_release_status") != "HOLD" or
             report.get("real_corpus_benchmarked") is not False or
@@ -71,6 +72,8 @@ def check_synthetic_stress(report: object) -> dict:
             report.get("source_values_disclosed") is not False or
             report.get("credentials_disclosed") is not False or
             report.get("query_regression_gate_enforced") is not False or
+            report.get("source_rights_verified") is not False or
+            report.get("historical_influence_proven") is not False or
             report.get("observed_costs_only") is not True):
         raise StressGateError("Untrusted synthetic benchmark scope.")
     results = report.get("case_results")
