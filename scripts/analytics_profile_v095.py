@@ -118,9 +118,15 @@ class FixedAnalyticsProfiler(LocalPlanClient):
         for k, v in params.items():
             if (k == "fetch_limit" and (type(v) is not int or v not in (11, 51))):
                 raise PlanEvidenceError("Invalid fixed result window.")
-            if k != "fetch_limit" and (not isinstance(v, str) or len(v) != 69 or
-                                        v.split(":", 1)[0] not in ("passage", "work")):
-                raise PlanEvidenceError("Invalid benchmark canonical identity.")
+            if k != "fetch_limit":
+                from research_graph.ontology import require_canonical_id
+                try:
+                    require_canonical_id(v)
+                except (ValueError, TypeError):
+                    raise PlanEvidenceError("Invalid benchmark canonical identity.") from None
+                expected_type = "passage" if k == "passage_id" else "work"
+                if not v.startswith(expected_type + ":"):
+                    raise PlanEvidenceError("Unexpected benchmark identity type.")
         statement = "PROFILE " + READ_OPERATIONS[OPERATIONS[operation]]
         payload = json.dumps({
             "statement": statement,
