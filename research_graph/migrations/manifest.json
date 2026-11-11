@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.2.1",
+  "schema_version": "0.2.2",
   "migrations": [
     {
       "id": "001",
@@ -23,6 +23,12 @@
       "id": "004",
       "path": "004_search_key_v1_indexes.cypher",
       "description": "Versioned secondary range indexes for deterministic normalized metadata title-prefix search",
+      "reversible": false
+    },
+    {
+      "id": "005",
+      "path": "005_audit_revision_ledger.cypher",
+      "description": "Unique append-only audit revision identities, one head per work pair, and bounded revision history lookup",
       "reversible": false
     }
   ]

@@ -102,6 +102,31 @@ jobs:
         run: |
           python scripts/api_bootstrap.py
           python scripts/api_smoke.py
+      - name: Metadata-only v0.9.12 revision chain CAS in disposable Neo4j
+        env:
+          CI: "true"
+        run: |
+          python scripts/revision_ledger_smoke_v0912.py --ack-disposable-fixture \
+            > local_staging/revision-ledger-smoke-v0912.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("local_staging/revision-ledger-smoke-v0912.json").read_text())
+          assert report["schema_version"] == "0.9.12"
+          assert report["verified_chain_length"] == 2
+          assert report["stale_cas_denied"] is True
+          assert report["source_records_written"] == 0
+          assert report["corpus_revision_immutable"] is False
+          assert report["research_release_status"] == "HOLD"
+          print("[OK] Disposable Neo4j metadata ledger CAS, chain and cleanup verified.")
+          PY
+      - name: Retain sanitized v0.9.12 revision chain CI evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-revision-ledger-v0912-synthetic
+          path: local_staging/revision-ledger-smoke-v0912.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Bounded synthetic graph cost profiles (32 and 128 SOURCE_LINK records)
         run: |
           mkdir -p local_staging
