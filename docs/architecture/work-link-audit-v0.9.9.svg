@@ -19,7 +19,7 @@
 <rect x="806" y="137" width="351" height="195" rx="17" fill="#4a3d31" stroke="#dcb58c" stroke-width="2"/>
 <text x="827" y="177" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Fail-closed row validation</text>
 <text x="827" y="216" fill="#f9e2c2" font-family="Arial,sans-serif" font-size="17">Edge IDs strictly ascending</text>
-<text x="827" y="251" fill="#f9e2c2" font-family="Arial,sans-serif" font-size="17"><=21 rows incl. lookahead</text>
+<text x="827" y="251" fill="#f9e2c2" font-family="Arial,sans-serif" font-size="17">&#8804;21 rows incl. lookahead</text>
 <text x="827" y="287" fill="#f9e2c2" font-family="Arial,sans-serif" font-size="17">No private source text</text>
 <path d="M962 332 V386 H589 V419" fill="none" stroke="#90c8fa" stroke-width="4"/>
 <rect x="239" y="426" width="741" height="118" rx="17" fill="#2a4058" stroke="#94b3d4" stroke-width="2"/>
