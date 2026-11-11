@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 690" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.11 two-pass bounded HMAC audit export</title>
+<desc id="desc">Private API reads at most 100 metadata-only Work evidence links across five keyset pages, repeats the entire bounded observation, fails with HTTP 409 if the observations differ, and signs a canonical metadata manifest with HMAC. A separate offline verifier checks integrity with the local service key. Two matching passes are not a database snapshot.</desc>
+<rect width="1240" height="690" rx="22" fill="#111b2c"/>
+<text x="45" y="60" font-family="Arial,sans-serif" font-size="31" font-weight="700" fill="#f4f7fc">Neo4j v0.9.11 / Two-pass audit export</text>
+<text x="45" y="97" font-family="Arial,sans-serif" font-size="18" fill="#b4c7dd">Code-derived architecture · not a live UI screenshot</text>
+<rect x="44" y="146" width="337" height="172" rx="18" fill="#234263" stroke="#87afd9" stroke-width="2"/>
+<text x="65" y="187" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#fff">1. Bounded scan</text>
+<text x="65" y="229" font-family="Arial,sans-serif" font-size="18" fill="#e5f0fd">Directed Work A → Work B</text>
+<text x="65" y="264" font-family="Arial,sans-serif" font-size="17" fill="#e5f0fd">Max 5 pages × 20 links</text>
+<path d="M381 231 H428" fill="none" stroke="#96c4f5" stroke-width="4"/>
+<rect x="431" y="146" width="379" height="172" rx="18" fill="#1b5a5d" stroke="#6fc8b9" stroke-width="2"/>
+<text x="453" y="187" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#fff">2. Full second pass</text>
+<text x="453" y="230" font-family="Arial,sans-serif" font-size="18" fill="#e0f5ee">Re-read selected Work pair</text>
+<text x="453" y="265" font-family="Arial,sans-serif" font-size="17" fill="#e0f5ee">Compare all observed metadata</text>
+<path d="M810 231 H857" fill="none" stroke="#96c4f5" stroke-width="4"/>
+<rect x="860" y="146" width="334" height="172" rx="18" fill="#4b3f57" stroke="#bea5d4" stroke-width="2"/>
+<text x="880" y="187" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#fff">3. Decide</text>
+<text x="880" y="228" font-family="Arial,sans-serif" font-size="18" fill="#f4e7fc">Mismatch → HTTP 409</text>
+<text x="880" y="264" font-family="Arial,sans-serif" font-size="17" fill="#f4e7fc">More than 100 → refuse</text>
+<path d="M1016 319 V370 H617 V403" stroke="#93c9ef" stroke-width="4" fill="none"/>
+<rect x="324" y="406" width="594" height="121" rx="18" fill="#354858" stroke="#9ab4cb" stroke-width="2"/>
+<text x="345" y="451" font-family="Arial,sans-serif" font-size="22" font-weight="700" fill="#fff">4. Canonical manifest + HMAC receipt</text>
+<text x="345" y="489" font-family="Arial,sans-serif" font-size="17" fill="#e7edf8">Exact ordered metadata · SHA-256 · local service key</text>
+<path d="M617 528 V566" stroke="#93c9ef" stroke-width="4" fill="none"/>
+<rect x="249" y="570" width="743" height="69" rx="17" fill="#265544" stroke="#77d2ad" stroke-width="2"/>
+<text x="270" y="613" font-family="Arial,sans-serif" font-size="21" font-weight="700" fill="#ebfff3">5. Offline verifier · no database connection</text>
+<text x="46" y="670" font-family="Arial,sans-serif" font-size="17" fill="#f7d8a6">Not a database snapshot · No immutable corpus proof · Rights unverified · HOLD</text>
+</svg>

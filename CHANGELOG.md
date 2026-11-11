@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.9.11] — 2026-11-12 (DRAFT — bounded two-pass research audit export)
+
+- Added authenticated metadata-only GET /v1/analysis/works/links/audit/export:
+  two full sequential passes of a single directed Work-pair relationship
+  set, each limited to five 20-link windows (100 canonical Evidence links).
+- Fail-closed no-partial-export behavior for >100 links, malformed
+  projection, duplicate evidence/edge IDs, missing Works or pass drift;
+  mismatched observations return sanitized HTTP 409 AUDIT_DRIFT.
+- Added exact canonical UTF-8 JSON manifest hash and domain-separated
+  service-key HMAC-SHA256 seal, bound to all ordered link metadata,
+  query-template version, population count, two-pass bounds and capture time.
+- Added local-only offline verifier CLI and strict envelope checker:
+  checks HMAC/hash, Work identity, evidence metadata, count/ordering and
+  explicit nonclaims. Service bearer key stays in a protected local file.
+- Added 12 focused tests and isolated live Neo4j smoke for two-link
+  successful export and offline verification plus tampered-manifest denial.
+- This is neither an immutable Neo4j revision nor transactional snapshot.
+  No archival/public research signing or source-rights validation. HOLD.
+
+
 ## [0.9.10] — 2026-11-12 (DRAFT — signed bounded prior-page drift witness)
 
 - Added private read-only checked Work-link audit endpoint, retaining

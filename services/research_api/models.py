@@ -491,3 +491,30 @@ class CheckedWorkLinkAuditPage(StrictModel):
     historical_influence_proven: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.9.11 two matching sequential bounded *observations*, not one
+# Neo4j transaction, immutable corpus revision or scholarly sign-off.
+class WorkAuditExportManifest(StrictModel):
+    schema_version: Literal["0.9.11"] = "0.9.11"
+    source_work_id: str
+    target_work_id: str
+    ordered_links: list[WorkCrossLink] = Field(max_length=100)
+    observed_link_count: int = Field(ge=0, le=100)
+    pages_per_pass: int = Field(ge=1, le=5)
+    query_template_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    captured_at_unix: int = Field(ge=0, le=4102444800)
+    observation_scope: Literal["two_sequential_bounded_reads_only"]
+    sequential_passes_matched: Literal[True]
+    graph_snapshot_verified: Literal[False] = False
+    corpus_revision_immutable: Literal[False] = False
+    independently_licensed_sources_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str = Field(max_length=500)
+
+
+class WorkAuditExportEnvelope(StrictModel):
+    manifest: WorkAuditExportManifest
+    manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    receipt_hmac_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")

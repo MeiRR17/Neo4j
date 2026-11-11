@@ -21,6 +21,7 @@ from scripts.bootstrap import DEFAULT_SECRET_PATH
 from scripts.migrate import LocalQueryClient
 from services.research_api.app import create_app
 from services.research_api.config import TOKEN_PATH, bootstrap_token, load_token
+from services.research_api.audit_export_v0911 import verify_audit_export
 
 
 def verify(response, expected):
@@ -424,12 +425,56 @@ RETURN ev.id AS id
                 **checked_query, "checkpoint": witness[:-1] + (
                     "a" if witness[-1] != "a" else "b"),
             }, headers=headers), 422)
+            # v0.9.11: export both synthetic Work links after two complete
+            # metadata observations, then independently check the local
+            # service HMAC without querying Neo4j again.
+            export_url = "/v1/analysis/works/links/audit/export"
+            export_params = {
+                "source_work_id": work, "target_work_id": other_work,
+            }
+            exported = http.get(
+                export_url, params=export_params, headers=headers)
+            verify(exported, 200)
+            signed_export = exported.json()
+            manifest = signed_export["manifest"]
+            if (manifest["schema_version"] != "0.9.11" or
+                    manifest["observed_link_count"] != 2 or
+                    manifest["pages_per_pass"] != 1 or
+                    {x["evidence_id"] for x in manifest["ordered_links"]} !=
+                    {cross_evidence, checkpoint_evidence} or
+                    manifest["graph_snapshot_verified"] is not False or
+                    manifest["corpus_revision_immutable"] is not False or
+                    manifest["research_release_status"] != "HOLD"):
+                raise RuntimeError("Bounded synthetic audit export invalid.")
+            checked_export = verify_audit_export(
+                signed_export, secret=load_token())
+            if (checked_export["observed_link_count"] != 2 or
+                    checked_export["hmac_verified_with_local_service_secret"]
+                    is not True or
+                    checked_export["source_rights_verified"] is not False):
+                raise RuntimeError("Offline Work audit export receipt invalid.")
+            edited_export = {
+                **signed_export,
+                "manifest": {
+                    **manifest,
+                    "observed_link_count": 999,
+                },
+            }
+            try:
+                verify_audit_export(edited_export, secret=load_token())
+            except ValueError:
+                pass
+            else:
+                raise RuntimeError("Tampered audit manifest was accepted.")
+            verify(http.get(
+                export_url, params={**export_params, "limit": 99},
+                headers=headers), 422)
             status = http.get("/v1/data/status", headers=headers)
             verify(status, 200)
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, signed prior-page drift audit, keyset link audit, receipt replay, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, two-pass HMAC-sealed Work audit export, signed prior-page drift audit, keyset link audit, receipt replay, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0
