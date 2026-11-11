@@ -115,6 +115,11 @@ jobs:
           assert report["schema_version"] == "0.9.12"
           assert report["verified_chain_length"] == 2
           assert report["stale_cas_denied"] is True
+          assert report["pinned_ed25519_anchor_verified"] is True
+          assert report["tampered_anchor_denied"] is True
+          assert report["anchor_prefix_survived_later_append"] is True
+          assert report["anchor_revisions_after_capture"] == 1
+          assert report["external_object_lock_verified"] is False
           assert report["source_records_written"] == 0
           assert report["corpus_revision_immutable"] is False
           assert report["research_release_status"] == "HOLD"
@@ -124,6 +129,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: audit-revision-ledger-v0912-synthetic
+          path: local_staging/revision-ledger-smoke-v0912.json
+          if-no-files-found: error
+          retention-days: 7
+      - name: Retain sanitized independently keyed anchor verification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-revision-anchor-v0913-synthetic
           path: local_staging/revision-ledger-smoke-v0912.json
           if-no-files-found: error
           retention-days: 7
