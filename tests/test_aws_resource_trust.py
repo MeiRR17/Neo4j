@@ -194,7 +194,7 @@ class ResourceTrustTests(unittest.TestCase):
     def test_role_trust_policy_content_drift_rejected(self):
         iam = RoleTrustMock()
         # Earlier v0.8.19 reads GetRole several times before new round.
-        iam.change_on = 15
+        iam.change_on = 12
         with self.assertRaises(ResourceTrustError):
             self.observe(iam=iam)
 
