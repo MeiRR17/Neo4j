@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 440" role="img" aria-labelledby="title desc">
+<title id="title">v0.9.0 evidence-linked analytics first slice</title>
+<desc id="desc">An authenticated canonical passage request enters one of two fixed read-only Cypher operations, observed source links and shared target candidates. Both retain exact Evidence identities and review states, then return bounded private metadata, not verified influence.</desc>
+<rect x="0" y="0" width="1000" height="440" rx="22" fill="#0c1525"/>
+<text x="45" y="58" fill="#f2f6ff" font-family="Arial,sans-serif" font-weight="bold" font-size="28">Neo4j v0.9.0 | Evidence-linked analytics</text>
+<text x="45" y="88" fill="#b8c8e0" font-family="Arial,sans-serif" font-size="16">Source-derived implementation schematic (not a live application screenshot)</text>
+<rect x="45" y="129" width="240" height="120" rx="12" fill="#1e3556" stroke="#668cc1" stroke-width="2"/>
+<text x="62" y="163" fill="#fff" font-family="Arial,sans-serif" font-weight="bold" font-size="18">Authenticated API</text>
+<text x="62" y="196" fill="#d3e0f3" font-family="Arial,sans-serif" font-size="15">canonical passage ID</text>
+<text x="62" y="222" fill="#d3e0f3" font-family="Arial,sans-serif" font-size="15">strict filters; up to 20 rows</text>
+<path d="M285 189 H342" stroke="#9bbbe8" stroke-width="3" fill="none"/>
+<path d="M333 182 l11 7 -11 7" stroke="#9bbbe8" stroke-width="3" fill="none"/>
+<rect x="345" y="116" width="290" height="70" rx="12" fill="#194955" stroke="#58aaa7" stroke-width="2"/>
+<text x="362" y="147" fill="#fff" font-family="Arial,sans-serif" font-size="18" font-weight="bold">Observed source links</text>
+<text x="362" y="171" fill="#d3f2f0" font-family="Arial,sans-serif" font-size="14">directed SOURCE_LINK + evidence</text>
+<rect x="345" y="208" width="290" height="70" rx="12" fill="#194955" stroke="#58aaa7" stroke-width="2"/>
+<text x="362" y="239" fill="#fff" font-family="Arial,sans-serif" font-size="18" font-weight="bold">Shared-target candidates</text>
+<text x="362" y="263" fill="#d3f2f0" font-family="Arial,sans-serif" font-size="14">two source-evidence trails</text>
+<path d="M635 151 H691 V190 H747" stroke="#9bbbe8" stroke-width="3" fill="none"/>
+<path d="M635 243 H691 V190" stroke="#9bbbe8" stroke-width="3" fill="none"/>
+<path d="M738 183 l11 7 -11 7" stroke="#9bbbe8" stroke-width="3" fill="none"/>
+<rect x="750" y="127" width="207" height="127" rx="12" fill="#4b362b" stroke="#d3a06c" stroke-width="2"/>
+<text x="768" y="163" fill="#fff" font-family="Arial,sans-serif" font-weight="bold" font-size="18">Evidence guards</text>
+<text x="768" y="193" fill="#ffdeb9" font-family="Arial,sans-serif" font-size="15">review state retained</text>
+<text x="768" y="218" fill="#ffdeb9" font-family="Arial,sans-serif" font-size="15">no source excerpts</text>
+<rect x="45" y="321" width="912" height="78" rx="12" fill="#283346" stroke="#7b8fab" stroke-width="1.6"/>
+<text x="65" y="353" fill="#f2f6ff" font-family="Arial,sans-serif" font-weight="bold" font-size="17">Exploratory metadata only | source rights and corpus completeness NOT verified</text>
+<text x="65" y="380" fill="#f5d4aa" font-family="Arial,sans-serif" font-size="17">No causal claims, authority ranking or research release | status HOLD</text>
+</svg>

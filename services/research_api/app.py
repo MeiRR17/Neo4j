@@ -24,7 +24,7 @@ from services.research_api.db import DatabaseUnavailable, ReadOnlyQueryClient
 from services.research_api.models import (
     Concept, ErrorResponse, EvidenceLink, Neighborhood, Page, Passage, Person, Readiness,
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
-    IndexedSearchCapability, ProvenanceMetadataPage,
+    IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -32,6 +32,7 @@ from services.research_api.queries import (
 from services.research_api.metadata_search import search_metadata, validate_search
 from services.research_api.search_index import search_indexed_metadata, indexed_capability
 from services.research_api.provenance import provenance_page, KINDS as PROVENANCE_KINDS
+from services.research_api.analytics import analysis_page
 
 
 security = HTTPBearer(auto_error=False)
@@ -329,6 +330,22 @@ def create_app(*, backend=None, token_path: Path | None = None,
             raise_http(422)
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/analysis/{kind}", response_model=AnalysisPage,
+             tags=["Research"], dependencies=[Depends(require_service_token)])
+    def analyze_links(request: Request, kind: str,
+                      passage_id: str = Query(...),
+                      limit: int = Query(default=10, ge=1, le=20)):
+        # Unknown and duplicate query facets may not silently disappear.
+        keys = [key for key, _ in request.query_params.multi_items()]
+        if (len(keys) != len(set(keys)) or set(keys) - {"passage_id", "limit"}
+                or "passage_id" not in keys):
+            raise_http(422)
+        try:
+            return analysis_page(
+                store, kind=kind, passage_id=passage_id, limit=limit)
         except (ValueError, TypeError):
             raise_http(422)
 

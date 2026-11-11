@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.9.0] — 2026-11-11 (DRAFT — evidence-linked exploratory analytics)
+
+- Added authenticated /v1/analysis/source-links and
+  /v1/analysis/shared-targets endpoints with fixed, read-only, bounded
+  Cypher and exact Evidence node/review-state bindings.
+- Returns only observed source-link direction and shared-target candidates,
+  including canonical passage IDs and provenance, never source text.
+- Rejects duplicate/unknown request fields, malformed canonical IDs, unsafe
+  graph projections, non-evidence claims and duplicate evidence inflation.
+- Synthetic API contract and security-denial tests; research release HOLD.
+  This is the first slice, not the complete v0.9.0 acceptance milestone.
+
+
 ## [0.8.16] — 2026-11-11 (DRAFT — read-only bucket governance and repeat observations)
 
 - Added a private operator-acknowledged AWS account/bucket governance audit,
