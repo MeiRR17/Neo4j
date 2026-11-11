@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.8.4] — 2026-11-11 (DRAFT — physical index readiness guard)
+
+- Corrected v0.8.3 indexed metadata search readiness: complete backfilled
+  properties alone no longer imply the underlying Neo4j index exists.
+- Added a fixed, parameterized read-only SHOW INDEXES registry operation;
+  each indexed request now requires the exact migration 004 index name,
+  ONLINE state, RANGE type, NODE entity type, correct label and property.
+- Missing, populating, failed, swapped, or malformed physical indexes fail
+  closed with the existing sanitized HTTP 503, before any coverage or
+  indexed-result query. No change to the v0.8.3 response schema or writes.
+- Added focused negative tests; existing real Neo4j signed indexed-read CI
+  exercises the physical-index check in an isolated fixture only.
+- Still no production activation, human rights clearance, service RBAC,
+  realistic PROFILE/EXPLAIN evidence or main merge.
+
+
 ## [0.8.3] — 2026-11-09 (DRAFT — indexed, rights-conservative metadata lookup)
 
 - Added migration 004, four additive range indexes over normalized title keys, and schema-manifest 0.2.1 (IDs and provenance unchanged).

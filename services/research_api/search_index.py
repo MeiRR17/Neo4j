@@ -17,11 +17,45 @@ INDEX_SCHEMA = "0.8.3"
 INDEX_VERSION = "search_key_v1"
 MAX_LIMIT = 20
 
+# Exact names and labels from migration 004. Never accept them from a caller.
+INDEX_DEFINITIONS = {
+    "works": ("work_search_key_v1", "Work"),
+    "persons": ("person_search_key_v1", "Person"),
+    "passages": ("passage_search_key_v1", "Passage"),
+    "concepts": ("concept_search_key_v1", "Concept"),
+}
+
+
+def verify_online_index(store: Any, kind: str) -> None:
+    """Fail closed if the physical Neo4j prefix index is absent or not ONLINE.
+
+    Backfilled properties alone do not guarantee an index exists or is usable.
+    Validate the exact migration-owned index name, entity label, indexed field
+    and RANGE type. Do not leak index inventory to API consumers.
+    """
+    if kind not in INDEX_DEFINITIONS:
+        raise ValueError("Unknown metadata kind.")
+    name, label = INDEX_DEFINITIONS[kind]
+    rows = store.query("index_state", {"index_name": name})
+    if not isinstance(rows, list) or len(rows) != 1:
+        raise DatabaseUnavailable("Metadata index unavailable.")
+    row = rows[0]
+    if (not isinstance(row, dict) or set(row) != {
+            "name", "type", "entityType", "labelsOrTypes", "properties", "state"
+        } or row["name"] != name or row["type"] != "RANGE"
+            or row["entityType"] != "NODE"
+            or row["labelsOrTypes"] != [label]
+            or row["properties"] != ["search_key_v1"]
+            or row["state"] != "ONLINE"):
+        raise DatabaseUnavailable("Metadata index not ready.")
+
+
 
 def verify_coverage(store: Any, kind: str) -> dict:
     """Never enable indexed search on absent, partial or stale metadata."""
     if kind not in ALLOWED_KINDS:
         raise ValueError("Unknown metadata kind.")
+    verify_online_index(store, kind)
     rows = store.query(f"index_coverage_{kind}")
     if not isinstance(rows, list) or len(rows) != 1:
         raise DatabaseUnavailable("Search index coverage unavailable.")
