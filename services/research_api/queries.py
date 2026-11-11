@@ -290,3 +290,54 @@ RETURN ev.id AS id, ev.source_record_id AS source_record_id,
 ORDER BY id
 LIMIT $fetch_limit
 """.strip()
+
+
+# v0.9.0: evidence-linked, metadata-only exploratory analytics.
+# Caller can only supply a canonical passage ID and a bounded row limit.
+READ_OPERATIONS["analysis_source_links"] = """
+MATCH (a:Passage)-[r:SOURCE_LINK]->(b:Passage)
+MATCH (ev:Evidence {id:r.evidence_id})
+WHERE (a.id = $id OR b.id = $id)
+  AND r.id IS NOT NULL
+  AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND r.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND ev.review_status IN ['unreviewed','approved','rejected','disputed']
+RETURN r.id AS id, a.id AS source_passage_id,
+       b.id AS target_passage_id, ev.id AS evidence_id,
+       r.claim_kind AS claim_kind, r.review_status AS review_status,
+       ev.review_status AS evidence_review_status,
+       ev.source_ref AS source_ref, ev.version_id AS version_id,
+       ev.rights_tag AS rights_tag
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
+
+READ_OPERATIONS["analysis_shared_targets"] = """
+MATCH (focus:Passage {id:$id})-[fr:SOURCE_LINK]->(target:Passage)
+MATCH (candidate:Passage)-[cr:SOURCE_LINK]->(target)
+MATCH (fe:Evidence {id:fr.evidence_id})
+MATCH (ce:Evidence {id:cr.evidence_id})
+WHERE candidate.id <> $id
+  AND fr.id IS NOT NULL AND cr.id IS NOT NULL
+  AND fr.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND cr.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND fe.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ce.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND fr.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND cr.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND fe.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND ce.review_status IN ['unreviewed','approved','rejected','disputed']
+RETURN candidate.id AS candidate_passage_id,
+       target.id AS shared_target_passage_id,
+       fe.id AS focus_evidence_id, ce.id AS candidate_evidence_id,
+       fr.review_status AS focus_review_status,
+       cr.review_status AS candidate_review_status,
+       fe.review_status AS focus_evidence_review_status,
+       ce.review_status AS candidate_evidence_review_status,
+       fe.source_ref AS focus_source_ref,
+       ce.source_ref AS candidate_source_ref
+ORDER BY candidate_passage_id, shared_target_passage_id,
+         focus_evidence_id, candidate_evidence_id
+LIMIT $fetch_limit
+""".strip()
