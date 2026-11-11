@@ -93,6 +93,11 @@ class SearchPlanTests(TestCase):
             reply(operator="NodeByLabelScan@neo4j"), kind="works", profile=False)
         self.assertFalse(other["search_key_range_seek_planned"])
         self.assertTrue(other["node_or_label_scan_planned"])
+        # Punctuation in real Neo4j plan names must never break CI, nor leak.
+        unusual = reply(operator="Unexpected (Fusion)+@neo4j")
+        parsed = inspect_plan_response(unusual, kind="works", profile=False)
+        self.assertIn("OtherOperator", parsed["operator_types"])
+        self.assertNotIn("Unexpected (Fusion)", json.dumps(parsed))
         wrong = reply()
         wrong["queryPlan"]["children"][0]["arguments"]["Details"] = "n.id"
         self.assertFalse(inspect_plan_response(
@@ -115,7 +120,7 @@ class SearchPlanTests(TestCase):
             {"queryPlan": []},
             {"data": {"fields": [], "values": [[1]]}},
             {"queryPlan": {**tree(), "children": "not-a-list"}},
-            {"queryPlan": {**tree(), "operatorType": "DROP DATABASE"}},
+            {"queryPlan": {**tree(), "operatorType": 42}},
         ]
         for change in changes:
             with self.subTest(change=change):
