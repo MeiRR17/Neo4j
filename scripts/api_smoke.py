@@ -42,13 +42,22 @@ def main() -> int:
     passage3 = passage_id(edition, "Synthetic Multiword Work, Part 1:3")
     source = stable_id("source", "research-api-ci-fixture", "snapshot")
     author = stable_id("person", "research-api-ci-fixture", "synthetic-author")
+    other_work = work_id("research-api-ci-fixture", "Synthetic Comparison Work")
+    other_edition = edition_id(other_work, "CI-comparison-edition")
+    other_passage = passage_id(other_edition, "Synthetic Comparison Work 1:1")
+    other_author = stable_id("person", "research-api-ci-fixture", "other-author")
     evidence = evidence_id(source, "Synthetic Multiword Work, Part 1:1",
                            "synthetic-link", passage1, passage2)
     edge = stable_id("edge", "SOURCE_LINK", passage1, passage2, evidence)
     evidence2 = evidence_id(source, "Synthetic Multiword Work, Part 1:2",
                             "synthetic-link", passage2, passage3)
     edge2 = stable_id("edge", "SOURCE_LINK", passage2, passage3, evidence2)
-    ids = [work, edition, passage1, passage2, passage3, source, evidence, evidence2, author]
+    cross_evidence = evidence_id(source, "Synthetic Multiword Work, Part 1:3",
+                                 "synthetic-cross-work", passage3, other_passage)
+    cross_edge = stable_id("edge", "SOURCE_LINK", passage3, other_passage, cross_evidence)
+    ids = [work, edition, passage1, passage2, passage3, source, evidence,
+           evidence2, author, other_work, other_edition, other_passage,
+           other_author, cross_evidence]
     try:
         seed = """
 MERGE (w:Work {id:$work})
@@ -67,6 +76,20 @@ MERGE (b:Passage {id:$p2})
 MERGE (c:Passage {id:$p3})
   ON CREATE SET c.source_ref='Synthetic Multiword Work, Part 1:3',
     c.work_id=$work, c.edition_id=$edition
+MERGE (other_work:Work {id:$other_work})
+  ON CREATE SET other_work.title='CI Synthetic Comparison Work',
+    other_work.provider_ref='ci-other-work', other_work.provider='research-api-ci-fixture'
+MERGE (other_edition:Edition {id:$other_edition})
+  ON CREATE SET other_edition.version_id='CI comparison only',
+    other_edition.rights_tag='TEST_METADATA_ONLY', other_edition.language='en'
+MERGE (other_work)-[:HAS_EDITION {id:$other_edition_edge}]->(other_edition)
+MERGE (other_passage:Passage {id:$other_passage})
+  ON CREATE SET other_passage.source_ref='Synthetic Comparison Work 1:1',
+    other_passage.work_id=$other_work, other_passage.edition_id=$other_edition
+MERGE (other_author:Person {id:$other_author})
+  ON CREATE SET other_author.display_name='Synthetic Second Author',
+    other_author.date_from_year=1210, other_author.date_to_year=1260
+MERGE (other_author)-[:AUTHORED {id:$other_author_edge}]->(other_work)
 MERGE (author:Person {id:$author})
   ON CREATE SET author.display_name='Synthetic Fixture Author',
     author.date_from_year=1100, author.date_to_year=1160
@@ -92,16 +115,36 @@ MERGE (ev2:Evidence {id:$evidence2})
 MERGE (b)-[r2:SOURCE_LINK {id:$edge2}]->(c)
   ON CREATE SET r2.evidence_id=$evidence2,
     r2.claim_kind='OBSERVED_SOURCE_LINK', r2.review_status='unreviewed'
+MERGE (cross_ev:Evidence {id:$cross_evidence})
+  ON CREATE SET cross_ev.claim_kind='OBSERVED_SOURCE_LINK',
+    cross_ev.review_status='unreviewed',
+    cross_ev.source_ref='Synthetic Multiword Work, Part 1:3',
+    cross_ev.source_uri='https://example.invalid/comparison',
+    cross_ev.rights_tag='TEST_FIXTURE',
+    cross_ev.source_record_id=$source, cross_ev.version_id='test-only',
+    cross_ev.link_category='synthetic-cross-work'
+MERGE (c)-[cross:SOURCE_LINK {id:$cross_edge}]->(other_passage)
+  ON CREATE SET cross.evidence_id=$cross_evidence,
+    cross.claim_kind='OBSERVED_SOURCE_LINK', cross.review_status='unreviewed'
 RETURN w.id AS id
 """
         edition_edge = stable_id("edge", "HAS_EDITION", work, edition, evidence)
         author_edge = stable_id("edge", "AUTHORED", author, work, evidence)
+        other_edition_edge = stable_id(
+            "edge", "HAS_EDITION", other_work, other_edition, cross_evidence)
+        other_author_edge = stable_id(
+            "edge", "AUTHORED", other_author, other_work, cross_evidence)
         admin.query(seed, {
             "work": work, "edition": edition, "edition_edge": edition_edge,
             "p1": passage1, "p2": passage2, "p3": passage3,
             "source": source, "evidence": evidence, "edge": edge,
             "evidence2": evidence2, "edge2": edge2,
             "author": author, "author_edge": author_edge,
+            "other_work": other_work, "other_edition": other_edition,
+            "other_passage": other_passage, "other_author": other_author,
+            "other_edition_edge": other_edition_edge,
+            "other_author_edge": other_author_edge,
+            "cross_evidence": cross_evidence, "cross_edge": cross_edge,
         })
         with TestClient(create_app()) as http:
             no_auth = http.get("/v1/works")
@@ -198,12 +241,39 @@ RETURN w.id AS id
                     [a["id"] for a in chronology["source_authors"]] != [author] or
                     chronology["historical_influence_proven"] is not False):
                 raise RuntimeError("Synthetic author chronology metadata invalid.")
+            # v0.9.3: real Neo4j read-only Work and author comparison.
+            comparison = http.get("/v1/analysis/works/compare", params={
+                "left_work_id": work, "right_work_id": other_work, "limit": 2,
+            }, headers=headers)
+            verify(comparison, 200)
+            report = comparison.json()
+            forward_links = report["left_to_right"]["links"]
+            if (report["left_work"]["author_sample"][0]["id"] != author or
+                    report["right_work"]["author_sample"][0]["id"] != other_author or
+                    report["author_id_overlap_status"] != "different_author_ids_observed" or
+                    report["left_to_right"]["observed_window_denominator"] != 1 or
+                    report["right_to_left"]["observed_window_denominator"] != 0 or
+                    len(forward_links) != 1 or
+                    forward_links[0]["edge_id"] != cross_edge or
+                    forward_links[0]["evidence_id"] != cross_evidence or
+                    forward_links[0]["source_passage_id"] != passage3 or
+                    forward_links[0]["target_passage_id"] != other_passage or
+                    report["historical_influence_proven"] is not False or
+                    report["research_release_status"] != "HOLD"):
+                raise RuntimeError("Bounded Work comparison lost source evidence or direction.")
+            backwards = http.get("/v1/analysis/works/compare", params={
+                "left_work_id": other_work, "right_work_id": work,
+            }, headers=headers)
+            verify(backwards, 200)
+            if (backwards.json()["left_to_right"]["observed_window_denominator"] != 0 or
+                    backwards.json()["right_to_left"]["observed_window_denominator"] != 1):
+                raise RuntimeError("Work comparison reversed source direction.")
             status = http.get("/v1/data/status", headers=headers)
             verify(status, 200)
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, 1/2-hop evidence paths, frequency/chronology, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0
