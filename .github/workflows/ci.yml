@@ -26,6 +26,16 @@ jobs:
           python scripts/search_quality_eval.py \
             --judgments tests/fixtures/search_quality_judgments_synthetic.json \
             --responses tests/fixtures/search_quality_responses_synthetic.json
+      - name: Offline reviewer packet safety and empty-form smoke
+        run: |
+          python scripts/search_review_workflow.py prepare \
+            --questions tests/fixtures/search_review_questions_synthetic.json \
+            --responses tests/fixtures/search_quality_responses_synthetic.json \
+            --output /tmp/neo4j-v088-review-packet.json
+          python scripts/search_review_workflow.py template \
+            --packet /tmp/neo4j-v088-review-packet.json \
+            --reviewer-id SYNTHETIC_CI_A \
+            --output /tmp/neo4j-v088-review-form.json
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py

@@ -83,6 +83,10 @@ The existing main branch contains README.md, docker-compose.yml, one Sefaria Pyt
 **Implemented foundation:** bounded frozen judgment/capture evaluator, explicit Precision@5 over judged top-five results, source-anchor and pagination-completeness checks, synthetic-only CI fixture, and reproducible SHA256 evidence hashes.
 **Remaining acceptance:** collect and adjudicate 50 genuine independently reviewed Jewish-philosophy questions, verify authorized source anchors and rights, produce representative query metrics and obtain a separately authorized human sign-off. This version does **not** satisfy the v0.8.0 research-quality release gate.
 
+### v0.8.8 — Private dual-review preparation (DRAFT)
+**Implemented foundation:** offline import of frozen complete metadata-only search captures into reviewer packets; independently completed judgment templates, packet-SHA provenance, explicit dispute adjudication and generation of the v0.8.7 evaluator input plus HOLD audit. Outputs are private 0600, synthetic fixtures remain clearly labelled.
+**Remaining:** implement authorized audited capture on the approved research host; real independent reviewer identification, question selection, edition rights clearance, evidence adjudication and 50-question release evidence. No auto approval or production switch.
+
 ### v0.9.0 — Research-grade graph analytics [P1; 2 cycles]
 **Changes:** five original questions rewritten as versioned, parameterized API analyses; shortest path with edge provenance; centrality as frequency measure not authority; co-citation as hypothesis; chronology constraints; author/work/period comparisons; analysis results include definition and limitations.  
 **Acceptance:** 100+ gold-set links and at least 20 manually checked analytical examples; no assertion of influence without supported temporal/primary evidence; performance tests with published fixture sizes. **Depends:** v0.8.0.

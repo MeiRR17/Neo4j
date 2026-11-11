@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.8] — 2026-11-11 (DRAFT — private dual-review preparation)
+
+- Built offline, non-destructive commands to prepare bounded review packets
+  from complete metadata-only search captures, generate truly empty per-reviewer
+  annotation templates, and freeze two independently completed assessments.
+- Explicit third-reviewer adjudication required whenever relevance judgments
+  conflict; no default majority, auto-labelling, model-generated review or
+  implied scholarly approval.
+- Packet includes only query, title, source anchor, canonical ID and matching
+  semantics; unsafe rights/source text and incomplete paging fail closed.
+- Forms bind to exact packet SHA256; audit records input fingerprints,
+  disagreement counts, and permanent unverified/HOLD release status.
+- Local files are exclusive-create mode 0600 and never overwritten. Added
+  synthetic-only CLI/negative tests and CI smoke; no human corpus invented.
+- 50 verified expert evaluations, content rights, BFF identity/RBAC,
+  live capture authentication and production release remain outstanding.
+
+
 ## [0.8.7] — 2026-11-11 (DRAFT — frozen research search-quality evaluation)
 
 - Added an offline, deterministic evaluation CLI for versioned frozen judgment
