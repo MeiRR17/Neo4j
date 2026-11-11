@@ -71,6 +71,16 @@ The existing authenticated live Neo4j smoke verifies the new endpoint,
 a one-row synthetic Evidence link, exhausted-edge cursor behavior,
 reverse direction and invalid arguments.
 
+The existing v0.9.6 fixed-fixture cost guard also detected a planning
+regression in the earlier incident-frequency query during this cycle:
+181 dbHits on 32 synthetic links and 661 on 128, compared with the
+prior 15-hit observation. Without changing any release or budget gate,
+we re-anchored the frequency query on Passage(id), using the existing
+canonical-ID uniqueness index, before undirected SOURCE_LINK expansion.
+This targeted repair is independently guarded by the same 32/128
+synthetic PROFILE checks and a new fixed-query-shape test. Its new cost
+must be verified from exact-head CI before claiming an improvement.
+
 Next acceptance steps: corpus-level revision/snapshot handling,
 reviewer workflow, 100+ authentic manually vetted links, 20 real
 scholarly cases, source rights, production query-cost budgets, DvirOS

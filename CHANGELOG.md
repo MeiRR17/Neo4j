@@ -11,8 +11,13 @@
 - Validated Work existence, canonical IDs, projection allowlists,
   source/target ownership, edge order, cursor advancement, duplicate
   evidence, statuses and metadata bounds; malformed data fails closed.
-- Added 12 focused contract/security tests and an authenticated live
+- Added 13 focused contract/security tests and an authenticated live
   Neo4j smoke for the new endpoint and cursor semantics.
+- On an initial CI run, the retained v0.9.6 dbHits gate caught an
+  unexpected 181/661-hit incident-frequency plan at 32/128 links.
+  Anchored that query to the unique Passage.id index before expanding
+  incident SOURCE_LINKs; the existing guard limits are unchanged.
+  New measured performance is subject to final-head CI validation.
 - Keyset pagination is not a transactional corpus snapshot; every
   response states research HOLD, no verified rights or historical
   influence. Existing synthetic regression gates remain unchanged.
