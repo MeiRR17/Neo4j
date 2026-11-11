@@ -158,6 +158,41 @@ jobs:
           path: local_staging/analytics-delta-v096.json
           if-no-files-found: error
           retention-days: 7
+      - name: Stress-test 256 and 512 synthetic SOURCE_LINK topologies
+        run: |
+          python scripts/analytics_stress_v097.py \
+            --ack-disposable-fixture > local_staging/analytics-stress-v097.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from scripts.analytics_stress_fixture_v097 import CASES
+          report = json.loads(Path("local_staging/analytics-stress-v097.json").read_text())
+          assert report["schema_version"] == "0.9.7"
+          assert report["case_order"] == list(CASES)
+          assert len(report["case_results"]) == 4
+          assert list(report["growth_by_topology"]) == ["disjoint", "hub"]
+          assert report["research_release_status"] == "HOLD"
+          assert report["representative_performance_proven"] is False
+          assert report["real_corpus_benchmarked"] is False
+          assert report["query_regression_gate_enforced"] is False
+          for case in report["case_results"]:
+              assert case["source_link_count"] in (256, 512)
+              assert case["topology"] in ("disjoint", "hub")
+              assert len(case["operations"]) == 4
+              for metric in case["operations"]:
+                  assert metric["source_values_disclosed"] is False
+                  assert metric["db_hits_max"] <= 250_000
+                  assert metric["samples"] == 3
+          print("[OK] Synthetic disjoint/hub stress evidence complete; "
+                "not a representative production-performance claim.")
+          PY
+      - name: Retain sanitized synthetic hub versus disjoint cost profiles
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-stress-v097-synthetic
+          path: local_staging/analytics-stress-v097.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Plan, apply and verify metadata-only search index (isolated CI)
         run: |
           python scripts/search_index_backfill.py dry-run --kind works
