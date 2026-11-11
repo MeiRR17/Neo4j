@@ -310,3 +310,60 @@ class EvidencePathPage(StrictModel):
     source_rights_verified: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.9.2: sample-frequency metrics and conditional author-year indicators.
+class SourceLinkFrequency(StrictModel):
+    schema_version: Literal["0.9.2"] = "0.9.2"
+    passage_id: str
+    sample_order: Literal["ascending_canonical_source_link_edge_id"]
+    sample_limit: Literal[50] = 50
+    observed_link_denominator: int = Field(ge=0, le=50)
+    outgoing_observed_links: int = Field(ge=0, le=50)
+    incoming_observed_links: int = Field(ge=0, le=50)
+    joint_approved_status_links: int = Field(ge=0, le=50)
+    contested_status_links: int = Field(ge=0, le=50)
+    pending_status_links: int = Field(ge=0, le=50)
+    joint_approved_status_fraction: float | None = Field(default=None, ge=0, le=1)
+    window_truncated: bool
+    whole_graph_centrality_verified: Literal[False] = False
+    graph_snapshot_isolation_verified: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    scholarly_quality_approved: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
+
+
+class AuthorLifetimeRange(StrictModel):
+    id: str
+    date_from_year: int | None
+    date_to_year: int | None
+
+
+class SourceLinkAuthorChronology(StrictModel):
+    schema_version: Literal["0.9.2"] = "0.9.2"
+    source_passage_id: str
+    target_passage_id: str
+    sample_link_edge_id: str | None
+    sample_link_evidence_id: str | None
+    source_work_id: str | None
+    target_work_id: str | None
+    source_authors: list[AuthorLifetimeRange]
+    target_authors: list[AuthorLifetimeRange]
+    metadata_status: Literal[
+        "no_eligible_observed_link_or_work", "same_work",
+        "missing_author_metadata", "ambiguous_author_metadata",
+        "incomplete_year_metadata", "author_lifetime_intervals_compared",
+    ]
+    author_lifetime_relation: Literal[
+        "unknown", "source_author_lifetime_later",
+        "target_author_lifetime_later", "lifetimes_overlap",
+    ]
+    source_years_independently_verified: Literal[False] = False
+    composition_or_publication_order_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    graph_snapshot_isolation_verified: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
