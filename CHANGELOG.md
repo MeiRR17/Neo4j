@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.9.12] — 2026-11-12 (DRAFT — governed metadata revision ledger)
+
+- Added additive graph migration 005: unique AuditRevisionHead and
+  AuditRevision node keys plus composite scope/sequence index.
+- Added local-only, explicitly approved revision bootstrap and
+  compare-and-swap append: verifies v0.9.11 signed metadata export,
+  binds one directed Work pair, locks the head for a single-statement
+  append, records a hash-chain revision ID and advances sequence/head.
+- Added bounded (32-record) history verification that recalculates
+  each SHA-256 chain link and rejects missing/reordered/tampered rows
+  or head/history mismatch. A conflicting expected head fails closed.
+- Added opt-in CLI plan/bootstrap/append/verify with guarded writes,
+  no source text writes and sanitized failure messages. Unit coverage
+  includes 12 targeted cases for HMAC, CAS, tampering and write denial.
+- Added disposable real Neo4j smoke for two appended synthetic
+  metadata observations, stale-head denial, chain replay and exact
+  ledger-node cleanup; CI retains sanitized evidence seven days.
+- This is NOT a Work/Evidence graph snapshot, independently secured
+  immutable archive, rights verification or public research release.
+  Existing synthetic cost gates remain unchanged. HOLD.
+
+
 ## [0.9.11] — 2026-11-12 (DRAFT — bounded two-pass research audit export)
 
 - Added authenticated metadata-only GET /v1/analysis/works/links/audit/export:

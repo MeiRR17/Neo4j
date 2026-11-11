@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 690" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.12 audit observation revision ledger and CAS</title>
+<desc id="desc">A verified signed v0.9.11 metadata export enters an explicitly approved local write guard, then the indexed Neo4j AuditRevisionHead compares expected version/hash under write lock, appends an AuditRevision record and advances the head. A bounded hash chain verifier reads revisions. This is not immutable source graph storage.</desc>
+<rect width="1260" height="690" rx="22" fill="#101a2c"/>
+<text x="45" y="58" font-family="Arial,sans-serif" fill="#f4f7ff" font-size="31" font-weight="700">Neo4j v0.9.12 / Governed revision ledger</text>
+<text x="45" y="92" font-family="Arial,sans-serif" fill="#b4c5dc" font-size="17">Code-derived architecture — not a screenshot of a live database</text>
+<rect x="43" y="145" width="360" height="168" rx="17" fill="#244462" stroke="#90b5df" stroke-width="2"/>
+<text x="63" y="187" font-family="Arial,sans-serif" fill="#fff" font-size="21" font-weight="700">1. Verified audit receipt</text>
+<text x="63" y="230" font-family="Arial,sans-serif" fill="#e1edfc" font-size="17">v0.9.11 canonical digest + HMAC</text>
+<text x="63" y="267" font-family="Arial,sans-serif" fill="#e1edfc" font-size="17">Directed Work pair · metadata only</text>
+<path d="M403 231 H453" stroke="#92c5f5" stroke-width="4"/>
+<rect x="455" y="145" width="351" height="168" rx="17" fill="#185861" stroke="#75c5b3" stroke-width="2"/>
+<text x="476" y="187" font-family="Arial,sans-serif" fill="#fff" font-size="21" font-weight="700">2. Explicit local write guard</text>
+<text x="476" y="230" font-family="Arial,sans-serif" fill="#e2f5ee" font-size="17">Operator opt-in / disposable CI</text>
+<text x="476" y="267" font-family="Arial,sans-serif" fill="#e2f5ee" font-size="17">No public API writes</text>
+<path d="M806 231 H855" stroke="#92c5f5" stroke-width="4"/>
+<rect x="858" y="145" width="355" height="168" rx="17" fill="#4e4056" stroke="#b9a3d1" stroke-width="2"/>
+<text x="878" y="187" font-family="Arial,sans-serif" fill="#fff" font-size="21" font-weight="700">3. CAS head advancement</text>
+<text x="878" y="230" font-family="Arial,sans-serif" fill="#eee7f6" font-size="17">Expected sequence + chain hash</text>
+<text x="878" y="267" font-family="Arial,sans-serif" fill="#eee7f6" font-size="17">Neo4j single write statement</text>
+<path d="M1035 313 V370 H634 V410" stroke="#92c5f5" stroke-width="4" fill="none"/>
+<rect x="249" y="415" width="763" height="133" rx="18" fill="#2b4459" stroke="#96b2cf" stroke-width="2"/>
+<text x="276" y="459" font-family="Arial,sans-serif" fill="#fff" font-size="22" font-weight="700">4. Hash-linked observation revisions</text>
+<text x="276" y="501" font-family="Arial,sans-serif" fill="#e3eef8" font-size="17">Revision 1 → Revision 2 → ... → Revision 32 (bounded)</text>
+<path d="M630 548 V583" stroke="#92c5f5" stroke-width="4"/>
+<rect x="264" y="590" width="732" height="63" rx="16" fill="#235545" stroke="#75d0ae" stroke-width="2"/>
+<text x="289" y="628" font-family="Arial,sans-serif" fill="#eafff4" font-size="20" font-weight="700">5. Replay and verify chain integrity · reject stale head</text>
+<text x="43" y="676" font-family="Arial,sans-serif" fill="#f8dba8" font-size="16">Work/Evidence graph is NOT immutable · Privileged DB writes not excluded · Rights unverified · HOLD</text>
+</svg>
