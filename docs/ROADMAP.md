@@ -91,6 +91,10 @@ The existing main branch contains README.md, docker-compose.yml, one Sefaria Pyt
 **Implemented foundation:** local bearer/HMAC GET collection of bounded scan or indexed prefix results; stable per-page request and cursor fingerprints; private frozen snapshots and HMAC manifests verified offline; synthetic unit and CI checks.
 **Remaining:** authorized deployment with DvirOS SSO/RBAC and enforcement of signed-call policy; corpus/index revision pinning, independent provenance and rights controls, 50 genuine reviewed research questions and external approval. No production rollout.
 
+### v0.8.10 — Bound observed search projection and index status (DRAFT)
+**Implemented:** opt-in signed before/after capture observation of bounded, all-visible result titles/anchors per queried kind plus physical index readiness/coverage, with a versioned HMAC-bound observation, offline verification and drift rejection. Backward-compatible with older v0.8.9 manifests.
+**Limitation:** not a database snapshot or complete corpus fingerprint; aliases, edition links, source text and graph edges may change undetected. Full immutable versioning, licensed corpus provenance and reviewer signoff remain HOLD.
+
 ### v0.9.0 — Research-grade graph analytics [P1; 2 cycles]
 **Changes:** five original questions rewritten as versioned, parameterized API analyses; shortest path with edge provenance; centrality as frequency measure not authority; co-citation as hypothesis; chronology constraints; author/work/period comparisons; analysis results include definition and limitations.  
 **Acceptance:** 100+ gold-set links and at least 20 manually checked analytical examples; no assertion of influence without supported temporal/primary evidence; performance tests with published fixture sizes. **Depends:** v0.8.0.

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="475" viewBox="0 0 1120 475" role="img" aria-label="Neo4j v0.8.10 before and after projection stability guard code diagram">
+<rect width="1120" height="475" rx="24" fill="#0d1728"/>
+<text x="38" y="53" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="#f8fafc">Neo4j v0.8.10 — Observed revision guard</text>
+<text x="38" y="83" font-family="Arial,sans-serif" font-size="15" fill="#a5b4ca">Diagram of committed implementation; not a production screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="28" y="135" width="235" height="138" rx="14" fill="#1b2b44" stroke="#60a5fa" stroke-width="2"/>
+<text x="145" y="173" font-weight="bold" fill="white" font-size="18">Before capture</text>
+<text x="145" y="201" fill="#cbd5e1" font-size="14">Complete visible scan</text>
+<text x="145" y="229" fill="#cbd5e1" font-size="14">Index state + SHA256</text>
+<rect x="302" y="135" width="230" height="138" rx="14" fill="#1b2b44" stroke="#a78bfa" stroke-width="2"/>
+<text x="417" y="173" font-weight="bold" fill="white" font-size="18">Signed capture</text>
+<text x="417" y="201" fill="#cbd5e1" font-size="14">Bearer + fresh HMAC</text>
+<text x="417" y="229" fill="#cbd5e1" font-size="14">Bounded search pages</text>
+<rect x="571" y="135" width="230" height="138" rx="14" fill="#1b2b44" stroke="#fbbf24" stroke-width="2"/>
+<text x="686" y="173" font-weight="bold" fill="white" font-size="18">After capture</text>
+<text x="686" y="201" fill="#cbd5e1" font-size="14">Repeat full observation</text>
+<text x="686" y="229" fill="#cbd5e1" font-size="14">Reject if digests drift</text>
+<rect x="839" y="135" width="248" height="138" rx="14" fill="#1b2b44" stroke="#34d399" stroke-width="2"/>
+<text x="963" y="173" font-weight="bold" fill="white" font-size="18">Signed manifest</text>
+<text x="963" y="201" fill="#cbd5e1" font-size="14">v0.8.10 HMAC binding</text>
+<text x="963" y="229" fill="#cbd5e1" font-size="14">Offline verify + HOLD</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M263 204h33"/><path d="M532 204h33"/><path d="M801 204h32"/></g>
+<g fill="#94a3b8"><path d="M296 204l-10 -7v14z"/><path d="M565 204l-10 -7v14z"/><path d="M833 204l-10 -7v14z"/></g>
+<rect x="28" y="310" width="1059" height="121" rx="13" fill="#192e48" stroke="#385070"/>
+<text x="52" y="344" font-family="Arial,sans-serif" font-weight="bold" fill="#f8fafc" font-size="19">Research release: HOLD</text>
+<text x="52" y="372" font-family="Arial,sans-serif" fill="#cbd5e1" font-size="15">Checks exposed titles/anchors and index state, not the complete immutable corpus.</text>
+<text x="52" y="399" font-family="Arial,sans-serif" fill="#fca5a5" font-size="14">Aliases, editions, texts and edges are outside the fingerprint; no transactional snapshot.</text>
+</svg>
