@@ -14,6 +14,7 @@ from services.research_api.audit_checkpoint import (
     AuditWindowDrift, TOKEN_TTL_SECONDS, checked_audit_page,
 )
 from services.research_api.config import bootstrap_token, load_token
+from services.research_api.queries import READ_OPERATIONS
 from tests.test_work_link_audit_v099 import AuditStore
 from tests.test_work_comparison import LEFT, RIGHT, edge
 
@@ -216,6 +217,19 @@ class CheckedAuditTests(unittest.TestCase):
             self.assertLessEqual(len(seen), 4)
         self.assertEqual(seen, sorted(seen))
         self.assertEqual(len(seen), 4)
+
+    def test_incident_frequency_expands_before_evidence_lookup(self):
+        # This separation is necessary for large unrelated-Work
+        # distractors; preserve the previously bounded read shape.
+        stmt = READ_OPERATIONS["analysis_frequency_window"]
+        self.assertIn("USING INDEX p:Passage(id)", stmt)
+        self.assertIn(
+            "MATCH (p)-[r:SOURCE_LINK]-(q:Passage)\nWITH r\n"
+            "MATCH (ev:Evidence {id:r.evidence_id})", stmt)
+        self.assertIn("ORDER BY edge_id", stmt)
+        self.assertIn("LIMIT $fetch_limit", stmt)
+        for keyword in ("MERGE ", "DELETE ", "CREATE ", "SET ", "APOC."):
+            self.assertNotIn(keyword, stmt.upper())
 
     def test_openapi_route_and_typed_response_registered(self):
         schema = self.client.get("/openapi.json").json()
