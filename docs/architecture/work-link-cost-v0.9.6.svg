@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.6 index anchored work link optimization</title>
+<desc id="desc">Before: two-sided Work link match cost 4366 dbHits at 32 synthetic links and 66382 dbHits at 128 links. After: an indexed source Passage lookup expands directed SOURCE_LINK then filters target Work and verifies Evidence, with new costs requiring CI validation. A delta pipeline compares sanitized metrics to the pinned historical benchmark.</desc>
+<rect width="1200" height="630" rx="23" fill="#101927"/>
+<text x="46" y="61" fill="#f2f6ff" font-family="Arial,sans-serif" font-size="31" font-weight="700">Neo4j / v0.9.6  —  Indexed graph traversal</text>
+<text x="46" y="92" fill="#becadd" font-family="Arial,sans-serif" font-size="17">Code-derived implementation schematic, not a live UI screenshot</text>
+<rect x="44" y="148" width="347" height="186" rx="16" fill="#46343c" stroke="#dca1a1" stroke-width="2"/>
+<text x="67" y="191" fill="#fff2f2" font-family="Arial,sans-serif" font-size="22" font-weight="700">BEFORE / v0.9.5</text>
+<text x="67" y="236" fill="#f4dbe0" font-family="Arial,sans-serif" font-size="17">Two-sided Work pattern</text>
+<text x="67" y="273" fill="#fff0ee" font-family="Arial,sans-serif" font-size="18">32 links: 4,366 dbHits</text>
+<text x="67" y="305" fill="#fff0ee" font-family="Arial,sans-serif" font-size="18">128 links: 66,382 dbHits</text>
+<path d="M391 239 H454" stroke="#9cbbea" stroke-width="4" fill="none"/>
+<path d="M442 231 L456 239 L442 247" stroke="#9cbbea" stroke-width="4" fill="none"/>
+<rect x="460" y="148" width="375" height="186" rx="16" fill="#1b5256" stroke="#73c1b5" stroke-width="2"/>
+<text x="482" y="191" fill="#f2fffc" font-family="Arial,sans-serif" font-size="22" font-weight="700">AFTER / v0.9.6</text>
+<text x="482" y="231" fill="#d7f4ed" font-family="Arial,sans-serif" font-size="17">Passage(work_id) index anchor</text>
+<text x="482" y="268" fill="#d7f4ed" font-family="Arial,sans-serif" font-size="17">Directed SOURCE_LINK expansion</text>
+<text x="482" y="302" fill="#d7f4ed" font-family="Arial,sans-serif" font-size="17">Target Work + Evidence checks</text>
+<path d="M835 239 H898" stroke="#9cbbea" stroke-width="4" fill="none"/>
+<path d="M886 231 L900 239 L886 247" stroke="#9cbbea" stroke-width="4" fill="none"/>
+<rect x="904" y="148" width="252" height="186" rx="16" fill="#263e5d" stroke="#8faed9" stroke-width="2"/>
+<text x="925" y="191" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Same evidence</text>
+<text x="925" y="234" fill="#d8e6f8" font-family="Arial,sans-serif" font-size="16">Exact canonical IDs</text>
+<text x="925" y="271" fill="#d8e6f8" font-family="Arial,sans-serif" font-size="16">2 review status fields</text>
+<text x="925" y="307" fill="#d8e6f8" font-family="Arial,sans-serif" font-size="16">Bounded read-only</text>
+<path d="M647 334 V380" stroke="#9cbbea" stroke-width="4" fill="none"/>
+<path d="M639 368 L647 382 L655 368" stroke="#9cbbea" stroke-width="4" fill="none"/>
+<rect x="260" y="388" width="775" height="135" rx="16" fill="#4d3b2d" stroke="#d3ab79" stroke-width="2"/>
+<text x="286" y="427" fill="#fff7e9" font-family="Arial,sans-serif" font-size="21" font-weight="700">Measured delta / CI</text>
+<text x="286" y="460" fill="#fae1c2" font-family="Arial,sans-serif" font-size="17">32/128 synthetic links × 4 fixed PROFILE queries</text>
+<text x="286" y="493" fill="#fae1c2" font-family="Arial,sans-serif" font-size="17">Pinned old dbHits vs new cost · sanitized 7-day artifact</text>
+<rect x="44" y="559" width="1112" height="48" rx="13" fill="#2c374a" stroke="#8297b5" stroke-width="2"/>
+<text x="64" y="591" fill="#f8e0bc" font-family="Arial,sans-serif" font-size="18" font-weight="700">New speedup is a hypothesis until exact-head CI evidence confirms it. Release HOLD.</text>
+</svg>

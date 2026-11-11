@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.9.6] — 2026-11-11 (DRAFT — index-anchored traversal / pinned costs)
+
+- Measured v0.9.5 synthetic baseline: directed cross-Work link query
+  required 4,366 dbHits at 32 SOURCE_LINKs and 66,382 at 128,
+  compared with stable 12-hit Work descriptors and 15-hit frequencies.
+- Re-anchored the fixed read-only cross-Work Cypher to the existing
+  Passage.work_id index before expanding a directed SOURCE_LINK,
+  filtering target Work and verifying exact Evidence IDs/review states.
+- Added sanitized pinned historical median-dbHits comparisons, change and
+  scaling indicators. CI stores a seven-day delta artifact.
+- Nine synthetic test cases cover safe deltas, malformed inputs, leakage
+  denial, baseline identity and the index-anchored read-only query.
+- No speedup claim until current HEAD's live synthetic CI metrics pass;
+  this does not establish real-corpus performance or a release. HOLD.
+
+
 ## [0.9.5] — 2026-11-11 (DRAFT — deterministic synthetic graph cost fixtures)
 
 - Added deterministic 32- and 128-edge benchmark datasets spanning two
