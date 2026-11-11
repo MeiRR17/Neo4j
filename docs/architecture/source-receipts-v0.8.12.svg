@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="455" viewBox="0 0 1100 455" role="img" aria-label="Neo4j v0.8.12 local receipt implementation">
+<rect width="1100" height="455" rx="24" fill="#0d1726"/>
+<text x="34" y="53" font-family="Arial,sans-serif" font-size="28" font-weight="bold" fill="#f8fafc">Neo4j v0.8.12 · Local source receipts</text>
+<text x="34" y="80" font-family="Arial,sans-serif" font-size="14" fill="#94a3b8">Code-derived implementation, not a production screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="25" y="130" width="233" height="139" rx="14" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="141" y="166" font-size="19" fill="white" font-weight="bold">Local source file</text>
+<text x="141" y="195" font-size="14" fill="#cbd5e1">CSV raw SHA256, or</text>
+<text x="141" y="220" font-size="14" fill="#cbd5e1">canonical JSON SHA256</text>
+<text x="141" y="245" font-size="14" fill="#cbd5e1">No source text export</text>
+<rect x="296" y="130" width="232" height="139" rx="14" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="412" y="166" font-size="18" fill="white" font-weight="bold">SourceRecord</text>
+<text x="412" y="195" font-size="14" fill="#cbd5e1">Canonical source ID</text>
+<text x="412" y="220" font-size="14" fill="#cbd5e1">URI + stored checksum</text>
+<text x="412" y="245" font-size="14" fill="#cbd5e1">Metadata-only rights</text>
+<rect x="566" y="130" width="231" height="139" rx="14" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+<text x="681" y="166" font-size="18" fill="white" font-weight="bold">Verification</text>
+<text x="681" y="195" font-size="14" fill="#cbd5e1">Read and hash actual file</text>
+<text x="681" y="220" font-size="14" fill="#cbd5e1">Reject any mismatch</text>
+<text x="681" y="245" font-size="14" fill="#cbd5e1">No automatic approval</text>
+<rect x="835" y="130" width="237" height="139" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="953" y="166" font-size="18" fill="white" font-weight="bold">Signed receipt</text>
+<text x="953" y="195" font-size="14" fill="#cbd5e1">HMAC + exclusive 0600</text>
+<text x="953" y="220" font-size="14" fill="#cbd5e1">Offline recheck</text>
+<text x="953" y="245" font-size="14" fill="#cbd5e1">Optional capture binding</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M258 199h32"/><path d="M528 199h32"/><path d="M797 199h32"/></g>
+<g fill="#94a3b8"><path d="M290 199l-9 -6v12z"/><path d="M560 199l-9 -6v12z"/><path d="M829 199l-9 -6v12z"/></g>
+<rect x="25" y="308" width="1047" height="112" rx="14" fill="#1a2b44" stroke="#385070"/>
+<text x="49" y="342" fill="white" font-size="19" font-weight="bold" font-family="Arial,sans-serif">Research release: HOLD</text>
+<text x="49" y="370" fill="#cbd5e1" font-size="15" font-family="Arial,sans-serif">Local byte consistency is not independently authenticated source delivery, licensing or immutable storage.</text>
+<text x="49" y="399" fill="#fca5a5" font-size="14" font-family="Arial,sans-serif">External receipts, human reviews and DvirOS production authorization still pending.</text>
+</svg>

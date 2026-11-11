@@ -99,6 +99,10 @@ The existing main branch contains README.md, docker-compose.yml, one Sefaria Pyt
 **Implemented:** signed private, allowlisted read-only listing of SourceRecord, Edition and Evidence metadata; explicit cursor completion and before/after HMAC-bound SHA256 observations of source checksums and edition/evidence version/status. Preserves the v0.8.10 search projection guard and v0.8.9 legacy output contract.
 **Remaining:** provider hash verification against real approved source snapshots, immutable source/edition receipts, relationship/alias coverage, true cross-request snapshot isolation, independent rights adjudication and the 50-question pilot. Remains HOLD.
 
+### v0.8.12 — Retained local metadata-source receipt (DRAFT)
+**Implemented:** HMAC tamper-evident local receipt generation/verification for retained original link CSV bytes or canonical JSON version metadata, matched to exported SourceRecord ID, URL, stored SHA256, and metadata-only rights status. Exclusive private outputs; optional authenticated association to a v0.8.11 capture event; synthetic tests and isolated graph smoke.
+**Remaining:** external immutable source snapshots, independently verified provider authenticity, actual graph membership/edition rights proof, 50 real scholarly judgments, BFF security and production approval. Local checks do not grant source rights or immutable corpus revision.
+
 ### v0.9.0 — Research-grade graph analytics [P1; 2 cycles]
 **Changes:** five original questions rewritten as versioned, parameterized API analyses; shortest path with edge provenance; centrality as frequency measure not authority; co-citation as hypothesis; chronology constraints; author/work/period comparisons; analysis results include definition and limitations.  
 **Acceptance:** 100+ gold-set links and at least 20 manually checked analytical examples; no assertion of influence without supported temporal/primary evidence; performance tests with published fixture sizes. **Depends:** v0.8.0.
