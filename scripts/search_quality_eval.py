@@ -15,6 +15,10 @@ from pathlib import Path
 import re
 import sys
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
 from research_graph.ontology import require_canonical_id
 from services.research_api.metadata_search import ALLOWED_KINDS, fold_metadata
 
@@ -156,10 +160,8 @@ def evaluate_pages(record: dict, case: dict) -> dict:
             raise QualityEvidenceError("Pagination completion flags conflict.")
         cursor = page["next_cursor"]
         if page["has_more"]:
-            if (not isinstance(cursor, str) or not cursor or cursor in seen_cursors
-                    or number == len(pages) - 1 and len(pages) == MAX_PAGES):
-                if not isinstance(cursor, str) or not cursor or cursor in seen_cursors:
-                    raise QualityEvidenceError("Pagination cursor invalid or repeated.")
+            if not isinstance(cursor, str) or not cursor or cursor in seen_cursors:
+                raise QualityEvidenceError("Pagination cursor invalid or repeated.")
             _canonical_id(cursor, case["kind"])
             seen_cursors.add(cursor)
         elif cursor is not None:
