@@ -341,3 +341,59 @@ ORDER BY candidate_passage_id, shared_target_passage_id,
          focus_evidence_id, candidate_evidence_id
 LIMIT $fetch_limit
 """.strip()
+
+
+# v0.9.1: fixed directed SOURCE_LINK path queries (1 or 2 hops only).
+# No arbitrary Cypher or client-controlled relationship type / path length.
+# Only unreviewed or approved edges AND matching Evidence can participate.
+READ_OPERATIONS["analysis_path_direct"] = """
+MATCH (s:Passage {id:$source_id})-[r:SOURCE_LINK]->(t:Passage {id:$target_id})
+MATCH (ev:Evidence {id:r.evidence_id})
+WHERE r.id IS NOT NULL
+  AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND r.review_status IN ['unreviewed', 'approved']
+  AND ev.review_status IN ['unreviewed', 'approved']
+WITH s,t,r,ev ORDER BY r.id
+RETURN [s.id, t.id] AS passage_ids,
+       [{edge_id:r.id, from_passage_id:s.id, to_passage_id:t.id,
+         evidence_id:ev.id, claim_kind:r.claim_kind,
+         edge_review_status:r.review_status,
+         evidence_review_status:ev.review_status,
+         source_ref:ev.source_ref, version_id:ev.version_id,
+         rights_tag:ev.rights_tag}] AS edges, 1 AS hop_count
+LIMIT $fetch_limit
+""".strip()
+
+READ_OPERATIONS["analysis_path_two_hop"] = """
+MATCH (s:Passage {id:$source_id})-[a:SOURCE_LINK]->(m:Passage)
+      -[b:SOURCE_LINK]->(t:Passage {id:$target_id})
+MATCH (ea:Evidence {id:a.evidence_id})
+MATCH (eb:Evidence {id:b.evidence_id})
+WHERE m.id <> s.id AND m.id <> t.id
+  AND a.id IS NOT NULL AND b.id IS NOT NULL AND a.id <> b.id
+  AND ea.id <> eb.id
+  AND a.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND b.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ea.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND eb.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND a.review_status IN ['unreviewed', 'approved']
+  AND b.review_status IN ['unreviewed', 'approved']
+  AND ea.review_status IN ['unreviewed', 'approved']
+  AND eb.review_status IN ['unreviewed', 'approved']
+WITH s,m,t,a,b,ea,eb ORDER BY m.id,a.id,b.id
+RETURN [s.id, m.id, t.id] AS passage_ids,
+       [{edge_id:a.id, from_passage_id:s.id, to_passage_id:m.id,
+         evidence_id:ea.id, claim_kind:a.claim_kind,
+         edge_review_status:a.review_status,
+         evidence_review_status:ea.review_status,
+         source_ref:ea.source_ref, version_id:ea.version_id,
+         rights_tag:ea.rights_tag},
+        {edge_id:b.id, from_passage_id:m.id, to_passage_id:t.id,
+         evidence_id:eb.id, claim_kind:b.claim_kind,
+         edge_review_status:b.review_status,
+         evidence_review_status:eb.review_status,
+         source_ref:eb.source_ref, version_id:eb.version_id,
+         rights_tag:eb.rights_tag}] AS edges, 2 AS hop_count
+LIMIT $fetch_limit
+""".strip()

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 560" role="img" aria-labelledby="t d">
+<title id="t">Neo4j v0.9.1 evidence-bounded directed paths</title>
+<desc id="d">An authenticated request for two canonical passage identifiers first checks a direct observed source link. If absent, it searches exactly two directed hops. Every edge requires a matching Evidence node and acceptable review states. Results cannot claim historical influence, rights approval or globally shortest paths.</desc>
+<rect width="1120" height="560" rx="24" fill="#10192b"/>
+<text x="50" y="59" fill="#f2f6fc" font-family="Arial,sans-serif" font-size="30" font-weight="700">Neo4j  /  v0.9.1 — Bounded evidence paths</text>
+<text x="50" y="91" fill="#b7c4dc" font-family="Arial,sans-serif" font-size="17">Code-derived architecture diagram • not a running application screenshot</text>
+<rect x="51" y="147" width="241" height="135" rx="16" fill="#1e385b" stroke="#789ac4" stroke-width="2"/>
+<text x="73" y="183" fill="#fff" font-family="Arial,sans-serif" font-size="19" font-weight="700">1. Private API</text>
+<text x="73" y="217" fill="#dde7f5" font-family="Arial,sans-serif" font-size="16">source + target IDs</text>
+<text x="73" y="247" fill="#dde7f5" font-family="Arial,sans-serif" font-size="16">auth, limit ≤ 10</text>
+<path d="M292 215 H370" stroke="#93c4f7" stroke-width="4" fill="none"/>
+<path d="M358 206 L371 215 L358 224" stroke="#93c4f7" stroke-width="4" fill="none"/>
+<rect x="373" y="147" width="290" height="111" rx="16" fill="#164d54" stroke="#60b7b7" stroke-width="2"/>
+<text x="395" y="184" fill="#fff" font-family="Arial,sans-serif" font-size="19" font-weight="700">2. Direct SOURCE_LINK</text>
+<text x="395" y="216" fill="#d8f4f0" font-family="Arial,sans-serif" font-size="16">1 hop; matching Evidence</text>
+<text x="395" y="238" fill="#d8f4f0" font-family="Arial,sans-serif" font-size="14">preferred shortest candidate</text>
+<path d="M520 258 V322" stroke="#93c4f7" stroke-width="4" fill="none"/>
+<path d="M511 311 L520 325 L529 311" stroke="#93c4f7" stroke-width="4" fill="none"/>
+<text x="540" y="294" fill="#b7c4dc" font-family="Arial,sans-serif" font-size="15">only if no direct link</text>
+<rect x="373" y="327" width="290" height="112" rx="16" fill="#164d54" stroke="#60b7b7" stroke-width="2"/>
+<text x="395" y="364" fill="#fff" font-family="Arial,sans-serif" font-size="19" font-weight="700">3. Two-hop fallback</text>
+<text x="395" y="395" fill="#d8f4f0" font-family="Arial,sans-serif" font-size="16">A → B → C (directed)</text>
+<text x="395" y="420" fill="#d8f4f0" font-family="Arial,sans-serif" font-size="14">2 different supporting Evidence IDs</text>
+<rect x="748" y="173" width="318" height="241" rx="16" fill="#4b3a2c" stroke="#d6b07e" stroke-width="2"/>
+<text x="771" y="210" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">4. Strict evidence guard</text>
+<text x="771" y="246" fill="#ffe6c8" font-family="Arial,sans-serif" font-size="16">• exact edge + Evidence IDs</text>
+<text x="771" y="279" fill="#ffe6c8" font-family="Arial,sans-serif" font-size="16">• reject disputed / rejected</text>
+<text x="771" y="312" fill="#ffe6c8" font-family="Arial,sans-serif" font-size="16">• no cycles or duplicate support</text>
+<text x="771" y="345" fill="#ffe6c8" font-family="Arial,sans-serif" font-size="16">• no unlicensed text</text>
+<text x="771" y="378" fill="#ffe6c8" font-family="Arial,sans-serif" font-size="16">• read-only, at most 2 hops</text>
+<path d="M663 213 H748" stroke="#93c4f7" stroke-width="4" fill="none"/>
+<path d="M663 387 H705 V274 H748" stroke="#93c4f7" stroke-width="4" fill="none"/>
+<rect x="50" y="475" width="1015" height="55" rx="13" fill="#2a3548" stroke="#8293ae" stroke-width="2"/>
+<text x="73" y="509" fill="#f6dfbb" font-family="Arial,sans-serif" font-size="19" font-weight="700">Response: observed paths only • no rights / snapshot / influence proof • RELEASE HOLD</text>
+</svg>

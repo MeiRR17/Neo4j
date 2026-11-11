@@ -39,11 +39,15 @@ def main() -> int:
     edition = edition_id(work, "CI-edition")
     passage1 = passage_id(edition, "Synthetic Multiword Work, Part 1:1")
     passage2 = passage_id(edition, "Synthetic Multiword Work, Part 1:2")
+    passage3 = passage_id(edition, "Synthetic Multiword Work, Part 1:3")
     source = stable_id("source", "research-api-ci-fixture", "snapshot")
     evidence = evidence_id(source, "Synthetic Multiword Work, Part 1:1",
                            "synthetic-link", passage1, passage2)
     edge = stable_id("edge", "SOURCE_LINK", passage1, passage2, evidence)
-    ids = [work, edition, passage1, passage2, source, evidence]
+    evidence2 = evidence_id(source, "Synthetic Multiword Work, Part 1:2",
+                            "synthetic-link", passage2, passage3)
+    edge2 = stable_id("edge", "SOURCE_LINK", passage2, passage3, evidence2)
+    ids = [work, edition, passage1, passage2, passage3, source, evidence, evidence2]
     try:
         seed = """
 MERGE (w:Work {id:$work})
@@ -59,6 +63,9 @@ MERGE (a:Passage {id:$p1})
 MERGE (b:Passage {id:$p2})
   ON CREATE SET b.source_ref='Synthetic Multiword Work, Part 1:2',
     b.work_id=$work, b.edition_id=$edition
+MERGE (c:Passage {id:$p3})
+  ON CREATE SET c.source_ref='Synthetic Multiword Work, Part 1:3',
+    c.work_id=$work, c.edition_id=$edition
 MERGE (src:SourceRecord {id:$source})
   ON CREATE SET src.provider='fixture', src.version_id='test-only',
     src.rights_tag='TEST_FIXTURE', src.source_uri='https://example.invalid/test'
@@ -71,13 +78,23 @@ MERGE (ev:Evidence {id:$evidence})
 MERGE (a)-[r:SOURCE_LINK {id:$edge}]->(b)
   ON CREATE SET r.evidence_id=$evidence,
     r.claim_kind='OBSERVED_SOURCE_LINK', r.review_status='unreviewed'
+MERGE (ev2:Evidence {id:$evidence2})
+  ON CREATE SET ev2.claim_kind='OBSERVED_SOURCE_LINK',
+    ev2.review_status='unreviewed', ev2.source_ref='Synthetic Multiword Work, Part 1:2',
+    ev2.source_uri='https://example.invalid/test', ev2.rights_tag='TEST_FIXTURE',
+    ev2.source_record_id=$source, ev2.version_id='test-only',
+    ev2.link_category='synthetic-link'
+MERGE (b)-[r2:SOURCE_LINK {id:$edge2}]->(c)
+  ON CREATE SET r2.evidence_id=$evidence2,
+    r2.claim_kind='OBSERVED_SOURCE_LINK', r2.review_status='unreviewed'
 RETURN w.id AS id
 """
         edition_edge = stable_id("edge", "HAS_EDITION", work, edition, evidence)
         admin.query(seed, {
             "work": work, "edition": edition, "edition_edge": edition_edge,
-            "p1": passage1, "p2": passage2, "source": source,
-            "evidence": evidence, "edge": edge,
+            "p1": passage1, "p2": passage2, "p3": passage3,
+            "source": source, "evidence": evidence, "edge": edge,
+            "evidence2": evidence2, "edge2": edge2,
         })
         with TestClient(create_app()) as http:
             no_auth = http.get("/v1/works")
@@ -126,12 +143,35 @@ RETURN w.id AS id
             verify(http.get("/v1/graph/neighborhood", params={
                 "entity_id": passage1, "depth": 3
             }, headers=headers), 422)
+            # v0.9.1: exercise both fixed path Cypher operations in real,
+            # disposable CI Neo4j, not only mocked graph rows.
+            direct = http.get("/v1/graph/evidence-path", params={
+                "source_id": passage1, "target_id": passage2,
+            }, headers=headers)
+            verify(direct, 200)
+            if (direct.json()["observed_shortest_hops"] != 1 or
+                direct.json()["paths"][0]["edges"][0]["evidence_id"] != evidence):
+                raise RuntimeError("Direct observed path lost exact evidence.")
+            two_hop = http.get("/v1/graph/evidence-path", params={
+                "source_id": passage1, "target_id": passage3,
+            }, headers=headers)
+            verify(two_hop, 200)
+            if (two_hop.json()["observed_shortest_hops"] != 2 or
+                [item["evidence_id"] for item in two_hop.json()["paths"][0]["edges"]]
+                    != [evidence, evidence2]):
+                raise RuntimeError("Two-hop path lost independent evidence chain.")
+            reverse = http.get("/v1/graph/evidence-path", params={
+                "source_id": passage3, "target_id": passage1,
+            }, headers=headers)
+            verify(reverse, 200)
+            if reverse.json()["paths"] or reverse.json()["observed_shortest_hops"] is not None:
+                raise RuntimeError("Directed path incorrectly traversed backwards.")
             status = http.get("/v1/data/status", headers=headers)
             verify(status, 200)
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop evidence paths, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0

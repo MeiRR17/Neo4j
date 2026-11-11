@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.9.1] — 2026-11-11 (DRAFT — evidence-bounded directed path discovery)
+
+- Added a private, authenticated /v1/graph/evidence-path operation with
+  exact canonical source/target passage identifiers, optional 1–10 result
+  window, and strict duplicate/unsupported-parameter denial.
+- Two fixed read-only Cypher statements check direct SOURCE_LINK edges
+  first, then 2-hop directed alternatives only if direct evidence is absent.
+  Matching Evidence nodes are mandatory at each hop; rejected/disputed
+  observations, cycles and duplicate supporting evidence are excluded.
+- Typed responses retain canonical passages, each edge ID and evidence ID,
+  source references, version/rights metadata and both review statuses.
+- Fail closed on invalid direction, unexpected projection, duplicate route,
+  over-budget output or client-supplied query fragments. No text is exposed.
+- Synthetic unit/API denial tests and real isolated Neo4j integration for
+  1-hop, 2-hop and reverse-negative paths. No full-corpus assertions.
+- Explicit limitations: no globally certified shortest path, source rights,
+  consistent graph snapshot or proof of historical influence. Release HOLD.
+
+
 ## [0.9.0] — 2026-11-11 (DRAFT — evidence-linked exploratory analytics)
 
 - Added authenticated /v1/analysis/source-links and
