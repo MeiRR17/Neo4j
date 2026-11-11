@@ -23,8 +23,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.aws_access_surface import (
-    _access_points, _pages, _role, _call, _sha,
-    MAX_ACCESS_POINTS, SAFE_AP,
+    _access_points, _role, _call, _sha, MAX_ACCESS_POINTS,
 )
 from scripts.aws_policy_revision import (
     observe_revision, verify_revision, live_clients,
@@ -248,20 +247,14 @@ def _scan(s3, sts, control, iam, *, account: str, bucket: str,
         role[1] != census["caller_role_arn_sha256"] or
         role[5] != census["caller_role_inventory_sha256"]):
         raise ResourceTrustError("Caller role differs from signed inventory.")
-    before_count, before_hash = _access_points(
-        control, account=account, bucket=bucket)
+    before_count, before_hash, names = _access_points(
+        control, account=account, bucket=bucket, include_names=True)
     if (before_count != census["bucket_access_point_count"] or
         before_hash != census["bucket_access_point_projection_sha256"]):
         raise ResourceTrustError("Access Point enumeration differs from signed census.")
-    points = _pages(
-        control, "list_access_points", "AccessPointList",
-        args={"AccountId": account, "Bucket": bucket},
-        token_key="NextToken", request_token="NextToken",
-        page_size="MaxResults", limit=MAX_ACCESS_POINTS)
-    names = [x.get("Name") if isinstance(x, dict) else None for x in points]
-    if (len(names) != before_count or len(set(names)) != len(names) or
-        any(not isinstance(n, str) or not SAFE_AP.fullmatch(n) for n in names)):
-        raise ResourceTrustError("Access Point policy listing incomplete.")
+    # These names came from the SAME S3Control enumeration whose VPC,
+    # public-policy and bucket projection was just fully validated.
+    # Do not make an independent unbound list call between checks.
     docs = []
     bucket_response = _call(
         s3, "get_bucket_policy", Bucket=bucket, ExpectedBucketOwner=account)
