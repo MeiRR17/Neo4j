@@ -7,7 +7,7 @@ from pathlib import Path
 import tempfile
 from unittest import TestCase
 
-from scripts.analytics_stress_fixture_v097 import CASES, stress_case
+from scripts.analytics_stress_fixture_v097 import CASES, VERSION, stress_case
 from scripts.analytics_stress_gate_v097 import (
     BUDGET, StressGateError, check_synthetic_stress, main,
 )
@@ -62,6 +62,7 @@ def fixture_report():
         })
     return {
         "schema_version": "0.9.7",
+        "fixture_version": VERSION,
         "case_order": list(CASES),
         "case_results": cases,
         "observed_costs_only": True,
