@@ -102,7 +102,12 @@ def prepare_packet(catalog: dict, captures: dict, *, catalog_hash: str,
     result = []
     for case in cases:
         record = index[case["id"]]
-        summary = evaluate_pages(record, {"kind": case["kind"], "labels": {}})
+        try:
+            summary = evaluate_pages(record, {"kind": case["kind"], "labels": {}})
+        except QualityEvidenceError:
+            # Convert the upstream safety-contract failure to our public
+            # workflow error without repeating source properties or text.
+            raise ReviewWorkflowError("Captured search metadata invalid.") from None
         if not summary["search_complete"] or summary["missing_anchors"]:
             raise ReviewWorkflowError("Incomplete search or missing source anchor.")
         all_hits = [hit for page in record["pages"] for hit in page["items"]]
