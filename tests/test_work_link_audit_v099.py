@@ -233,6 +233,17 @@ class AuditLinkTests(unittest.TestCase):
         self.assertIn("/v1/analysis/works/links/audit", openapi["paths"])
         self.assertIn("WorkLinkAuditPage", openapi["components"]["schemas"])
 
+    def test_incident_frequency_anchors_canonical_passage_index(self):
+        # v0.9.9 also repairs a previously unanchored incident-frequency
+        # plan found by the existing v0.9.6 synthetic dbHits regression gate.
+        cypher = READ_OPERATIONS["analysis_frequency_window"]
+        self.assertIn("MATCH (p:Passage {id:$passage_id})", cypher)
+        self.assertIn("USING INDEX p:Passage(id)", cypher)
+        self.assertIn("WITH p\nMATCH (p)-[r:SOURCE_LINK]-(q:Passage)", cypher)
+        self.assertIn("MATCH (ev:Evidence {id:r.evidence_id})", cypher)
+        self.assertIn("ORDER BY edge_id", cypher)
+        self.assertIn("LIMIT $fetch_limit", cypher)
+
     def test_direct_calls_require_bounded_inputs(self):
         for opts in (
             {"source_work_id": LEFT, "target_work_id": LEFT},
