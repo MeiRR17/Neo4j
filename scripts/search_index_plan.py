@@ -209,8 +209,11 @@ def main(argv: list[str] | None = None) -> int:
             print("[HOLD] No indexed range seek observed; do not claim indexing speedup.")
             return 1
         return 0
-    except (PlanEvidenceError, ValueError, OSError) as exc:
-        # Report only a constant safe diagnostic; never print query plans or auth.
+    except PlanEvidenceError as exc:
+        # Only our constant diagnostics; never print server response or input.
+        print("[FAIL] Indexed plan evidence unavailable: " + str(exc))
+        return 1
+    except (ValueError, OSError):
         print("[FAIL] Indexed plan evidence unavailable.")
         return 1
 
