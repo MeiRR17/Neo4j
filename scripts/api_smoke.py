@@ -270,6 +270,46 @@ RETURN w.id AS id
             if (backwards.json()["left_to_right"]["observed_window_denominator"] != 0 or
                     backwards.json()["right_to_left"]["observed_window_denominator"] != 1):
                 raise RuntimeError("Work comparison reversed source direction.")
+            # v0.9.9: authenticated directed and cursor-filtered link audit
+            # against the disposable live Neo4j fixture. No population claim.
+            audit_url = "/v1/analysis/works/links/audit"
+            params = {
+                "source_work_id": work,
+                "target_work_id": other_work,
+                "limit": 1,
+            }
+            first_page = http.get(audit_url, params=params, headers=headers)
+            verify(first_page, 200)
+            page = first_page.json()
+            if (page["schema_version"] != "0.9.9" or
+                    page["observed_window_denominator"] != 1 or
+                    page["links"][0]["edge_id"] != cross_edge or
+                    page["links"][0]["evidence_id"] != cross_evidence or
+                    page["has_more"] is not False or
+                    page["next_cursor"] is not None or
+                    page["snapshot_consistency_verified"] is not False or
+                    page["research_release_status"] != "HOLD"):
+                raise RuntimeError("Live Work-link audit lost Evidence or bounds.")
+            past_cursor = http.get(
+                audit_url, params={**params, "cursor": cross_edge},
+                headers=headers)
+            verify(past_cursor, 200)
+            if (past_cursor.json()["links"] or
+                    past_cursor.json()["observed_window_denominator"] != 0):
+                raise RuntimeError("Audit cursor did not exclude previous edge.")
+            opposite = http.get(
+                audit_url, params={
+                    "source_work_id": other_work,
+                    "target_work_id": work, "limit": 1,
+                }, headers=headers)
+            verify(opposite, 200)
+            if opposite.json()["links"]:
+                raise RuntimeError("Work-link audit silently reversed direction.")
+            for invalid in (
+                {**params, "cursor": other_work},
+                {**params, "rights": "approved"},
+            ):
+                verify(http.get(audit_url, params=invalid, headers=headers), 422)
             # v0.9.4: repeat a fixed metadata-only comparison 20 times on
             # the disposable two-Work fixture; this measures only this
             # synthetic runner and does not certify real-corpus performance.
@@ -311,7 +351,7 @@ RETURN w.id AS id
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, receipt replay, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, keyset link audit, receipt replay, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0
