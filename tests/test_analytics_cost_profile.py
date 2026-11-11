@@ -71,7 +71,7 @@ class FakeOpener:
 
 
 class FakeAdmin:
-    def __init__(self, *, occupied=False, fail_seed=False):
+    def __init__(self, *_unused, occupied=False, fail_seed=False):
         self.calls = []
         self.occupied = occupied
         self.fail_seed = fail_seed
@@ -253,8 +253,8 @@ class AnalyticsBenchmarkTests(TestCase):
     def test_constrained_report_does_not_certify_production(self):
         with patch("scripts.analytics_cost_benchmark.LocalQueryClient", FakeAdmin), \
              patch("scripts.analytics_cost_benchmark.FixedAnalyticsProfiler",
-                   FakeProfiler):
-            data = run_benchmark(sizes=(32, 128))
+                   FakeProfiler), patch.dict(os.environ, {"CI": "true"}):
+            data = run_benchmark(sizes=(32, 128), acknowledged_disposable=True)
         self.assertEqual(data["schema_version"], "0.9.5")
         self.assertEqual([x["size"] for x in data["sizes"]], [32, 128])
         self.assertEqual(data["research_release_status"], "HOLD")
