@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.8.15] — 2026-11-11 (DRAFT — version-pinned S3 API evidence)
+
+- Implemented read-only, credential-gated AWS S3 metadata probing *after* verified
+  v0.8.14 pinned Ed25519 attestation and v0.8.11–13 local receipt/witness chain.
+- HeadObject pins Bucket/Key/VersionId/ExpectedBucketOwner, confirms HTTP 200,
+  exact byte length and a FULL_OBJECT SHA-256 checksum against both signed
+  operator claim and locally retained original bytes. ETag and multipart
+  COMPOSITE checksums are not accepted substitutes.
+- A second version-scoped GetObjectRetention response must independently agree
+  with the HEAD Object Lock mode and unexpired retain-until date.
+- Enforces SigV4/TLS, pinned commercial S3 endpoint and ignored SDK endpoint
+  overrides; never downloads object bodies or mutates archive/retention.
+- Added synthetic denial tests (mismatch, missing checksum, wrong version/owner,
+  bad permissions, expired retention, off-endpoint requests), operator runbook,
+  pinned opt-in boto3 SDK and code-path SVG.
+- Even a successful S3 metadata read does NOT prove immutable history, signer
+  organizational identity, source rights or scholarly release. All such
+  approvals remain FALSE; status HOLD. No production S3 call was made.
+
+
 ## [0.8.14] — 2026-11-11 (DRAFT — pinned external archive-claim signature)
 
 - Added an offline **Ed25519** signature verifier for a separately provided
