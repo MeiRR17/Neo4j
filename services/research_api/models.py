@@ -367,3 +367,66 @@ class SourceLinkAuthorChronology(StrictModel):
     graph_snapshot_isolation_verified: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.9.3: metadata-only two-Work comparison, no verified attribution.
+class WorkComparisonAuthor(StrictModel):
+    id: str
+    date_from_year: int | None
+    date_to_year: int | None
+
+
+class WorkComparisonDescriptor(StrictModel):
+    id: str
+    title: str | None
+    provider_ref: str | None
+    author_sample: list[WorkComparisonAuthor]
+    author_sample_truncated: bool
+    author_metadata_status: Literal["missing", "single", "multiple", "truncated"]
+
+
+class WorkCrossLink(StrictModel):
+    edge_id: str
+    source_passage_id: str
+    target_passage_id: str
+    evidence_id: str
+    edge_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    source_ref: str
+    target_ref: str
+    evidence_source_ref: str | None
+    version_id: str | None
+    rights_tag: str | None
+
+
+class WorkCrossLinkWindow(StrictModel):
+    source_work_id: str
+    target_work_id: str
+    links: list[WorkCrossLink]
+    observed_window_denominator: int = Field(ge=0, le=10)
+    joint_approved_status_links: int = Field(ge=0, le=10)
+    contested_status_links: int = Field(ge=0, le=10)
+    pending_status_links: int = Field(ge=0, le=10)
+    has_more: bool
+
+
+class WorkComparison(StrictModel):
+    schema_version: Literal["0.9.3"] = "0.9.3"
+    left_work: WorkComparisonDescriptor
+    right_work: WorkComparisonDescriptor
+    left_to_right: WorkCrossLinkWindow
+    right_to_left: WorkCrossLinkWindow
+    author_id_overlap_status: Literal[
+        "insufficient_author_metadata",
+        "shared_author_id_observed",
+        "different_author_ids_observed",
+    ]
+    shared_author_ids: list[str]
+    directional_window_limit: int = Field(ge=1, le=10)
+    all_cross_work_links_examined: Literal[False] = False
+    author_attribution_independently_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    graph_snapshot_isolation_verified: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
