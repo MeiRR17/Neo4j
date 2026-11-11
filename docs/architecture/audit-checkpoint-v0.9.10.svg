@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.10 bounded signed audit checkpoint</title>
+<desc id="desc">A private audited Work link page receives a ten-minute HMAC checkpoint. Next request verifies signature, scope and expiry, rereads the previous bounded page and compares its Evidence metadata hash. A changed window returns HTTP 409, a matching one advances. Does not certify graph snapshot or rights.</desc>
+<rect width="1200" height="650" rx="24" fill="#101b2c"/>
+<text x="46" y="58" fill="#f4f8fc" font-family="Arial,sans-serif" font-size="30" font-weight="700">Neo4j v0.9.10 / Signed audit checkpoints</text>
+<text x="46" y="92" fill="#bdcee1" font-family="Arial,sans-serif" font-size="17">Code-derived implementation diagram · not a live screenshot</text>
+<rect x="44" y="140" width="320" height="155" rx="17" fill="#244261" stroke="#89b3db" stroke-width="2"/>
+<text x="64" y="181" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">1 · First audit page</text>
+<text x="64" y="223" fill="#e5f0fc" font-family="Arial,sans-serif" font-size="17">Work A → Work B</text>
+<text x="64" y="259" fill="#e5f0fc" font-family="Arial,sans-serif" font-size="17">1–20 links + lookahead</text>
+<path d="M364 217 H414" stroke="#91c8f5" stroke-width="4"/>
+<rect x="416" y="140" width="340" height="155" rx="17" fill="#175861" stroke="#7ac8b9" stroke-width="2"/>
+<text x="436" y="181" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">2 · HMAC checkpoint</text>
+<text x="436" y="223" fill="#ddf5ed" font-family="Arial,sans-serif" font-size="17">10-minute expiry</text>
+<text x="436" y="259" fill="#ddf5ed" font-family="Arial,sans-serif" font-size="17">Work scope + page hash</text>
+<path d="M756 217 H806" stroke="#91c8f5" stroke-width="4"/>
+<rect x="808" y="140" width="347" height="155" rx="17" fill="#493d60" stroke="#b1a0d8" stroke-width="2"/>
+<text x="828" y="181" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">3 · Verified resume</text>
+<text x="828" y="223" fill="#eee9f8" font-family="Arial,sans-serif" font-size="17">MAC · scope · expiry</text>
+<text x="828" y="259" fill="#eee9f8" font-family="Arial,sans-serif" font-size="17">Re-read prior window</text>
+<path d="M980 297 V345 H607 V377" fill="none" stroke="#91c8f5" stroke-width="4"/>
+<rect x="330" y="383" width="551" height="108" rx="18" fill="#304258" stroke="#99b6d4" stroke-width="2"/>
+<text x="356" y="425" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">4 · Compare evidence metadata digest</text>
+<text x="356" y="463" fill="#e4edf9" font-family="Arial,sans-serif" font-size="17">Only immediately previous page re-observed</text>
+<path d="M330 437 H262 V516" fill="none" stroke="#efa4a2" stroke-width="4"/>
+<path d="M881 437 H952 V516" fill="none" stroke="#8addbb" stroke-width="4"/>
+<rect x="56" y="522" width="437" height="66" rx="15" fill="#634042" stroke="#d7989a" stroke-width="2"/>
+<text x="78" y="564" fill="#ffefed" font-family="Arial,sans-serif" font-size="21" font-weight="700">Changed → HTTP 409 AUDIT_DRIFT</text>
+<rect x="708" y="522" width="447" height="66" rx="15" fill="#205547" stroke="#79cfab" stroke-width="2"/>
+<text x="733" y="564" fill="#e9fff5" font-family="Arial,sans-serif" font-size="21" font-weight="700">Matching → Next bounded page</text>
+<text x="44" y="626" fill="#f9d9ae" font-family="Arial,sans-serif" font-size="18" font-weight="700">One previous page only · No graph-wide snapshot · Rights unverified · HOLD</text>
+</svg>
