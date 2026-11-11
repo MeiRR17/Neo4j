@@ -184,6 +184,11 @@ class BackendPolicyTests(unittest.TestCase):
                 self.assertIn("RETURN R, B\n}", upper)
                 self.assertEqual(upper.count("CALL (A) {"), 1)
                 upper = upper.replace("CALL (A) {", "")
+            elif name == "analysis_frequency_window":
+                self.assertIn("WITH P\nCALL (P) {", upper)
+                self.assertIn("RETURN R\n}", upper)
+                self.assertEqual(upper.count("CALL (P) {"), 1)
+                upper = upper.replace("CALL (P) {", "")
             for forbidden in ["DELETE ", "MERGE ", "CREATE ", "SET ", "LOAD CSV",
                               "APOC.", "CALL ", "DROP ", "REMOVE "]:
                 with self.subTest(name=name, forbidden=forbidden):

@@ -409,7 +409,10 @@ READ_OPERATIONS["analysis_frequency_window"] = """
 MATCH (p:Passage {id:$passage_id})
 USING INDEX p:Passage(id)
 WITH p
-MATCH (p)-[r:SOURCE_LINK]-(q:Passage)
+CALL (p) {
+  MATCH (p)-[r:SOURCE_LINK]-(q:Passage)
+  RETURN r
+}
 WITH r
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL

@@ -246,7 +246,9 @@ class AuditLinkTests(unittest.TestCase):
         cypher = READ_OPERATIONS["analysis_frequency_window"]
         self.assertIn("MATCH (p:Passage {id:$passage_id})", cypher)
         self.assertIn("USING INDEX p:Passage(id)", cypher)
-        self.assertIn("WITH p\nMATCH (p)-[r:SOURCE_LINK]-(q:Passage)", cypher)
+        self.assertIn("WITH p\nCALL (p) {", cypher)
+        self.assertIn("MATCH (p)-[r:SOURCE_LINK]-(q:Passage)", cypher)
+        self.assertIn("RETURN r\n}", cypher)
         self.assertIn("MATCH (ev:Evidence {id:r.evidence_id})", cypher)
         self.assertIn("ORDER BY edge_id", cypher)
         self.assertIn("LIMIT $fetch_limit", cypher)
