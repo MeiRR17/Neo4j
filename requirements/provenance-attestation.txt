@@ -1,0 +1,3 @@
+# v0.8.14 standalone offline archival attestation verifier.
+# Ed25519 public-key verification only; no signer private keys stored.
+cryptography==46.0.4

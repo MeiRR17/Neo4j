@@ -6,6 +6,7 @@ No persisted raw source text, production network call or scholarly approval.
 from __future__ import annotations
 
 import os
+import base64
 from pathlib import Path
 import secrets
 import sys
@@ -16,6 +17,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from fastapi.testclient import TestClient
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 from ingestion.sefaria_links import file_sha256
 from research_graph.ontology import stable_id
@@ -25,6 +28,7 @@ from scripts.search_provenance import observe_provenance
 from scripts.search_revision import observe_projection
 from scripts.source_receipts import MODES, issue_receipt
 from scripts.source_membership import issue_witness, verify_witness
+from scripts.external_archive_attestation import DOMAIN, verify_attestation
 from services.research_api.app import create_app
 from services.research_api.signature import CLIENT_ID, sign_request
 
@@ -75,13 +79,68 @@ def main() -> int:
             record, receipt, FIXTURE, capture, client.fetch, key=client.key)
         verify_witness(
             witness, record, receipt, FIXTURE, capture, key=client.key)
+        # Ephemeral PRIVATE KEY: generated inside isolated CI, never saved,
+        # not an independent real-world archival provider or a release.
+        signer = Ed25519PrivateKey.generate()
+        policy = {
+            "schema_version": "0.8.14",
+            "trust_status": "OPERATOR_PINNED_IDENTITY_NOT_ATTESTED",
+            "signers": [{
+                "signer_id": "ci_archival_fixture",
+                "role": "archive_operator",
+                "archive_namespace": "ci_synthetic_archive",
+                "ed25519_public_key_b64": base64.b64encode(
+                    signer.public_key().public_bytes(
+                        Encoding.Raw, PublicFormat.Raw)).decode("ascii"),
+            }],
+        }
+        archive_report = {
+            "schema_version": "0.8.14",
+            "provider": "s3_object_lock",
+            "bucket": "ci-synthetic-archive",
+            "object_key": "fixture/links0.csv",
+            "version_id": "synthetic-ci-object-version",
+            "content_sha256": receipt["observed_raw_file_sha256"],
+            "content_length": receipt["observed_file_size_bytes"],
+            "object_lock_mode": "COMPLIANCE",
+            "retain_until_utc": "2028-01-01T00:00:00Z",
+            "evidence_origin": "operator_supplied_unverified",
+        }
+        statement = {
+            "schema_version": "0.8.14",
+            "purpose": "archival_operator_attests_report_claim",
+            "signer_id": "ci_archival_fixture",
+            "archive_namespace": "ci_synthetic_archive",
+            "source_record_id": ident,
+            "source_receipt_sha256": digest(encode(receipt)),
+            "source_witness_sha256": digest(encode(witness)),
+            "capture_manifest_sha256": digest(encode(capture)),
+            "archive_report_sha256": digest(encode(archive_report)),
+            "issued_at_utc": "2026-11-11T12:00:00Z",
+            "provider_identity_independently_verified": False,
+            "source_rights_verified": False,
+            "research_release_status": "HOLD",
+        }
+        signed = {
+            "statement": statement,
+            "signature_b64": base64.b64encode(
+                signer.sign(DOMAIN + encode(statement))).decode("ascii"),
+        }
+        attestation_result = verify_attestation(
+            policy, archive_report, signed, source_record=record,
+            receipt=receipt, witness=witness, capture=capture,
+            source_file=FIXTURE, local_key=client.key)
+        if (attestation_result["pinned_key_signature_valid"] is not True or
+            attestation_result["external_archive_immutability_verified"] is not False or
+            attestation_result["research_release_status"] != "HOLD"):
+            raise RuntimeError("Signed synthetic archival claim promoted trust.")
         if (witness["source_record_id"] != ident or
             witness["research_release_status"] != "HOLD" or
             witness["independent_provider_signature_verified"] is not False or
             witness["cross_request_snapshot_isolation"] is not False):
             raise RuntimeError("Source membership overclaimed independent trust.")
-    print("[OK] Captured signed source membership in isolated CI graph; "
-          "external verification pending; HOLD.")
+    print("[OK] Signed source membership and synthetic Ed25519 archive claim "
+          "against isolated CI Neo4j; external immutability unverified; HOLD.")
     return 0
 
 
