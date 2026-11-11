@@ -97,8 +97,10 @@ def inspect_plan_response(body: object, *, kind: str, profile: bool) -> dict:
             raise PlanEvidenceError("Malformed Cypher operator.")
         # Neo4j's server suffix (e.g. @neo4j) is not an input selector.
         name = operator.split("@", 1)[0]
+        # Neo4j also uses punctuation in some legitimate operator names.
+        # Unknown names are grouped, never copied into logs or responses.
         if not name.isascii() or not name.replace("_", "").isalnum():
-            raise PlanEvidenceError("Malformed Cypher operator name.")
+            name = "OtherOperator"
         ops.append(name)
         details = args.get("Details", "")
         if not isinstance(details, str):
