@@ -1,0 +1,143 @@
+{
+  "schema_version": "0.8.7",
+  "responses": [
+    {
+      "id": "q-he-001",
+      "pages": [
+        {
+          "schema_version": "0.8.2",
+          "kind": "works",
+          "items": [
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000001",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 1",
+              "source_anchor": "SYNTHETIC:WORK:1",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000002",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 2",
+              "source_anchor": "SYNTHETIC:WORK:2",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000003",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 3",
+              "source_anchor": "SYNTHETIC:WORK:3",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000004",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 4",
+              "source_anchor": "SYNTHETIC:WORK:4",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000005",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 5",
+              "source_anchor": "SYNTHETIC:WORK:5",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            }
+          ],
+          "search_complete": true,
+          "has_more": false,
+          "next_cursor": null
+        }
+      ]
+    },
+    {
+      "id": "q-en-001",
+      "pages": [
+        {
+          "schema_version": "0.8.3",
+          "kind": "works",
+          "items": [
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000006",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 6",
+              "source_anchor": "SYNTHETIC:WORK:6",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000007",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 7",
+              "source_anchor": "SYNTHETIC:WORK:7",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000008",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 8",
+              "source_anchor": "SYNTHETIC:WORK:8",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:0000000000000000000000000000000000000000000000000000000000000009",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 9",
+              "source_anchor": "SYNTHETIC:WORK:9",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            },
+            {
+              "id": "work:000000000000000000000000000000000000000000000000000000000000000a",
+              "kind": "work",
+              "title": "SYNTHETIC WORK 10",
+              "source_anchor": "SYNTHETIC:WORK:10",
+              "match_basis": "title",
+              "review_status": "unreviewed",
+              "source_verification": "NOT_VERIFIED",
+              "rights_status": "NOT_ASSESSED",
+              "text_available": false
+            }
+          ],
+          "search_complete": true,
+          "has_more": false,
+          "next_cursor": null
+        }
+      ]
+    }
+  ]
+}

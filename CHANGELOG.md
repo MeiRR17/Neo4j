@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.8.7] — 2026-11-11 (DRAFT — frozen research search-quality evaluation)
+
+- Added an offline, deterministic evaluation CLI for versioned frozen judgment
+  files and complete v0.8.2/v0.8.3 metadata-only search page captures.
+- Computes Precision@5 over **explicit** 0/1 relevance labels, with five
+  positions in the denominator and transparent eligible-query counts.
+- Blocks inflated quality claims when pagination is incomplete, top-five hits
+  are unjudged, canonical IDs duplicate, required source anchors are missing,
+  or review/source-safety contracts are violated.
+- Produces reproducible input SHA256 hashes and safe diagnostics without
+  printing queries, titles, record IDs, excerpts or license-sensitive text.
+- Adds small Hebrew/English **synthetic-only** test fixtures and CI smoke;
+  cannot manufacture 50 genuine reviewed research questions.
+- Independent review not verified and release always HOLD; DvirOS RBAC,
+  scholarly sources/rights and representative 50-question scoring remain open.
+
+
 ## [0.8.6] — 2026-11-11 (DRAFT — bounded index query-plan evidence)
 
 - Added a local-loopback-only `EXPLAIN`/opt-in `PROFILE` CLI for the exact

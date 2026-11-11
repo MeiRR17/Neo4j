@@ -1,0 +1,82 @@
+{
+  "schema_version": "0.8.7",
+  "dataset_kind": "synthetic",
+  "queries": [
+    {
+      "id": "q-he-001",
+      "kind": "works",
+      "query": "ספר סינתטי",
+      "language": "he",
+      "judgments": [
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000001",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:1"
+        },
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000002",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:2"
+        },
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000003",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:3"
+        },
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000004",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:4"
+        },
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000005",
+          "relevance": 0,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:5"
+        }
+      ]
+    },
+    {
+      "id": "q-en-001",
+      "kind": "works",
+      "query": "synthetic title",
+      "language": "en",
+      "judgments": [
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000006",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:6"
+        },
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000007",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:7"
+        },
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000008",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:8"
+        },
+        {
+          "id": "work:0000000000000000000000000000000000000000000000000000000000000009",
+          "relevance": 1,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:9"
+        },
+        {
+          "id": "work:000000000000000000000000000000000000000000000000000000000000000a",
+          "relevance": 0,
+          "reviewer_id": "SYNTHETIC_FIXTURE",
+          "evidence_ref": "SYNTHETIC:REVIEW:10"
+        }
+      ]
+    }
+  ]
+}

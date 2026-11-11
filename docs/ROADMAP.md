@@ -79,6 +79,10 @@ The existing main branch contains README.md, docker-compose.yml, one Sefaria Pyt
 **Changes:** search on Hebrew and English titles/aliases, diacritic and punctuation normalization without losing canonical IDs, lexical passage index where licensed; filters for author, work, period, concept, text version, link status and evidence type. Saved filters in DvirOS.  
 **Acceptance:** 50 frozen research questions evaluated by reviewer; target precision@5 >= 0.80 on annotated pilot set, with failure analysis; every result includes precise anchor. **Depends:** v0.7.0.
 
+### v0.8.7 — Offline quality-evaluation harness (DRAFT)
+**Implemented foundation:** bounded frozen judgment/capture evaluator, explicit Precision@5 over judged top-five results, source-anchor and pagination-completeness checks, synthetic-only CI fixture, and reproducible SHA256 evidence hashes.
+**Remaining acceptance:** collect and adjudicate 50 genuine independently reviewed Jewish-philosophy questions, verify authorized source anchors and rights, produce representative query metrics and obtain a separately authorized human sign-off. This version does **not** satisfy the v0.8.0 research-quality release gate.
+
 ### v0.9.0 — Research-grade graph analytics [P1; 2 cycles]
 **Changes:** five original questions rewritten as versioned, parameterized API analyses; shortest path with edge provenance; centrality as frequency measure not authority; co-citation as hypothesis; chronology constraints; author/work/period comparisons; analysis results include definition and limitations.  
 **Acceptance:** 100+ gold-set links and at least 20 manually checked analytical examples; no assertion of influence without supported temporal/primary evidence; performance tests with published fixture sizes. **Depends:** v0.8.0.
