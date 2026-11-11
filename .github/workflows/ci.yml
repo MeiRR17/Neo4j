@@ -102,6 +102,35 @@ jobs:
         run: |
           python scripts/api_bootstrap.py
           python scripts/api_smoke.py
+      - name: Bounded synthetic graph cost profiles (32 and 128 SOURCE_LINK records)
+        run: |
+          mkdir -p local_staging
+          python scripts/analytics_cost_benchmark.py \
+            --ack-disposable-fixture > local_staging/analytics-cost-v095.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("local_staging/analytics-cost-v095.json").read_text())
+          assert report["schema_version"] == "0.9.5"
+          assert report["research_release_status"] == "HOLD"
+          assert report["real_corpus_benchmarked"] is False
+          assert report["representative_performance_proven"] is False
+          assert [case["size"] for case in report["sizes"]] == [32, 128]
+          assert all(len(case["operation_profiles"]) == 4 for case in report["sizes"])
+          for case in report["sizes"]:
+              for plan in case["operation_profiles"]:
+                  assert plan["source_values_exposed"] is False
+                  assert plan["representative_performance_proven"] is False
+          print("[OK] Isolated 32/128-link cost evidence verified; "
+                "report artifact contains no rows, credentials or text.")
+          PY
+      - name: Retain sanitized synthetic analytics cost evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-cost-v095-synthetic
+          path: local_staging/analytics-cost-v095.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Plan, apply and verify metadata-only search index (isolated CI)
         run: |
           python scripts/search_index_backfill.py dry-run --kind works

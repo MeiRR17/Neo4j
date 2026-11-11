@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.9.5] — 2026-11-11 (DRAFT — deterministic synthetic graph cost fixtures)
+
+- Added deterministic 32- and 128-edge benchmark datasets spanning two
+  synthetic Works, two synthetic authors and one matching Evidence node
+  per SOURCE_LINK; stable fixture digests with enumerated cleanup IDs.
+- Added CI-only, opt-in seeded benchmark runner; checks IDs are absent
+  before creating anything, then profiles four fixed read-only graph
+  analyses three times per size and removes only synthetic fixture IDs.
+- Added strict, bounded PROFILE response inspector: operators and dbHits
+  only, no plan Details or raw graph results. Records descriptive median
+  / nearest-rank p95 HTTP time with explicit nonrepresentative flags.
+- Added 11 unit/security tests for fixture determinism, query injection,
+  malformed profile metadata, cost caps, CI guard and cleanup paths.
+- CI retains a validated small sanitized JSON artifact for seven days.
+  No performance SLO, corpus quality, rights or production claim. HOLD.
+
+
 ## [0.9.4] — 2026-11-11 (DRAFT — bounded comparison receipts / replay evidence)
 
 - Added a private authenticated Work-comparison receipt endpoint returning
