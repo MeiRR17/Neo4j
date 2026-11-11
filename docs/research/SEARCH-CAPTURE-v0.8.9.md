@@ -68,3 +68,11 @@ and release_status=HOLD. The tool cannot establish source licensing, corpus
 revision stability, a complete real gold set or the expertise of reviewers.
 The existing 50-question, 0.80 Precision@5 and human-signoff release gates
 remain pending. Synthetic tests exercise code, not real scholar evaluations.
+
+## Isolated integration validation
+
+CI also runs scripts/capture_smoke.py **after** the signed DvirOS bridge
+and indexed metadata backfill. It uses the actual disposable Neo4j database
+and the real signed HTTP request handler, routed through an in-process local
+FastAPI TestClient, to capture and verify both scan and indexed-prefix pages.
+No production network address is contacted and no review records are created.

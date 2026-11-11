@@ -8,6 +8,8 @@
   and per-page/request/response budgets; never falls back to weaker search.
 - Writes v0.8.7-compatible frozen responses and a locally HMAC-authenticated
   trace of request targets, cursors and page responses to private 0600 files.
+- Added a signed FastAPI-to-real-Neo4j integration smoke for both scan and
+  indexed-prefix paths, with only disposable synthetic data and no files.
 - Added a standalone offline verifier, negative tests for unsafe source
   fields, tampering, incorrect pagination, remote hosts and auth denials.
 - Documentation distinguishes local-client integrity from server attestation;

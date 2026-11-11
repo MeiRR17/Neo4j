@@ -101,6 +101,8 @@ jobs:
         run: |
           python scripts/api_signature_bootstrap.py
           python scripts/bridge_smoke.py
+      - name: Signed metadata snapshot capture against real CI Neo4j
+        run: python scripts/capture_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
       - name: Stop local test environment
