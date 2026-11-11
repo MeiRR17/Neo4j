@@ -212,6 +212,55 @@ jobs:
             local_staging/analytics-stress-gate-v097.json
           if-no-files-found: error
           retention-days: 7
+      - name: Profile unrelated-Work distractor isolation (128 selected plus 0/128/512 unrelated)
+        run: |
+          python scripts/analytics_distractor_v098.py \
+            --ack-disposable-fixture > local_staging/analytics-distractors-v098.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from scripts.analytics_distractor_fixture_v098 import CASES
+          doc = json.loads(Path("local_staging/analytics-distractors-v098.json").read_text())
+          assert doc["schema_version"] == "0.9.8"
+          assert doc["case_order"] == list(CASES)
+          assert doc["fixed_selected_source_links"] == 128
+          assert [case["distractor_source_link_count"] for case in doc["case_results"]] == [0, 128, 512]
+          assert all(case["work_count"] == 4 and len(case["operations"]) == 4 for case in doc["case_results"])
+          assert all(metric["source_values_disclosed"] is False and metric["samples"] == 3
+                     for case in doc["case_results"] for metric in case["operations"])
+          assert doc["research_release_status"] == "HOLD"
+          assert doc["new_cost_gate_enforced"] is False
+          assert doc["representative_performance_proven"] is False
+          print("[OK] Three four-Work selectivity fixtures, 36 sanitized PROFILE observations; "
+                "synthetic diagnostic only, not production validation.")
+          PY
+      - name: Enforce unrelated-Work selectivity and query-cost budgets
+        run: |
+          python scripts/analytics_distractor_gate_v098.py \
+            --input local_staging/analytics-distractors-v098.json \
+            --output local_staging/analytics-distractor-gate-v098.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          summary = json.loads(Path("local_staging/analytics-distractor-gate-v098.json").read_text())
+          assert summary["schema_version"] == "0.9.8"
+          assert summary["synthetic_selectivity_gate_passed"] is True
+          assert summary["fixed_fixture_budget_enforced"] is True
+          assert summary["maximum_interference_ratio"] == 1.25
+          assert summary["production_slo_verified"] is False
+          assert summary["research_release_status"] == "HOLD"
+          print("[OK] Four-Work synthetic selectivity gate passed; "
+                "not a production SLO, source authenticity or scholarly approval.")
+          PY
+      - name: Archive sanitized four-Work distractor selectivity measurements
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-distractors-v098-synthetic
+          path: |
+            local_staging/analytics-distractors-v098.json
+            local_staging/analytics-distractor-gate-v098.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Plan, apply and verify metadata-only search index (isolated CI)
         run: |
           python scripts/search_index_backfill.py dry-run --kind works

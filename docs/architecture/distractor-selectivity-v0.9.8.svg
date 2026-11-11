@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 620" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.8 four-Work distractor selectivity implementation</title>
+<desc id="desc">A CI-only study holds 128 observed links between two Works constant while adding zero, 128 or 512 unrelated links between two separate Works. Each case uses fixed read-only PROFILE queries and sanitized observations, then exact cleanup. The study neither uses nor certifies scholarly source data or production performance.</desc>
+<rect width="1180" height="620" rx="20" fill="#111b2c"/>
+<text x="40" y="57" font-family="Arial,sans-serif" fill="#f2f7ff" font-size="28" font-weight="700">Neo4j v0.9.8 | Distractor isolation</text>
+<text x="40" y="87" font-family="Arial,sans-serif" fill="#b6c8df" font-size="16">Code-derived schematic — not a live application screenshot</text>
+<rect x="38" y="134" width="342" height="234" rx="16" fill="#1c4e61" stroke="#85bfd3" stroke-width="2"/>
+<text x="58" y="174" font-family="Arial,sans-serif" fill="#ffffff" font-size="21" font-weight="700">Selected Work pair</text>
+<text x="58" y="212" font-family="Arial,sans-serif" fill="#d7eff7" font-size="18">Work A   ⇄   Work B</text>
+<text x="58" y="249" font-family="Arial,sans-serif" fill="#d7eff7" font-size="17">128 SOURCE_LINK edges</text>
+<text x="58" y="284" font-family="Arial,sans-serif" fill="#d7eff7" font-size="17">Exact Evidence per link</text>
+<text x="58" y="325" font-family="Arial,sans-serif" fill="#b4f4da" font-size="19" font-weight="700">Kept constant</text>
+<rect x="417" y="134" width="338" height="234" rx="16" fill="#3a465e" stroke="#b8c5d6" stroke-width="2"/>
+<text x="438" y="174" font-family="Arial,sans-serif" fill="#ffffff" font-size="21" font-weight="700">Unrelated Work pair</text>
+<text x="438" y="212" font-family="Arial,sans-serif" fill="#e3ebf8" font-size="18">Work C   ⇄   Work D</text>
+<text x="438" y="256" font-family="Arial,sans-serif" fill="#e3ebf8" font-size="19">0  →  128  →  512 links</text>
+<text x="438" y="300" font-family="Arial,sans-serif" fill="#e3ebf8" font-size="17">No shared Passages</text>
+<text x="438" y="334" font-family="Arial,sans-serif" fill="#e3ebf8" font-size="17">No shared Evidence</text>
+<rect x="790" y="134" width="350" height="234" rx="16" fill="#55402e" stroke="#dbb37f" stroke-width="2"/>
+<text x="811" y="174" font-family="Arial,sans-serif" fill="#fff" font-size="21" font-weight="700">Read-only PROFILE</text>
+<text x="811" y="218" font-family="Arial,sans-serif" fill="#ffe8c7" font-size="18">4 fixed query operations</text>
+<text x="811" y="260" font-family="Arial,sans-serif" fill="#ffe8c7" font-size="18">3 repeats × 3 fixtures</text>
+<text x="811" y="300" font-family="Arial,sans-serif" fill="#ffe8c7" font-size="18">36 cost observations</text>
+<text x="811" y="340" font-family="Arial,sans-serif" fill="#ffe8c7" font-size="17">No source records</text>
+<path d="M380 252 H410" stroke="#9fd4ec" stroke-width="4"/>
+<path d="M755 252 H784" stroke="#9fd4ec" stroke-width="4"/>
+<path d="M964 368 V414 H591 V433" stroke="#9fd4ec" stroke-width="4" fill="none"/>
+<rect x="182" y="438" width="825" height="105" rx="15" fill="#25465a" stroke="#83afbf" stroke-width="2"/>
+<text x="208" y="477" font-family="Arial,sans-serif" fill="#fff" font-size="20" font-weight="700">Sanitized cost comparison and exact fixture cleanup</text>
+<text x="208" y="514" font-family="Arial,sans-serif" fill="#d6eaf4" font-size="17">1,102 dbHits in every case  ·  Ratio 1.0  ·  7-day artifact  ·  no production claim</text>
+<text x="40" y="589" font-family="Arial,sans-serif" fill="#f9d6a8" font-size="18" font-weight="700">v0.9.8 selectivity gate <=1.25x; prior cost guards unchanged. Research release: HOLD.</text>
+</svg>
