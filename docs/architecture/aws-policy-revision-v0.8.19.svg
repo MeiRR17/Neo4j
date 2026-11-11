@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="476" viewBox="0 0 1160 476" role="img" aria-label="Neo4j v0.8.19 IAM policy revision and blind spot checks">
+<rect width="1160" height="476" rx="24" fill="#0c1729"/>
+<text x="32" y="51" fill="#f8fafc" font-family="Arial,sans-serif" font-size="29" font-weight="bold">Neo4j v0.8.19 · IAM/SCP revision guards</text>
+<text x="32" y="78" fill="#a5b4ca" font-family="Arial,sans-serif" font-size="15">Code-derived architecture · not an AWS console or production screenshot</text>
+<g text-anchor="middle" font-family="Arial,sans-serif">
+<rect x="25" y="132" width="258" height="147" rx="14" fill="#192d47" stroke="#60a5fa" stroke-width="2"/>
+<text x="154" y="172" fill="#fff" font-size="19" font-weight="bold">Signed v0.8.18 audit</text>
+<text x="154" y="204" fill="#cbd5e1" font-size="14">IAM + SCP attachments</text>
+<text x="154" y="231" fill="#cbd5e1" font-size="14">Document projection SHA256</text>
+<text x="154" y="256" fill="#cbd5e1" font-size="13">HMAC + source chain</text>
+<rect x="313" y="132" width="254" height="147" rx="14" fill="#192d47" stroke="#a78bfa" stroke-width="2"/>
+<text x="440" y="172" fill="#fff" font-size="19" font-weight="bold">Two full re-read rounds</text>
+<text x="440" y="204" fill="#cbd5e1" font-size="14">GetPolicy → Version → GetPolicy</text>
+<text x="440" y="231" fill="#cbd5e1" font-size="14">Inline IAM + inherited SCPs</text>
+<text x="440" y="256" fill="#cbd5e1" font-size="13">Reject version/content drift</text>
+<rect x="597" y="132" width="260" height="147" rx="14" fill="#192d47" stroke="#fbbf24" stroke-width="2"/>
+<text x="727" y="172" fill="#fff" font-size="19" font-weight="bold">Condition review flags</text>
+<text x="727" y="204" fill="#cbd5e1" font-size="14">IfExists · Null · ForAnyValue</text>
+<text x="727" y="231" fill="#cbd5e1" font-size="14">Network / principal context</text>
+<text x="727" y="256" fill="#cbd5e1" font-size="13">Unreviewed paths enumerated</text>
+<rect x="887" y="132" width="247" height="147" rx="14" fill="#192d47" stroke="#34d399" stroke-width="2"/>
+<text x="1010" y="172" fill="#fff" font-size="19" font-weight="bold">Private report</text>
+<text x="1010" y="204" fill="#cbd5e1" font-size="14">Counters + SHA256 + HMAC</text>
+<text x="1010" y="231" fill="#cbd5e1" font-size="14">Offline integrity check</text>
+<text x="1010" y="256" fill="#cbd5e1" font-size="13">Research HOLD</text>
+</g>
+<g stroke="#9ca3af" stroke-width="3"><path d="M283 205h24"/><path d="M567 205h24"/><path d="M857 205h24"/></g>
+<g fill="#9ca3af"><path d="M307 205l-9 -6v12z"/><path d="M591 205l-9 -6v12z"/><path d="M881 205l-9 -6v12z"/></g>
+<rect x="25" y="319" width="1109" height="119" rx="14" fill="#1b304a" stroke="#435774"/>
+<text x="48" y="352" fill="#f8fafc" font-family="Arial,sans-serif" font-weight="bold" font-size="20">Important: repeated metadata reads ≠ effective AWS permissions</text>
+<text x="48" y="382" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="15">Role trust, session &amp; resource policies, cross-account grants, and condition semantics are unverified.</text>
+<text x="48" y="411" fill="#fda4af" font-family="Arial,sans-serif" font-size="14">CI uses synthetic AWS mocks only; no live account, rights approval or research release.</text>
+</svg>
