@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.8.9] — 2026-11-11 (DRAFT — signed localhost search capture)
+
+- Added an opt-in localhost-only research metadata capture tool using the
+  existing DvirOS bearer authentication and fresh HMAC signature per GET.
+- Uses fixed API routes, schema constraints, strict canonical cursor checks
+  and per-page/request/response budgets; never falls back to weaker search.
+- Writes v0.8.7-compatible frozen responses and a locally HMAC-authenticated
+  trace of request targets, cursors and page responses to private 0600 files.
+- Added a standalone offline verifier, negative tests for unsafe source
+  fields, tampering, incorrect pagination, remote hosts and auth denials.
+- Documentation distinguishes local-client integrity from server attestation;
+  production use, source rights, reviewer identities and scholarly quality
+  remain unapproved, release HOLD.
+
+
 ## [0.8.8] — 2026-11-11 (DRAFT — private dual-review preparation)
 
 - Built offline, non-destructive commands to prepare bounded review packets

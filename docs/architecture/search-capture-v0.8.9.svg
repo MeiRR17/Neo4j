@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1050" height="435" viewBox="0 0 1050 435" role="img" aria-label="v0.8.9 signed localhost capture code diagram">
+<rect width="1050" height="435" rx="24" fill="#111827"/>
+<text x="36" y="51" fill="#f9fafb" font-size="27" font-weight="bold" font-family="Arial,sans-serif">Neo4j v0.8.9 · Signed metadata capture</text>
+<text x="36" y="77" fill="#a8b4c7" font-size="15" font-family="Arial,sans-serif">Code-derived flow · not a screenshot of production</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="30" y="121" width="223" height="139" rx="12" fill="#1f2937" stroke="#60a5fa" stroke-width="2"/>
+<text x="141" y="158" fill="white" font-size="19" font-weight="bold">Frozen questions</text>
+<text x="141" y="186" fill="#d1d5db" font-size="14">Fixed kind + query</text>
+<text x="141" y="213" fill="#d1d5db" font-size="14">0.8.8 catalog</text>
+<rect x="291" y="121" width="222" height="139" rx="12" fill="#1f2937" stroke="#a78bfa" stroke-width="2"/>
+<text x="402" y="158" fill="white" font-size="19" font-weight="bold">Signed API GET</text>
+<text x="402" y="186" fill="#d1d5db" font-size="14">Bearer + HMAC + nonce</text>
+<text x="402" y="213" fill="#d1d5db" font-size="14">127.0.0.1 · no proxy</text>
+<rect x="551" y="121" width="222" height="139" rx="12" fill="#1f2937" stroke="#fbbf24" stroke-width="2"/>
+<text x="662" y="158" fill="white" font-size="19" font-weight="bold">Validate pages</text>
+<text x="662" y="186" fill="#d1d5db" font-size="14">Cursor continuity</text>
+<text x="662" y="213" fill="#d1d5db" font-size="14">No text · budgeted</text>
+<rect x="810" y="121" width="208" height="139" rx="12" fill="#1f2937" stroke="#34d399" stroke-width="2"/>
+<text x="914" y="158" fill="white" font-size="19" font-weight="bold">Private evidence</text>
+<text x="914" y="186" fill="#d1d5db" font-size="14">0.8.7 snapshot</text>
+<text x="914" y="213" fill="#d1d5db" font-size="14">0.8.9 HMAC trace</text>
+</g>
+<path d="M253 190h34 M513 190h34 M773 190h33" stroke="#9ca3af" stroke-width="3"/>
+<g fill="#9ca3af"><path d="M287 190l-9 -6v12z"/><path d="M547 190l-9 -6v12z"/><path d="M806 190l-9 -6v12z"/></g>
+<rect x="30" y="300" width="988" height="98" rx="12" fill="#20304a" stroke="#475569"/>
+<text x="54" y="334" fill="#fff" font-family="Arial,sans-serif" font-size="18" font-weight="bold">Release: HOLD</text>
+<text x="54" y="362" fill="#d1d5db" font-family="Arial,sans-serif" font-size="15">Signed client manifest is not server attestation, source-rights approval or human review.</text>
+<text x="54" y="382" fill="#fda4af" font-family="Arial,sans-serif" font-size="14">Production data not collected; scholarly acceptance remains pending.</text>
+</svg>
