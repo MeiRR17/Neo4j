@@ -25,6 +25,7 @@ from services.research_api.models import (
     Concept, ErrorResponse, EvidenceLink, Neighborhood, Page, Passage, Person, Readiness,
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
     IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
+    SourceLinkFrequency, SourceLinkAuthorChronology,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -34,6 +35,7 @@ from services.research_api.search_index import search_indexed_metadata, indexed_
 from services.research_api.provenance import provenance_page, KINDS as PROVENANCE_KINDS
 from services.research_api.analytics import analysis_page
 from services.research_api.evidence_paths import evidence_path_page
+from services.research_api.metric_chronology import link_frequency, author_chronology
 
 
 security = HTTPBearer(auto_error=False)
@@ -331,6 +333,36 @@ def create_app(*, backend=None, token_path: Path | None = None,
             raise_http(422)
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/analysis/metrics/link-frequency",
+             response_model=SourceLinkFrequency, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def source_link_frequency(request: Request, passage_id: str = Query(...)):
+        # Fixed first-50 ordered observation, never unbounded centrality.
+        names = [name for name, _ in request.query_params.multi_items()]
+        if names != ["passage_id"]:
+            raise_http(422)
+        try:
+            return link_frequency(store, passage_id=passage_id)
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/analysis/chronology/author-lifetimes",
+             response_model=SourceLinkAuthorChronology, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def source_link_author_chronology(request: Request,
+                                     source_id: str = Query(...),
+                                     target_id: str = Query(...)):
+        # Dates compare metadata only for an eligible direct observed link.
+        names = [name for name, _ in request.query_params.multi_items()]
+        if (len(names) != len(set(names)) or
+                set(names) != {"source_id", "target_id"}):
+            raise_http(422)
+        try:
+            return author_chronology(
+                store, source_id=source_id, target_id=target_id)
         except (ValueError, TypeError):
             raise_http(422)
 
