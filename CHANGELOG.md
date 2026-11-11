@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.8.20] — 2026-11-11 (DRAFT — bounded S3 resource and role trust policy shapes)
+
+- Added opt-in, read-only S3 GetBucketPolicy, S3Control
+  GetAccessPointPolicy for each previously inventoried bucket Access Point,
+  and IAM GetRole AssumeRolePolicyDocument for the authenticated caller.
+- Validates policy JSON including principals, NotPrincipal, actions,
+  resources and conditions with strict size/cursor/identity bounds.
+  Detects explicit foreign-account AWS principals, wildcard principals,
+  service/federated principals, conditions and assume-role action shapes;
+  these are **structural flags**, NOT evidence that any cross-account
+  request will be allowed by AWS.
+- Binds the policy set to the v0.8.19 HMAC-authenticated role and
+  VPC-scoped Access Point inventory; requires two matching complete reads,
+  repeating Access Point count/hash and caller IAM role metadata each time.
+  Missing policy permissions, unexpected policy data and content drift
+  fail closed, never silently reporting zero policies.
+- Issues digest-only, mode-0600 private HMAC report and offline
+  verification. No raw bucket names, principal ARNs, policy content,
+  credentials, or source text is saved.
+- Explicit remaining blind spots include IAM/session, organization RCP,
+  VPC endpoint, Multi-Region/Object Lambda and cross-account policies.
+  Effective permissions, provider identity, licensing and release
+  remain unverified / HOLD. Synthetic-only AWS unit tests and isolated
+  real Neo4j source-chain smoke; no live AWS requests in CI.
+
+
 ## [0.8.19] — 2026-11-11 (DRAFT — policy revision recheck and structural condition indicators)
 
 - Added a read-only, bounded second-pass IAM/SCP policy document inspection

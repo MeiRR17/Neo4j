@@ -146,7 +146,8 @@ def _pab(data: object) -> None:
         raise AccessAuditError("Account public-access block is not complete.")
 
 
-def _access_points(s3control, *, account: str, bucket: str) -> tuple[int, str]:
+def _access_points(s3control, *, account: str, bucket: str,
+                   include_names: bool = False) -> tuple:
     _pab(_call(s3control, "get_public_access_block", AccountId=account))
     points = _pages(
         s3control, "list_access_points", "AccessPointList",
@@ -184,7 +185,11 @@ def _access_points(s3control, *, account: str, bucket: str) -> tuple[int, str]:
             "policy_nonpublic": True, "account_block_all_four": True,
         })
     summaries.sort(key=lambda x: x["name_sha256"])
-    return len(summaries), digest(encode(summaries))
+    summary = (len(summaries), digest(encode(summaries)))
+    # v0.8.20: return names ONLY to the in-memory policy scanner that
+    # just authenticated their bounded S3Control metadata. Names are
+    # NEVER written to the HMAC audit report.
+    return (*summary, sorted(names)) if include_names else summary
 
 
 def _role(iam, sts, *, account: str, include_entries: bool = False) -> tuple:

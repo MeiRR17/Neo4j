@@ -58,6 +58,8 @@ jobs:
         run: PYTHONPATH=scripts python -m unittest tests.test_aws_policy_documents -v
       - name: IAM/SCP default-version drift, condition blind spots (mocked only)
         run: PYTHONPATH=scripts python -m unittest tests.test_aws_policy_revision -v
+      - name: Bucket, Access Point, and IAM role trust policies (synthetic only)
+        run: PYTHONPATH=scripts python -m unittest tests.test_aws_resource_trust -v
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
@@ -125,7 +127,7 @@ jobs:
         run: python scripts/capture_smoke.py
       - name: Retained synthetic source bytes versus live signed SourceRecord
         run: python scripts/source_receipt_smoke.py
-      - name: Complete captured source chain with mocked AWS policy revisions
+      - name: Complete captured source chain with synthetic S3 resource/trust policies
         run: python scripts/source_membership_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
