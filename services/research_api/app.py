@@ -26,6 +26,7 @@ from services.research_api.models import (
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
     IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
     SourceLinkFrequency, SourceLinkAuthorChronology, WorkComparison,
+    WorkComparisonReceipt,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -37,6 +38,7 @@ from services.research_api.analytics import analysis_page
 from services.research_api.evidence_paths import evidence_path_page
 from services.research_api.metric_chronology import link_frequency, author_chronology
 from services.research_api.work_comparison import compare_works
+from services.research_api.comparison_receipts import comparison_receipt
 
 
 security = HTTPBearer(auto_error=False)
@@ -335,6 +337,27 @@ def create_app(*, backend=None, token_path: Path | None = None,
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
         except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/analysis/works/compare/receipt",
+             response_model=WorkComparisonReceipt, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def receipt_work_comparison(request: Request,
+                                left_work_id: str = Query(...),
+                                right_work_id: str = Query(...),
+                                limit: int = Query(default=10, ge=1, le=10)):
+        names = [name for name, _ in request.query_params.multi_items()]
+        if (len(names) != len(set(names)) or
+                set(names) - {"left_work_id", "right_work_id", "limit"} or
+                not {"left_work_id", "right_work_id"}.issubset(names)):
+            raise_http(422)
+        try:
+            return comparison_receipt(
+                store, left_work_id=left_work_id,
+                right_work_id=right_work_id, limit=limit)
+        except LookupError:
+            raise_http(404)
+        except (TypeError, ValueError):
             raise_http(422)
 
     @app.get("/v1/analysis/works/compare",
