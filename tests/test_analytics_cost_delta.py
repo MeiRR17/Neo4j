@@ -10,7 +10,7 @@ import unittest
 
 from scripts.analytics_cost_delta_v096 import (
     BASELINE_ARTIFACT_ID, BASELINE_DB_HITS, BASELINE_RUN_ID,
-    DeltaError, compare_cost_report, main,
+    DeltaError, compare_cost_report, enforce_synthetic_ci_cost_gate, main,
 )
 from services.research_api.queries import READ_OPERATIONS
 
@@ -172,6 +172,40 @@ class AnalyticsCostDeltaTests(unittest.TestCase):
         for forbidden in ("MERGE ", "DELETE ", "CREATE ", "SET ", "CALL ",
                           "LOAD CSV", "APOC."):
             self.assertNotIn(forbidden, statement.upper())
+
+
+    def test_synthetic_ci_gate_accepts_both_measured_fixture_scales(self):
+        validated = compare_cost_report(report(forward32=334, forward128=1102))
+        enforce_synthetic_ci_cost_gate(validated)
+        self.assertEqual(validated["cross_work_scaling"]["forward_links"]
+                         ["current_growth_factor"], 3.299)
+
+    def test_synthetic_ci_gate_rejects_old_quadratic_plan(self):
+        with self.assertRaises(DeltaError):
+            enforce_synthetic_ci_cost_gate(compare_cost_report(report()))
+        for low, high in ((601, 1102), (334, 2401), (100, 900)):
+            with self.subTest(db_hits=(low, high)):
+                with self.assertRaises(DeltaError):
+                    enforce_synthetic_ci_cost_gate(
+                        compare_cost_report(
+                            report(forward32=low, forward128=high)))
+
+    def test_synthetic_cli_cost_gate_is_optional_and_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "cost.json"
+            target = Path(tmp) / "delta.json"
+            args = ["--input", str(source), "--output", str(target),
+                    "--require-synthetic-cost-gate"]
+            source.write_text(json.dumps(report()), encoding="utf-8")
+            self.assertEqual(main(args), 1)
+            source.write_text(
+                json.dumps(report(forward32=334, forward128=1102)),
+                encoding="utf-8")
+            self.assertEqual(main(args), 0)
+            output = json.loads(target.read_text(encoding="utf-8"))
+            self.assertTrue(output["regression_gate_enforced"])
+            self.assertTrue(output["synthetic_regression_gate_passed"])
+            self.assertEqual(output["research_release_status"], "HOLD")
 
 
 if __name__ == "__main__":

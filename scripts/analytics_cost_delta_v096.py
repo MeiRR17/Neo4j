@@ -129,10 +129,65 @@ def compare_cost_report(report: object) -> dict:
     return output
 
 
+
+# Fixture-specific regression ceilings calibrated from v0.9.6 experimental
+# run #43102371908 (334 / 1,102 dbHits per Work direction). These are NOT
+# production SLOs. Bounded headroom lets real query-plan cost regressions
+# fail CI without pretending the tiny fixture represents a production graph.
+SYNTHETIC_CI_BUDGET = {
+    "32": {
+        "work_descriptor": 30,
+        "forward_links": 600,
+        "reverse_links": 600,
+        "incident_frequency": 40,
+    },
+    "128": {
+        "work_descriptor": 30,
+        "forward_links": 2400,
+        "reverse_links": 2400,
+        "incident_frequency": 40,
+    },
+}
+MAX_SYNTHETIC_GROWTH_FACTOR = 6.0
+
+
+def enforce_synthetic_ci_cost_gate(delta: object) -> None:
+    """Deny increased fixed-fixture cost at the protected CI entrypoint."""
+    if not isinstance(delta, dict) or delta.get("schema_version") != "0.9.6":
+        raise DeltaError("Malformed cost-gate input.")
+    if (delta.get("research_release_status") != "HOLD" or
+            delta.get("representative_performance_proven") is not False or
+            delta.get("baseline_run_id") != BASELINE_RUN_ID):
+        raise DeltaError("Unsafe synthetic cost-gate scope.")
+    comparisons = delta.get("cost_comparisons")
+    scaling = delta.get("cross_work_scaling")
+    if not isinstance(comparisons, dict) or set(comparisons) != {"32", "128"}:
+        raise DeltaError("Incomplete synthetic fixture costs.")
+    if not isinstance(scaling, dict) or set(scaling) != {
+        "forward_links", "reverse_links"
+    }:
+        raise DeltaError("Missing directional scaling metrics.")
+    for size, ceilings in SYNTHETIC_CI_BUDGET.items():
+        metrics = comparisons[size]
+        if not isinstance(metrics, dict) or set(metrics) != set(ceilings):
+            raise DeltaError("Malformed fixed-operation costs.")
+        for op, maximum in ceilings.items():
+            current = _hits(metrics[op].get("current_db_hits_median"))
+            if current > maximum:
+                raise DeltaError("Synthetic graph dbHits regression budget exceeded.")
+    for direction in scaling:
+        factor = scaling[direction].get("current_growth_factor")
+        if (type(factor) not in (int, float) or not 0 < factor <=
+                MAX_SYNTHETIC_GROWTH_FACTOR):
+            raise DeltaError("Synthetic graph scaling regression detected.")
+        if scaling[direction].get("lower_128_hit_count_than_baseline") is not True:
+            raise DeltaError("Synthetic query no longer beats pinned baseline.")
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--require-synthetic-cost-gate", action="store_true")
     args = parser.parse_args(argv)
     try:
         if args.input.is_symlink() or args.output.is_symlink():
@@ -141,6 +196,10 @@ def main(argv: list[str] | None = None) -> int:
             raise DeltaError("Benchmark report file exceeds size budget.")
         obj = json.loads(args.input.read_text(encoding="utf-8"))
         delta = compare_cost_report(obj)
+        if args.require_synthetic_cost_gate:
+            enforce_synthetic_ci_cost_gate(delta)
+            delta["regression_gate_enforced"] = True
+            delta["synthetic_regression_gate_passed"] = True
         args.output.write_text(
             json.dumps(delta, sort_keys=True, separators=(",", ":")) + "\n",
             encoding="utf-8")

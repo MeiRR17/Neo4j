@@ -135,7 +135,8 @@ jobs:
         run: |
           python scripts/analytics_cost_delta_v096.py \
             --input local_staging/analytics-cost-v095.json \
-            --output local_staging/analytics-delta-v096.json
+            --output local_staging/analytics-delta-v096.json \
+            --require-synthetic-cost-gate
           python - <<'PY'
           import json
           from pathlib import Path
@@ -143,11 +144,12 @@ jobs:
           assert report["schema_version"] == "0.9.6"
           assert report["baseline_run_id"] == 43099681819
           assert report["fixture_scales"] == [32, 128]
-          assert report["regression_gate_enforced"] is False
+          assert report["regression_gate_enforced"] is True
+          assert report["synthetic_regression_gate_passed"] is True
           assert report["research_release_status"] == "HOLD"
           assert not report["representative_performance_proven"]
-          print("[OK] Pinned-v0.9.5 vs v0.9.6 cost delta saved; "
-                "cost improvement remains an observation, not research approval.")
+          print("[OK] v0.9.6 fixed-fixture dbHits regression gate passed; "
+                "the threshold is synthetic-only and not a production SLO.")
           PY
       - name: Retain sanitized v0.9.6 anchored cost comparison
         uses: actions/upload-artifact@v4
