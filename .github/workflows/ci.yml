@@ -18,7 +18,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install pinned Research API dependencies
-        run: python -m pip install -r requirements/research-api-test.txt
+        run: |
+          python -m pip install -r requirements/research-api-test.txt
+          python -m pip install -r requirements/s3-archive-probe.txt
       - name: Unit, API and security contract tests
         run: PYTHONPATH=scripts python -m unittest discover -s tests -v
       - name: Offline frozen search-quality fixture and anti-inflation gate
