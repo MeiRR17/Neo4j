@@ -54,6 +54,8 @@ jobs:
         run: PYTHONPATH=scripts python -m unittest tests.test_s3_governance -v
       - name: IAM, inherited SCP and S3 Access Point scoped census (mocked only)
         run: PYTHONPATH=scripts python -m unittest tests.test_aws_access_surface -v
+      - name: Bounded IAM and SCP policy-document risk indicators (mocked only)
+        run: PYTHONPATH=scripts python -m unittest tests.test_aws_policy_documents -v
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
@@ -121,7 +123,7 @@ jobs:
         run: python scripts/capture_smoke.py
       - name: Retained synthetic source bytes versus live signed SourceRecord
         run: python scripts/source_receipt_smoke.py
-      - name: Complete captured source chain with mocked S3, STS and access surface
+      - name: Complete captured source chain with mocked AWS policy documents
         run: python scripts/source_membership_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py

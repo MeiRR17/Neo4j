@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.8.18] — 2026-11-11 (DRAFT — bounded IAM and SCP policy documents)
+
+- Added an opt-in read-only IAM and Organizations document analyzer bound to
+  the signed v0.8.17 role attachment and complete account/OU/root SCP census.
+  Reads GetPolicy+GetPolicyVersion for managed IAM policies, GetRolePolicy for
+  inline policies, and DescribePolicy for each unique inherited SCP.
+- Strictly validates bounded IAM/SCP JSON statement structure (including
+  URL-decoded IAM documents), rejects duplicate properties, missing data,
+  unknown effects and inconsistent attached/default policy identities.
+- Reports digest-only conservative indicators: broad IAM allows, storage
+  mutation and privilege-escalation action patterns, explicit denies,
+  conditioned/NotAction/NotResource statements, and SCP allow/deny counts.
+  NO claim of effective AWS authorization, SCP evaluation or rights approval.
+- Checks policy attachments and OU ancestry before/after document retrieval
+  and fails closed if the signed census no longer matches; creates exclusive
+  mode-0600 locally HMAC-protected report with offline verification.
+- New synthetic policy denial tests plus signed real isolated Neo4j source
+  integration with mocked IAM/Organizations/S3. No live AWS in CI. HOLD.
+
+
 ## [0.8.17] — 2026-11-11 (DRAFT — bounded IAM/SCP/S3 Access Point inventory)
 
 - Added opt-in read-only AWS access-surface census layered on the signed

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="470" viewBox="0 0 1160 470" role="img" aria-label="Neo4j v0.8.18 source-backed IAM and SCP document analysis flow">
+<rect width="1160" height="470" rx="22" fill="#0c1524"/>
+<text x="35" y="52" font-size="28" font-family="Arial,sans-serif" font-weight="bold" fill="#f8fafc">Neo4j v0.8.18 · Policy document risk indicators</text>
+<text x="35" y="80" font-size="15" font-family="Arial,sans-serif" fill="#a4b3cc">Diagram from implemented code — not an AWS console screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="25" y="132" width="255" height="145" rx="13" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="152" y="171" font-size="18" font-weight="bold" fill="white">Signed access census</text>
+<text x="152" y="199" font-size="14" fill="#cbd5e1">v0.8.11–17 provenance</text>
+<text x="152" y="225" font-size="14" fill="#cbd5e1">IAM + SCP attachments</text>
+<text x="152" y="250" font-size="13" fill="#cbd5e1">Repeat list to detect drift</text>
+<rect x="311" y="132" width="258" height="145" rx="13" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="440" y="171" font-size="18" font-weight="bold" fill="white">Read-only AWS policies</text>
+<text x="440" y="199" font-size="14" fill="#cbd5e1">IAM managed + inline</text>
+<text x="440" y="225" font-size="14" fill="#cbd5e1">Inherited SCP documents</text>
+<text x="440" y="250" font-size="13" fill="#cbd5e1">Bounded strict JSON parser</text>
+<rect x="600" y="132" width="259" height="145" rx="13" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+<text x="730" y="171" font-size="18" font-weight="bold" fill="white">Conservative indicators</text>
+<text x="730" y="199" font-size="14" fill="#cbd5e1">Wildcard IAM allows</text>
+<text x="730" y="225" font-size="14" fill="#cbd5e1">Storage + IAM mutations</text>
+<text x="730" y="250" font-size="13" fill="#cbd5e1">Deny / Conditions / NotAction</text>
+<rect x="890" y="132" width="245" height="145" rx="13" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="1012" y="171" font-size="18" font-weight="bold" fill="white">Private HMAC report</text>
+<text x="1012" y="199" font-size="14" fill="#cbd5e1">SHA256 and counts only</text>
+<text x="1012" y="225" font-size="14" fill="#cbd5e1">Offline verification</text>
+<text x="1012" y="250" font-size="13" fill="#cbd5e1">Release remains HOLD</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M280 204h25"/><path d="M569 204h25"/><path d="M859 204h25"/></g>
+<g fill="#94a3b8"><path d="M305 204l-10 -6v12z"/><path d="M594 204l-10 -6v12z"/><path d="M884 204l-10 -6v12z"/></g>
+<rect x="25" y="315" width="1110" height="117" rx="13" fill="#192b45" stroke="#3b526f"/>
+<text x="52" y="350" font-family="Arial,sans-serif" font-size="20" font-weight="bold" fill="#f8fafc">Critical boundary: policy findings ≠ effective AWS permissions</text>
+<text x="52" y="380" font-family="Arial,sans-serif" font-size="15" fill="#cbd5e1">Conditions, resources, IAM/SCP interplay, cross-account grants and trust policies remain unevaluated.</text>
+<text x="52" y="409" font-family="Arial,sans-serif" font-size="14" fill="#fda4af">Only synthetic AWS fixtures; no live account, provider attestation, legal clearance or scholarly signoff.</text>
+</svg>
