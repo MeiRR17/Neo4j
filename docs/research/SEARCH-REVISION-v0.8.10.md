@@ -89,3 +89,10 @@ freeze; then collect 50 real questions, verify independent scholarly
 reviewer identities, adjudicate relevance, and evaluate Precision@5.
 DvirOS BFF SSO/RBAC and production authorization are still outstanding.
 No main merge or production enablement is implied.
+
+## v0.8.11: Expanded metadata scope (opt-in)
+
+The next version can additionally bind SourceRecord, Edition and Evidence
+version/checksum metadata to the search capture HMAC without exposing source
+texts. This checks only the private API's bounded projection, not actual
+provider bytes or full graph relationships. See SEARCH-PROVENANCE-v0.8.11.md.

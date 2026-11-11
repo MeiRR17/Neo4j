@@ -191,3 +191,44 @@ class IndexedSearchCapability(StrictModel):
     source_trail_verified: Literal[False] = False
     text_available: Literal[False] = False
     corpus_status: Literal["unreviewed_metadata_only"] = "unreviewed_metadata_only"
+
+
+class ProvenanceSourceItem(StrictModel):
+    id: str
+    provider: str | None = None
+    source_uri: str | None = None
+    version_id: str | None = None
+    rights_tag: str | None = None
+    checksum_sha256: str | None = None
+
+
+class ProvenanceEditionItem(StrictModel):
+    id: str
+    work_id: str
+    version_id: str | None = None
+    language: str | None = None
+    rights_tag: str | None = None
+    rights_review_status: str | None = None
+    allowed_text_redistribution: bool | None = None
+
+
+class ProvenanceEvidenceItem(StrictModel):
+    id: str
+    source_record_id: str
+    version_id: str | None = None
+    rights_tag: str | None = None
+    claim_kind: str
+    review_status: str
+
+
+class ProvenanceMetadataPage(StrictModel):
+    schema_version: Literal["0.8.11"] = "0.8.11"
+    kind: Literal["sources", "editions", "evidence"]
+    items: list[ProvenanceSourceItem | ProvenanceEditionItem | ProvenanceEvidenceItem]
+    has_more: bool
+    search_complete: bool
+    next_cursor: str | None = None
+    rights_independently_verified: Literal[False] = False
+    source_bytes_verified: Literal[False] = False
+    source_text_available: Literal[False] = False
+    corpus_snapshot_isolation: Literal[False] = False

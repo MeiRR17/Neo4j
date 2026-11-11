@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.8.11] — 2026-11-11 (DRAFT — source/edition/evidence provenance observation)
+
+- Implemented a new authenticated, bounded, metadata-only provenance API
+  for SourceRecord, Edition and Evidence with three fixed read-only Cypher
+  queries, strict canonical-ID order and explicit cursor completion.
+- Added signed before/after observations of these metadata projections and
+  their provider-supplied checksums/version identifiers; records only digests,
+  missing-data counts and source uncertainty in a v0.8.11 HMAC manifest.
+- Unapproved text/unknown fields, rights elevation, broken pagination,
+  forged manifests and mixed observation scopes are rejected.
+- Extended synthetic unit and live CI Neo4j bridge/capture checks. Existing
+  v0.8.9/v0.8.10 capture and verification remains supported.
+- Does not establish actual source checksum trust, edition licensing,
+  relationship stability, whole-database isolation or production approval.
+
+
 ## [0.8.10] — 2026-11-11 (DRAFT — bounded search projection and index revision binding)
 
 - Added a signed private API observation of all bounded visible metadata

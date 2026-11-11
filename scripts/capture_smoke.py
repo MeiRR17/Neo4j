@@ -22,6 +22,7 @@ from scripts.search_capture import (
     SignedLoopbackClient, collect, digest, encode, verify,
 )
 from scripts.search_revision import observe_projection
+from scripts.search_provenance import observe_provenance
 from services.research_api.app import create_app
 
 
@@ -85,11 +86,13 @@ def main() -> int:
                 catalog, caller.fetch, mode=mode,
                 catalog_sha=catalog_sha, key=caller.key,
                 revision_probe=lambda: observe_projection(
-                    catalog, caller.fetch, mode=mode))
-            if manifest["schema_version"] != "0.8.10" or (
+                    catalog, caller.fetch, mode=mode),
+                provenance_probe=lambda: observe_provenance(caller.fetch))
+            if manifest["schema_version"] != "0.8.11" or (
                 manifest["revision_observation"][
                     "corpus_immutable_revision_verified"] is not False
-            ):
+            ) or (manifest["provenance_observation"][
+                "source_rights_verified"] is not False):
                 raise RuntimeError("Revision observation was not bound safely.")
             count = verify(
                 catalog, snapshots, manifest, catalog_sha=catalog_sha,

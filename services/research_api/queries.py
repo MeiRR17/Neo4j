@@ -255,3 +255,38 @@ SHOW INDEXES YIELD name, type, entityType, labelsOrTypes, properties, state
 WHERE name = $index_name
 RETURN name, type, entityType, labelsOrTypes, properties, state
 """.strip()
+
+
+# v0.8.11 fixed, bounded, metadata-only provenance reads. These are NOT
+# checksums of the full corpus or certificates of text/edition usage rights.
+READ_OPERATIONS["provenance_sources"] = """
+MATCH (s:SourceRecord)
+WHERE ($cursor = '' OR s.id > $cursor)
+RETURN s.id AS id, s.provider AS provider, s.source_uri AS source_uri,
+       s.version_id AS version_id, s.rights_tag AS rights_tag,
+       s.checksum_sha256 AS checksum_sha256
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
+
+READ_OPERATIONS["provenance_editions"] = """
+MATCH (ed:Edition)
+WHERE ($cursor = '' OR ed.id > $cursor)
+RETURN ed.id AS id, ed.work_id AS work_id,
+       ed.version_id AS version_id, ed.language AS language,
+       ed.rights_tag AS rights_tag,
+       ed.rights_review_status AS rights_review_status,
+       ed.allowed_text_redistribution AS allowed_text_redistribution
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
+
+READ_OPERATIONS["provenance_evidence"] = """
+MATCH (ev:Evidence)
+WHERE ($cursor = '' OR ev.id > $cursor)
+RETURN ev.id AS id, ev.source_record_id AS source_record_id,
+       ev.version_id AS version_id, ev.rights_tag AS rights_tag,
+       ev.claim_kind AS claim_kind, ev.review_status AS review_status
+ORDER BY id
+LIMIT $fetch_limit
+""".strip()
