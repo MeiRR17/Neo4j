@@ -27,6 +27,6 @@
 <path d="M964 368 V414 H591 V433" stroke="#9fd4ec" stroke-width="4" fill="none"/>
 <rect x="182" y="438" width="825" height="105" rx="15" fill="#25465a" stroke="#83afbf" stroke-width="2"/>
 <text x="208" y="477" font-family="Arial,sans-serif" fill="#fff" font-size="20" font-weight="700">Sanitized cost comparison and exact fixture cleanup</text>
-<text x="208" y="514" font-family="Arial,sans-serif" fill="#d6eaf4" font-size="17">Median dbHits / control  ·  7-day artifact  ·  no corpus or production claim</text>
-<text x="40" y="589" font-family="Arial,sans-serif" fill="#f9d6a8" font-size="18" font-weight="700">Existing v0.9.6 / v0.9.7 regression guards remain active. Research release: HOLD.</text>
+<text x="208" y="514" font-family="Arial,sans-serif" fill="#d6eaf4" font-size="17">1,102 dbHits in every case  ·  Ratio 1.0  ·  7-day artifact  ·  no production claim</text>
+<text x="40" y="589" font-family="Arial,sans-serif" fill="#f9d6a8" font-size="18" font-weight="700">v0.9.8 selectivity gate <=1.25x; prior cost guards unchanged. Research release: HOLD.</text>
 </svg>

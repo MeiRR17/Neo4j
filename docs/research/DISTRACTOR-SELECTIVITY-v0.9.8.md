@@ -51,9 +51,35 @@ bounded batch sizes. Cleanup uses only exact generated node IDs and
 recounts them afterward, even if seeding or profiling fails; failure
 to clean up fails the workflow.
 
-The normal v0.9.6 and v0.9.7 cost regression gates remain active.
-This version introduces **no new cost regression threshold** until the
-actual fixture distribution and PROFILE results are inspected.
+The first complete GitHub Actions Neo4j test (run #43108294329,
+head 2e8faf491b1c7ec1b8fe150d0b4850727474ef42, artifact
+#13895291726) recorded these synthetic median dbHits:
+
+| Operation | 0 distractors | 128 distractors | 512 distractors |
+| --- | ---: | ---: | ---: |
+| Work descriptor | 12 | 12 | 12 |
+| SOURCE_LINK left-to-right | 1,102 | 1,102 | 1,102 |
+| SOURCE_LINK right-to-left | 1,102 | 1,102 | 1,102 |
+| Incident frequency | 15 | 15 | 15 |
+
+No full/label scan or expensive-join operator was observed. The recorded
+ratio-to-control was 1.0 for all operations and all three cases.
+
+Following those observations, the new scripts/analytics_distractor_gate_v098.py
+CI gate validates **exact fixture SHA-256 fingerprints** and all three
+case populations, rejects any unsafe or unexpected projection fields,
+and enforces both absolute synthetic budgets and relative interference:
+Work descriptors <=30 dbHits, directional links <=1,600 dbHits,
+incident frequency <=30 dbHits, and every observed ratio-to-control
+<=1.25 (25% headroom). It also rejects full/label scans, expensive
+joins, malformed row counts, invalid timing or risk/rights claims.
+The gate result is archived alongside the sanitized 36-observation
+report for seven days.
+
+The pre-existing v0.9.6 and v0.9.7 cost regression guards are unchanged.
+All three sets of thresholds concern tiny, fabricated CI fixtures;
+they are neither representative production performance SLOs nor
+research-quality approval.
 
 ## What this does not establish
 

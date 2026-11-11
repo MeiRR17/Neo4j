@@ -9,10 +9,15 @@
   reference, exact inventory checks and fail-closed cleanup.
 - Strict output contains sanitized metadata metrics and fixture hashes,
   not query rows, user-provided Cypher, credentials or source text.
-- Added 10 synthetic contract/security tests and a short-lived
-  analytics-distractors-v098-synthetic CI evidence artifact.
-- Existing v0.9.6/v0.9.7 cost and topology regression gates remain
-  active. No new fixture ceiling is asserted before measuring CI.
+- The first complete real Neo4j CI run #43108294329 measured identical
+  1,102 dbHits per Work-link direction with 0, 128 or 512 unrelated
+  links; Work descriptors stayed at 12, incident frequency at 15.
+- Added a synthetic-only selectivity regression gate enforcing an
+  interference ratio <=1.25, directional dbHits <=1,600 and exact
+  per-case fixture SHA-256, count, sanitized-profile and scope guards.
+- Added 19 synthetic contract/security tests overall and archived
+  both measured and gate reports for seven days in GitHub Actions.
+- Existing v0.9.6/v0.9.7 cost and topology guards remain active.
 - Scholarship, author chronology, source rights, SSO/RBAC and public
   release remain unverified. Research release HOLD.
 
