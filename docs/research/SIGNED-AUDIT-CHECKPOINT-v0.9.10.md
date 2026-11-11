@@ -41,7 +41,7 @@ snapshot_consistency_verified=false,
 entire_audit_chain_reverified=false,
 source_rights_verified=false and research_release_status=HOLD.
 
-Verification includes 13 targeted tests: unchanged page chaining,
+Verification includes 14 targeted tests: unchanged page chaining,
 changed Evidence review state, deleted/inserted prior rows, tampered
 MAC, wrong Work direction and limit, token expiry, secret rotation,
 invalid/duplicated keys, missing Works, read projection and
@@ -50,6 +50,17 @@ two cross-Work links, mutates one observed Evidence status, verifies
 HTTP 409 and confirms recovery after restoration. Fixture cleanup
 uses exact synthetic IDs. Existing 32/128, 256/512 and unrelated-Work
 performance guards are not relaxed.
+
+A separate performance regression was detected during CI for this
+version: incident-frequency cost rose to 6,425 database hits with 512
+unrelated Work links, despite 15 hits in the zero-noise case.
+Work-link comparison cost stayed at 1,102. The fixed incident query
+now separates the selected Passage relationship expansion from its
+Evidence lookup using a bounded WITH r stage, so the planner cannot
+start with a graph-wide Evidence-join expansion on that query block.
+The existing strict selectivity thresholds were NOT increased; the
+subsequent exact-commit CI benchmark must confirm the repair.
+Sanitized four-Work cost reports are now retained even if a gate fails.
 
 Remaining approval: signed full-chain revision/export, source and
 edition rights, scholarly human review, DvirOS SSO/RBAC, production
