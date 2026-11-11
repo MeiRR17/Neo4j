@@ -178,7 +178,10 @@ def run_fixture(admin: LocalQueryClient, profiler: FixedAnalyticsProfiler,
 
 def run_benchmark(*, sizes: tuple[int, ...] = SIZES,
                   base_url: str = "http://127.0.0.1:7474",
-                  secret_path: Path = DEFAULT_SECRET_PATH) -> dict:
+                  secret_path: Path = DEFAULT_SECRET_PATH,
+                  acknowledged_disposable: bool = False) -> dict:
+    if os.getenv("CI") != "true" or acknowledged_disposable is not True:
+        raise ValueError("Explicit CI disposable-fixture authorization is required.")
     if (not sizes or len(sizes) != len(set(sizes)) or
             any(type(size) is not int or size not in SIZES for size in sizes)):
         raise ValueError("Only declared fixture sizes are permitted.")
@@ -219,6 +222,7 @@ def main(argv: list[str] | None = None) -> int:
         size_values = tuple(args.size) if args.size else SIZES
         report = run_benchmark(
             sizes=size_values, base_url=args.url, secret_path=args.secret,
+            acknowledged_disposable=True,
         )
         print(json.dumps(report, ensure_ascii=False,
                          sort_keys=True, separators=(",", ":")))
