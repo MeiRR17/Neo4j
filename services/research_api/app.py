@@ -27,6 +27,7 @@ from services.research_api.models import (
     IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
     SourceLinkFrequency, SourceLinkAuthorChronology, WorkComparison,
     WorkComparisonReceipt, WorkLinkAuditPage, CheckedWorkLinkAuditPage,
+    WorkAuditExportEnvelope,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -41,6 +42,7 @@ from services.research_api.work_comparison import compare_works
 from services.research_api.comparison_receipts import comparison_receipt
 from services.research_api.work_link_audit import audit_work_link_page
 from services.research_api.audit_checkpoint import AuditWindowDrift, checked_audit_page
+from services.research_api.audit_export_v0911 import export_work_link_audit
 from services.research_api.config import load_token
 
 
@@ -341,6 +343,30 @@ def create_app(*, backend=None, token_path: Path | None = None,
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
         except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/analysis/works/links/audit/export",
+             response_model=WorkAuditExportEnvelope, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def export_work_audit(request: Request,
+                          source_work_id: str = Query(...),
+                          target_work_id: str = Query(...)):
+        keys = [key for key, _ in request.query_params.multi_items()]
+        if (len(keys) != len(set(keys)) or
+                set(keys) != {"source_work_id", "target_work_id"}):
+            raise_http(422)
+        # Export HMAC is a local service attestation, not an independent
+        # signed historical source or long-term key-rotation strategy.
+        secret = load_token(token_path)
+        try:
+            return export_work_link_audit(
+                store, source_work_id=source_work_id,
+                target_work_id=target_work_id, secret=secret)
+        except AuditWindowDrift:
+            raise_http(409)
+        except LookupError:
+            raise_http(404)
+        except (TypeError, ValueError):
             raise_http(422)
 
     @app.get("/v1/analysis/works/links/audit/checked",

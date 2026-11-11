@@ -139,7 +139,7 @@ def _validate_manifest(value: object) -> dict:
             type(value["note"]) is not str or
             len(value["note"]) > 500):
         raise ValueError("Audit export counts, clock or size invalid.")
-    if count > pages * PAGE_SIZE or count <= (pages - 1) * PAGE_SIZE:
+    if count > pages * PAGE_SIZE or (pages > 1 and count <= (pages - 1) * PAGE_SIZE):
         raise ValueError("Audit export page boundary invalid.")
     previous_edge = ""
     seen_evidence = set()
