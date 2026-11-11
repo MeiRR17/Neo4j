@@ -148,8 +148,8 @@ def _caller(sts: object, account: str) -> tuple[str, str, str]:
 
 def live_clients(*, profile: str, region: str, account: str):
     """One explicitly configured AWS credential session; fixed TLS endpoints."""
-    _identity(profile, region, account)
     try:
+        _identity(profile, region, account)
         import boto3
         from botocore.config import Config
         session = boto3.Session(profile_name=profile, region_name=region)
@@ -219,8 +219,11 @@ def observe_governance(
         not isinstance(region, str) or not REGION.fullmatch(region)
     ):
         raise GovernanceError("Expected S3 owner/region not pinned.")
-    _chain(policy, report, statement, record, receipt, witness,
-           capture, source_file, local_key)
+    try:
+        _chain(policy, report, statement, record, receipt, witness,
+               capture, source_file, local_key)
+    except (ValueError, TypeError, KeyError, OSError):
+        raise GovernanceError("Upstream source/Ed25519 evidence invalid.") from None
     version = observe_s3_version(
         s3, policy=policy, report=report, statement=statement,
         record=record, receipt=receipt, witness=witness, capture=capture,
