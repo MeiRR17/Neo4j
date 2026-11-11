@@ -144,10 +144,29 @@ def run_matrix(*, cases: tuple[str, ...] = CASES,
         try:
             results.append(run_case(admin, profiler, distractor_case(name)))
         except (PlanEvidenceError, OSError, RuntimeError, ValueError) as exc:
-            # Emit only fixed case ID + exception class, never a DB
-            # exception body or unauthorized source data.
+            # Only predetermined constant categories; never echo an
+            # exception body that could contain a query, text or secret.
+            static_reasons = {
+                "Profiler db-hits budget exceeded.": "node_dbhits_budget",
+                "Total profiler db-hits budget exceeded.": "total_dbhits_budget",
+                "Profile response byte limit exceeded.": "response_byte_budget",
+                "Profiler wall-clock safety budget exceeded.": "latency_budget",
+                "Profile result exceeded row budget.": "result_row_budget",
+                "Stress PROFILE produced inconsistent sampled rows.": "row_cardinality",
+                "Profiler plan exceeded structural bounds.": "plan_structure",
+                "Graph profiler request unavailable.": "query_unavailable",
+                "Profile was not a clean read-only observation.": "query_error",
+                "Missing profiler operator tree.": "missing_plan",
+                "Invalid profiler operator.": "invalid_operator",
+                "Synthetic stress budget exceeded.": "stress_budget",
+                "Synthetic distractor cleanup failed.": "cleanup_failed",
+            }
+            category = (
+                static_reasons.get(str(exc), "unclassified")
+                if isinstance(exc, PlanEvidenceError) else type(exc).__name__
+            )
             raise PlanEvidenceError(
-                "synthetic " + name + " failed: " + type(exc).__name__
+                "synthetic " + name + " failed: " + category
             ) from None
     return {
         "schema_version": "0.9.8",
