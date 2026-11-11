@@ -32,6 +32,7 @@ from scripts.source_membership import issue_witness, verify_witness
 from scripts.external_archive_attestation import DOMAIN, verify_attestation
 from scripts.live_s3_version_verify import observe_s3_version, verify_observation
 from scripts.s3_governance import observe_governance, verify_governance
+from scripts.aws_access_surface import observe_access_surface, verify_access_surface
 from services.research_api.app import create_app
 from services.research_api.signature import CLIENT_ID, sign_request
 
@@ -255,13 +256,32 @@ def main() -> int:
         if (control_evidence["archive_continuously_immutable_verified"] is not False or
             control_evidence["aws_bucket_policy_status_nonpublic"] is not True):
             raise RuntimeError("Synthetic bucket read incorrectly upgraded trust.")
+        # Real isolated Neo4j source chain with NO AWS network activity.
+        from tests.test_s3_governance import FakeGovernanceS3, FakeSTS
+        from tests.test_aws_access_surface import S3ControlMock, IAMMock, OrgMock
+        surface = observe_access_surface(
+            FakeGovernanceS3(archive_report), FakeSTS(),
+            S3ControlMock(bucket=archive_report["bucket"]), IAMMock(), OrgMock(),
+            policy=policy, report=archive_report, statement=signed,
+            record=record, receipt=receipt, witness=witness, capture=capture,
+            source_file=FIXTURE, local_key=client.key,
+            account="123456789012", region="il-central-1",
+            observed_at=datetime(2026, 11, 11, 13, tzinfo=timezone.utc))
+        verify_access_surface(
+            surface, policy=policy, report=archive_report, statement=signed,
+            record=record, receipt=receipt, witness=witness, capture=capture,
+            source_file=FIXTURE, local_key=client.key,
+            account="123456789012", region="il-central-1")
+        if (surface["release_status"] != "HOLD" or
+            surface["effective_iam_permissions_verified"] is not False):
+            raise RuntimeError("Synthetic access census promoted unsupported trust.")
         if (witness["source_record_id"] != ident or
             witness["research_release_status"] != "HOLD" or
             witness["independent_provider_signature_verified"] is not False or
             witness["cross_request_snapshot_isolation"] is not False):
             raise RuntimeError("Source membership overclaimed independent trust.")
-    print("[OK] Signed real Neo4j source chain + mocked S3 version, "
-          "bucket governance and STS; NO live AWS; research HOLD.")
+    print("[OK] Real isolated Neo4j chain + mocked S3, IAM, SCP, Access Points;"
+          " no live AWS; research HOLD.")
     return 0
 
 

@@ -4,3 +4,5 @@
 boto3==1.44.0
 # v0.8.16 STS and bucket governance use the same pinned boto3/botocore SDK.
 # Runtime has no new optional dependencies.
+# v0.8.17 uses IAM, Organizations, S3Control and STS read-only clients
+# from the existing pinned boto3 package; no additional dependency.
