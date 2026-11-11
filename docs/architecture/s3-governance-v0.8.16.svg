@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1170" height="486" viewBox="0 0 1170 486" role="img" aria-label="Neo4j v0.8.16 AWS STS, bucket governance, and spaced observation code diagram">
+<rect width="1170" height="486" rx="23" fill="#0e192a"/>
+<text x="34" y="51" font-family="Arial,sans-serif" font-weight="bold" font-size="28" fill="#f8fafc">Neo4j v0.8.16 — S3 governance &amp; repeat audit</text>
+<text x="34" y="81" font-family="Arial,sans-serif" font-size="15" fill="#a9bacb">Code-derived flow — not a live AWS screenshot or production evidence</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="27" y="139" width="251" height="151" rx="13" fill="#1d2a41" stroke="#60a5fa" stroke-width="2"/>
+<text x="152" y="175" fill="#fff" font-size="19" font-weight="bold">Signed source chain</text>
+<text x="152" y="204" fill="#cbd5e1" font-size="14">v0.8.11–14 source proofs</text>
+<text x="152" y="230" fill="#cbd5e1" font-size="14">Ed25519 &amp; local HMAC</text>
+<text x="152" y="260" fill="#cbd5e1" font-size="13">Reject before AWS on mismatch</text>
+<rect x="310" y="139" width="259" height="151" rx="13" fill="#1d2a41" stroke="#a78bfa" stroke-width="2"/>
+<text x="439" y="175" fill="#fff" font-size="19" font-weight="bold">Versioned object + STS</text>
+<text x="439" y="204" fill="#cbd5e1" font-size="14">HEAD + COMPLIANCE lock</text>
+<text x="439" y="230" fill="#cbd5e1" font-size="14">STS caller = expected owner</text>
+<text x="439" y="260" fill="#cbd5e1" font-size="13">Fixed AWS HTTPS endpoints</text>
+<rect x="601" y="139" width="260" height="151" rx="13" fill="#1d2a41" stroke="#fbbf24" stroke-width="2"/>
+<text x="731" y="175" fill="#fff" font-size="19" font-weight="bold">4 bucket control reads</text>
+<text x="731" y="204" fill="#cbd5e1" font-size="14">Versioning &amp; public blocking</text>
+<text x="731" y="230" fill="#cbd5e1" font-size="14">Nonpublic policy + lock</text>
+<text x="731" y="260" fill="#cbd5e1" font-size="13">Exact ExpectedBucketOwner</text>
+<rect x="893" y="139" width="250" height="151" rx="13" fill="#1d2a41" stroke="#34d399" stroke-width="2"/>
+<text x="1018" y="175" fill="#fff" font-size="19" font-weight="bold">Private HMAC audits</text>
+<text x="1018" y="204" fill="#cbd5e1" font-size="14">Mode 0600; offline verify</text>
+<text x="1018" y="230" fill="#cbd5e1" font-size="14">Compare 2 samples ≥24 h</text>
+<text x="1018" y="260" fill="#cbd5e1" font-size="13">No continuous guarantee</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M278 213h27"/><path d="M569 213h27"/><path d="M861 213h27"/></g>
+<g fill="#94a3b8"><path d="M305 213l-10 -6v12z"/><path d="M596 213l-10 -6v12z"/><path d="M888 213l-10 -6v12z"/></g>
+<rect x="27" y="324" width="1116" height="123" rx="13" fill="#1b304b" stroke="#3a5375"/>
+<text x="52" y="357" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="#f8fafc">Research release: HOLD</text>
+<text x="52" y="388" font-family="Arial,sans-serif" font-size="15" fill="#cbd5e1">CI uses mocked AWS responses. No real bucket owner, IAM grants or organizational identity audited.</text>
+<text x="52" y="417" font-family="Arial,sans-serif" font-size="14" fill="#fca5a5">Two observations do not establish uninterrupted WORM retention, source rights or scholarly approval.</text>
+</svg>

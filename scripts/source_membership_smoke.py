@@ -31,6 +31,7 @@ from scripts.source_receipts import MODES, issue_receipt
 from scripts.source_membership import issue_witness, verify_witness
 from scripts.external_archive_attestation import DOMAIN, verify_attestation
 from scripts.live_s3_version_verify import observe_s3_version, verify_observation
+from scripts.s3_governance import observe_governance, verify_governance
 from services.research_api.app import create_app
 from services.research_api.signature import CLIENT_ID, sign_request
 
@@ -172,6 +173,56 @@ def main() -> int:
                     },
                 }
 
+        # Additional v0.8.16 exact owner-scoped bucket-read contracts.
+        def _fixed_bucket_read(params):
+            if params != {"Bucket": archive_report["bucket"],
+                          "ExpectedBucketOwner": "123456789012"}:
+                raise RuntimeError("Unpinned mock S3 bucket controls.")
+
+        def _versioning(self, **params):
+            _fixed_bucket_read(params)
+            return {"ResponseMetadata": {
+                "HTTPStatusCode": 200, "RequestId": "CI_BUCKET_VERSION"},
+                    "Status": "Enabled"}
+
+        def _public_block(self, **params):
+            _fixed_bucket_read(params)
+            return {"ResponseMetadata": {
+                "HTTPStatusCode": 200, "RequestId": "CI_BUCKET_PUBLIC"},
+                    "PublicAccessBlockConfiguration": {
+                        "BlockPublicAcls": True, "IgnorePublicAcls": True,
+                        "BlockPublicPolicy": True,
+                        "RestrictPublicBuckets": True}}
+
+        def _policy_status(self, **params):
+            _fixed_bucket_read(params)
+            return {"ResponseMetadata": {
+                "HTTPStatusCode": 200, "RequestId": "CI_BUCKET_POLICY"},
+                    "PolicyStatus": {"IsPublic": False}}
+
+        def _object_lock_config(self, **params):
+            _fixed_bucket_read(params)
+            return {"ResponseMetadata": {
+                "HTTPStatusCode": 200, "RequestId": "CI_BUCKET_LOCK_CONFIG"},
+                    "ObjectLockConfiguration": {
+                        "ObjectLockEnabled": "Enabled"}}
+
+        FakeS3.get_bucket_versioning = _versioning
+        FakeS3.get_public_access_block = _public_block
+        FakeS3.get_bucket_policy_status = _policy_status
+        FakeS3.get_object_lock_configuration = _object_lock_config
+
+        class FakeSTS:
+            def get_caller_identity(self):
+                return {
+                    "ResponseMetadata": {
+                        "HTTPStatusCode": 200, "RequestId": "CI_STS_CALLER"},
+                    "Account": "123456789012",
+                    "Arn": ("arn:aws:sts::123456789012:"
+                            "assumed-role/ci-research/fixture"),
+                    "UserId": "AROAEXAMPLE:CI_FIXTURE",
+                }
+
         s3_evidence = observe_s3_version(
             FakeS3(), policy=policy, report=archive_report,
             statement=signed, record=record, receipt=receipt,
@@ -188,13 +239,29 @@ def main() -> int:
         if (s3_evidence["external_archive_immutability_end_to_end_verified"] is not False or
             s3_evidence["aws_full_object_sha256_matched"] is not True):
             raise RuntimeError("Synthetic S3 observation falsely upgraded trust.")
+        control_evidence = observe_governance(
+            FakeS3(), FakeSTS(), policy=policy, report=archive_report,
+            statement=signed, record=record, receipt=receipt,
+            witness=witness, capture=capture, source_file=FIXTURE,
+            local_key=client.key, account="123456789012",
+            region="il-central-1",
+            observed_at=datetime(2026, 11, 11, 13, tzinfo=timezone.utc))
+        verify_governance(
+            control_evidence, policy=policy, report=archive_report,
+            statement=signed, record=record, receipt=receipt,
+            witness=witness, capture=capture, source_file=FIXTURE,
+            local_key=client.key, account="123456789012",
+            region="il-central-1")
+        if (control_evidence["archive_continuously_immutable_verified"] is not False or
+            control_evidence["aws_bucket_policy_status_nonpublic"] is not True):
+            raise RuntimeError("Synthetic bucket read incorrectly upgraded trust.")
         if (witness["source_record_id"] != ident or
             witness["research_release_status"] != "HOLD" or
             witness["independent_provider_signature_verified"] is not False or
             witness["cross_request_snapshot_isolation"] is not False):
             raise RuntimeError("Source membership overclaimed independent trust.")
-    print("[OK] Signed real Neo4j chain plus mocked S3 HEAD/retention + "
-          "Ed25519; NO live AWS used; external immutability unverified; HOLD.")
+    print("[OK] Signed real Neo4j source chain + mocked S3 version, "
+          "bucket governance and STS; NO live AWS; research HOLD.")
     return 0
 
 
