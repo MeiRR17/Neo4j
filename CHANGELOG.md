@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.9.13] — 2026-11-12 (DRAFT — pinned revision-chain anchors)
+
+- Added metadata-only, bounded v0.9.12 ledger checkpoint capture
+  after verifying all existing hash-linked revision records.
+- Added domain-separated Ed25519 signature of canonical checkpoint
+  JSON, requiring a separately supplied raw private key and signer ID.
+- Added fixed offline verifier against a scoped operator-pinned
+  public-key policy; missing, wrong, duplicate or unpinned signers,
+  signature tampering and unauthorized rights/release claims fail.
+- Added live read-only comparator that checks the complete current
+  chain and re-verifies the anchored historical prefix, permitting
+  later valid appends but refusing anchored rollback/rewrite.
+- Added local CLI capture/sign/verify/compare, 15 focused tests and
+  disposable Neo4j smoke with an ephemeral CI-only signing key.
+- No remote archive write, external storage immutability evidence,
+  independent signer-organization identity proof, Work/Evidence
+  snapshot guarantee or research rights approval. HOLD.
+
+
 ## [0.9.12] — 2026-11-12 (DRAFT — governed metadata revision ledger)
 
 - Added additive graph migration 005: unique AuditRevisionHead and

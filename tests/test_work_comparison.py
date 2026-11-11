@@ -245,6 +245,10 @@ class WorkComparisonTests(unittest.TestCase):
         for operation in ("analysis_work_descriptor", "analysis_work_cross_links"):
             cypher = READ_OPERATIONS[operation].upper()
             self.assertIn("LIMIT ", cypher)
+            if operation == "analysis_work_cross_links":
+                self.assertIn("WITH A\nCALL (A) {", cypher)
+                self.assertEqual(cypher.count("CALL (A) {"), 1)
+                cypher = cypher.replace("CALL (A) {", "")
             for forbidden in ("CREATE ", "MERGE ", "DELETE ", "SET ",
                               "CALL ", "APOC.", "LOAD CSV"):
                 self.assertNotIn(forbidden, cypher)

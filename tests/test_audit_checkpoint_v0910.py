@@ -223,9 +223,10 @@ class CheckedAuditTests(unittest.TestCase):
         # distractors; preserve the previously bounded read shape.
         stmt = READ_OPERATIONS["analysis_frequency_window"]
         self.assertIn("USING INDEX p:Passage(id)", stmt)
+        self.assertIn("WITH p\nCALL (p) {", stmt)
         self.assertIn(
-            "MATCH (p)-[r:SOURCE_LINK]-(q:Passage)\nWITH r\n"
-            "MATCH (ev:Evidence {id:r.evidence_id})", stmt)
+            "MATCH (p)-[r:SOURCE_LINK]-(q:Passage)\n  RETURN r\n}"
+            "\nWITH r\nMATCH (ev:Evidence {id:r.evidence_id})", stmt)
         self.assertIn("ORDER BY edge_id", stmt)
         self.assertIn("LIMIT $fetch_limit", stmt)
         for keyword in ("MERGE ", "DELETE ", "CREATE ", "SET ", "APOC."):

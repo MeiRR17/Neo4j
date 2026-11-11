@@ -175,6 +175,20 @@ class BackendPolicyTests(unittest.TestCase):
         self.assertGreaterEqual(len(READ_OPERATIONS), 12)
         for name, statement in READ_OPERATIONS.items():
             upper = statement.upper()
+            # The two fixed Work-link templates contain exactly one
+            # correlated read-only subquery. All other CALL forms remain
+            # prohibited across the complete allowlisted registry.
+            if name in ("analysis_work_cross_links",
+                        "analysis_work_cross_link_page"):
+                self.assertIn("WITH A\nCALL (A) {", upper)
+                self.assertIn("RETURN R, B\n}", upper)
+                self.assertEqual(upper.count("CALL (A) {"), 1)
+                upper = upper.replace("CALL (A) {", "")
+            elif name == "analysis_frequency_window":
+                self.assertIn("WITH P\nCALL (P) {", upper)
+                self.assertIn("RETURN R\n}", upper)
+                self.assertEqual(upper.count("CALL (P) {"), 1)
+                upper = upper.replace("CALL (P) {", "")
             for forbidden in ["DELETE ", "MERGE ", "CREATE ", "SET ", "LOAD CSV",
                               "APOC.", "CALL ", "DROP ", "REMOVE "]:
                 with self.subTest(name=name, forbidden=forbidden):

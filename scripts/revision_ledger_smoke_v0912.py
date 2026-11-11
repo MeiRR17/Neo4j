@@ -9,10 +9,16 @@ Never run this against a real research database.
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 from pathlib import Path
 import sys
+
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.serialization import (
+    Encoding, PrivateFormat, PublicFormat, NoEncryption,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -22,6 +28,10 @@ from scripts.bootstrap import DEFAULT_SECRET_PATH
 from scripts.migrate import LocalQueryClient
 from services.research_api.audit_export_v0911 import export_work_link_audit
 from services.research_api.config import load_token
+from services.research_api.revision_anchor_v0913 import (
+    AnchorError, capture_anchor, sign_anchor, verify_anchor,
+    compare_anchor_to_live,
+)
 from services.research_api.revision_ledger_v0912 import (
     ZERO_CHAIN, RevisionLedgerError, append_revision,
     bootstrap_head, head_for, scope_id, verify_revision_chain,
@@ -65,11 +75,51 @@ def run(*, url: str = "http://127.0.0.1:7474",
             raise RevisionLedgerError("Stale append was not denied.")
         if head_for(client,LEFT,RIGHT)["sequence"] != 1:
             raise RevisionLedgerError("Rejected stale append changed head.")
+        # v0.9.13: produce a strictly synthetic, separately pinned
+        # Ed25519 checkpoint of the verified first ledger revision.
+        checkpoint = capture_anchor(client, LEFT, RIGHT, now=1234567892)
+        ephemeral = Ed25519PrivateKey.generate()
+        private = ephemeral.private_bytes(
+            Encoding.Raw, PrivateFormat.Raw, NoEncryption())
+        public = ephemeral.public_key().public_bytes(
+            Encoding.Raw, PublicFormat.Raw)
+        signed_checkpoint = sign_anchor(
+            checkpoint, signer_id="synthetic-ci-revision-signer",
+            private_key_bytes=private)
+        pin_policy = {
+            "schema_version": "0.9.13",
+            "trust_status": "OPERATOR_PINNED_IDENTITY_NOT_ATTESTED",
+            "signers": [{
+                "signer_id": "synthetic-ci-revision-signer",
+                "role": "audit_revision_operator",
+                "scope_id": scope,
+                "ed25519_public_key_b64":
+                    base64.b64encode(public).decode("ascii"),
+            }],
+        }
+        anchored = verify_anchor(signed_checkpoint, pin_policy)
+        if (anchored["signature_verified_against_pinned_public_key"] is not True
+                or anchored["anchored_sequence"] != 1 or
+                anchored["external_object_lock_verified"] is not False):
+            raise RevisionLedgerError("Synthetic pinned anchor not verified.")
+        forged = {**signed_checkpoint, "anchor_sha256": "0" * 64}
+        try:
+            verify_anchor(forged, pin_policy)
+        except AnchorError:
+            pass
+        else:
+            raise RevisionLedgerError("Tampered synthetic anchor was accepted.")
         second = append_revision(
             client,signed,secret=token,expected_sequence=1,
             expected_chain_sha256=first["chain_sha256"],now=1234567892,
         )
         report = verify_revision_chain(client, LEFT, RIGHT)
+        anchor_result = compare_anchor_to_live(
+            client, signed_checkpoint, pin_policy)
+        if (not anchor_result["live_prefix_matches_pinned_anchor"] or
+                anchor_result["revisions_after_anchor"] != 1 or
+                anchor_result["continuous_storage_immutability_verified"] is not False):
+            raise RevisionLedgerError("Ledger prefix drifted from pinned anchor.")
         if (report["verified_record_count"] != 2 or
                 report["latest_revision_id"] != second["revision_id"] or
                 report["chain_sha256"] != second["chain_sha256"] or
@@ -81,6 +131,11 @@ def run(*, url: str = "http://127.0.0.1:7474",
             "schema_revision_nodes_written": 2,
             "stale_cas_denied": True,
             "verified_chain_length": 2,
+            "pinned_ed25519_anchor_verified": True,
+            "tampered_anchor_denied": True,
+            "anchor_prefix_survived_later_append": True,
+            "anchor_revisions_after_capture": 1,
+            "external_object_lock_verified": False,
             "source_records_written": 0,
             "graph_snapshot_verified": False,
             "corpus_revision_immutable": False,

@@ -166,6 +166,21 @@ class StressSuiteTests(TestCase):
                 with self.assertRaises(PlanEvidenceError):
                     summarize_stress(case, "forward_links", records)
 
+    def test_profile_failure_classification_never_leaks_exception_body(self):
+        from scripts.analytics_stress_v097 import _safe_failure
+        message = "PRIVATE SOURCE CONTENT AND GRAPH QUERY PLAN"
+        self.assertEqual(
+            _safe_failure(
+                "forward_links", PlanEvidenceError(
+                    "Graph profiler request unavailable.")),
+            "stage_forward_links_reason_transport_or_timeout",
+        )
+        diagnostic = _safe_failure(
+            "incident_frequency", PlanEvidenceError(message))
+        self.assertEqual(
+            diagnostic, "stage_incident_frequency_reason_unclassified_denial")
+        self.assertNotIn("PRIVATE", diagnostic)
+
     def test_unknown_operation_and_missing_repeats_are_rejected(self):
         case = stress_case("disjoint-256")
         with self.assertRaises(PlanEvidenceError):

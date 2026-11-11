@@ -166,12 +166,19 @@ class AnalyticsCostDeltaTests(unittest.TestCase):
         self.assertIn("USING INDEX a:Passage(work_id)", statement)
         self.assertIn("MATCH (a)-[r:SOURCE_LINK]->(b:Passage)", statement)
         self.assertIn("WHERE coalesce(b.work_id, '') = $target_work_id", statement)
+        self.assertIn("WITH a\nCALL (a) {", statement)
+        self.assertIn("RETURN r, b\n}", statement)
         self.assertIn("MATCH (ev:Evidence {id:r.evidence_id})", statement)
         self.assertIn("ORDER BY edge_id", statement)
         self.assertIn("LIMIT $fetch_limit", statement)
+        # Permit only the exact built-in correlated read-only subquery,
+        # not procedures, arbitrary CALL variants or writes.
+        cypher = statement.upper()
+        self.assertEqual(cypher.count("CALL (A) {"), 1)
+        cypher = cypher.replace("CALL (A) {", "")
         for forbidden in ("MERGE ", "DELETE ", "CREATE ", "SET ", "CALL ",
                           "LOAD CSV", "APOC."):
-            self.assertNotIn(forbidden, statement.upper())
+            self.assertNotIn(forbidden, cypher)
 
 
     def test_synthetic_ci_gate_accepts_both_measured_fixture_scales(self):
