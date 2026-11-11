@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.8.15] — 2026-11-11 (DRAFT — read-only live S3 object-version audit)
+
+- Added opt-in AWS S3 SDK verifier using an explicitly selected named
+  credential profile, AWS region and 12-digit ExpectedBucketOwner.
+- Calls only HEAD on an exact object **VersionId** with ChecksumMode
+  ENABLED and get_object_retention on the same version; no downloads,
+  source-body reads, object writes or arbitrary custom endpoints.
+- Rejects stale/changed object versions, delete markers, absent SHA256,
+  multipart COMPOSITE checksums, mismatched content size/sha256, expired
+  retention, unsafe governance mode, contradictory HEAD versus retention
+  records and HTTP error/unauthenticated API responses.
+- Requires valid upstream 0.8.11 HMAC capture, 0.8.12 source-byte receipt,
+  0.8.13 membership witness and 0.8.14 pinned Ed25519 attestation BEFORE
+  contacting AWS. Validates claimed S3 report against observed HEAD and
+  COMPLIANCE retention metadata, and writes an exclusive mode-0600,
+  locally HMAC-protected result with offline verification mode.
+- Synthetic CI uses injected fake S3 API with NO AWS credentials or calls,
+  plus source-chain integration against isolated real Neo4j. No actual
+  S3 object or retention was verified in CI.
+- Provider/organizational identity, external archival immutability
+  end-to-end, source rights and scholarly release remain UNVERIFIED/HOLD.
+
+
 ## [0.8.14] — 2026-11-11 (DRAFT — pinned external archive-claim signature)
 
 - Added an offline **Ed25519** signature verifier for a separately provided
