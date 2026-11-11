@@ -234,6 +234,11 @@ class MetricsChronologyTests(unittest.TestCase):
             cypher = READ_OPERATIONS[name].upper()
             self.assertIn("EVIDENCE", cypher)
             self.assertIn("LIMIT ", cypher)
+            if name == "analysis_frequency_window":
+                self.assertIn("WITH P\nCALL (P) {", cypher)
+                self.assertIn("RETURN R\n}", cypher)
+                self.assertEqual(cypher.count("CALL (P) {"), 1)
+                cypher = cypher.replace("CALL (P) {", "")
             for forbidden in ("CREATE ", "MERGE ", "DELETE ", "SET ",
                               "CALL ", "LOAD CSV", "APOC."):
                 self.assertNotIn(forbidden, cypher)
