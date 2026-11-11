@@ -183,9 +183,14 @@ class SignedLoopbackClient:
             request.ProxyHandler({}), NoRedirect())
 
     def fetch(self, target: str) -> dict:
+        capabilities = {
+            "/v1/search/metadata/indexed/capability?kind=" + kind
+            for kind in ALLOWED_KINDS
+        }
         if not isinstance(target, str) or not (
             target.startswith("/v1/search/metadata?") or
-            target.startswith("/v1/search/metadata/indexed?")
+            target.startswith("/v1/search/metadata/indexed?") or
+            target in capabilities
         ):
             raise CaptureError("Unapproved signed request target.")
         now = int(time.time())
