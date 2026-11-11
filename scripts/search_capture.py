@@ -277,10 +277,16 @@ def manifest_mac(unsigned: dict, key: str) -> str:
 
 
 def collect(catalog: dict, fetch, *, mode: str, catalog_sha: str,
-            key: str) -> tuple[dict, dict]:
+            key: str, revision_probe=None) -> tuple[dict, dict]:
     _, cases = _query_catalog(catalog)
     if mode not in ("scan", "indexed"):
         raise CaptureError("Invalid capture mode.")
+    kinds = {case["kind"] for case in cases}
+    revision_before = None
+    if revision_probe is not None:
+        from scripts.search_revision import validate_observation
+        revision_before = revision_probe()
+        validate_observation(revision_before, kinds, mode=mode)
     responses = []
     calls = 0
     for case in cases:
@@ -309,8 +315,14 @@ def collect(catalog: dict, fetch, *, mode: str, catalog_sha: str,
     trace, verified_calls = trace_pages(catalog, snapshot, mode=mode)
     if calls != verified_calls:
         raise CaptureError("Internal request-count discrepancy.")
+    if revision_probe is not None:
+        revision_after = revision_probe()
+        validate_observation(revision_after, kinds, mode=mode)
+        if revision_before != revision_after:
+            raise CaptureError("Observed metadata/index revision drifted during capture.")
     unsigned = {
-        "schema_version": SCHEMA, "mode": mode,
+        "schema_version": "0.8.10" if revision_probe is not None else SCHEMA,
+        "mode": mode,
         "catalog_sha256": catalog_sha,
         "snapshot_sha256": digest(encode(snapshot)),
         "request_count": calls, "trace": trace,
@@ -320,6 +332,10 @@ def collect(catalog: dict, fetch, *, mode: str, catalog_sha: str,
         "independent_human_review_verified": False,
         "release_status": "HOLD",
     }
+    if revision_before is not None:
+        # HMAC-bound observed projection only, never a full immutable
+        # corpus or database transaction revision.
+        unsigned["revision_observation"] = revision_before
     return snapshot, {**unsigned, "manifest_hmac": manifest_mac(unsigned, key)}
 
 
@@ -330,9 +346,20 @@ def verify(catalog: dict, snapshot: dict, manifest: dict, *, catalog_sha: str,
                 "independent_server_attestation", "source_rights_verified",
                 "independent_human_review_verified", "release_status",
                 "manifest_hmac"}
-    if not isinstance(manifest, dict) or set(manifest) != required:
+    if not isinstance(manifest, dict):
         raise CaptureError("Manifest envelope invalid.")
-    if (manifest["schema_version"] != SCHEMA or
+    schema = manifest.get("schema_version")
+    if schema == "0.8.10":
+        required.add("revision_observation")
+    if set(manifest) != required:
+        raise CaptureError("Manifest envelope invalid.")
+    if schema == "0.8.10":
+        from scripts.search_revision import validate_observation
+        _, cases = _query_catalog(catalog)
+        validate_observation(
+            manifest["revision_observation"],
+            {c["kind"] for c in cases}, mode=manifest["mode"])
+    if (schema not in (SCHEMA, "0.8.10") or
         manifest["mode"] not in ("scan", "indexed") or
         manifest["catalog_sha256"] != catalog_sha or
         manifest["snapshot_sha256"] != snapshot_sha or
@@ -384,11 +411,14 @@ def main(argv: list[str] | None = None) -> int:
     capture.add_argument("--token-file", type=Path)
     capture.add_argument("--key-file", type=Path)
     capture.add_argument("--ack-authorized-metadata-only", action="store_true")
+    capture.add_argument("--pin-observed-projection", action="store_true",
+                         help="Before/after full bounded visible-metadata and index checks.")
     check = sub.add_parser("verify")
     check.add_argument("--questions", type=Path, required=True)
     check.add_argument("--responses", type=Path, required=True)
     check.add_argument("--manifest", type=Path, required=True)
     check.add_argument("--key-file", type=Path)
+    check.add_argument("--require-observed-projection", action="store_true")
     args = parser.parse_args(argv)
     if args.mode == "capture" and not args.ack_authorized_metadata_only:
         print("[BLOCKED] Authorized private metadata capture acknowledgement required.")
@@ -398,14 +428,24 @@ def main(argv: list[str] | None = None) -> int:
         if args.mode == "capture":
             client = SignedLoopbackClient(
                 args.url, token_path=args.token_file, key_path=args.key_file)
+            revision_probe = None
+            if args.pin_observed_projection:
+                from scripts.search_revision import observe_projection
+                revision_probe = lambda: observe_projection(
+                    catalog, client.fetch, mode=args.search)
             snapshot, manifest = collect(
                 catalog, client.fetch, mode=args.search,
-                catalog_sha=catalog_sha, key=client.key)
+                catalog_sha=catalog_sha, key=client.key,
+                revision_probe=revision_probe)
             save_private_pair(args.output, args.manifest, snapshot, manifest)
             count = manifest["request_count"]
         else:
             snapshot, snapshot_sha = read_evidence(args.responses)
             manifest, _ = read_evidence(args.manifest)
+            if args.require_observed_projection and (
+                manifest.get("schema_version") != "0.8.10"
+            ):
+                raise CaptureError("Capture lacks bounded revision observation.")
             key = load_token(args.key_file or signature_key_path())
             count = verify(
                 catalog, snapshot, manifest, catalog_sha=catalog_sha,

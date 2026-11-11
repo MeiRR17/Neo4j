@@ -76,3 +76,20 @@ and indexed metadata backfill. It uses the actual disposable Neo4j database
 and the real signed HTTP request handler, routed through an in-process local
 FastAPI TestClient, to capture and verify both scan and indexed-prefix pages.
 No production network address is contacted and no review records are created.
+
+## v0.8.10: Optional bounded visible-projection pin
+
+Add `--pin-observed-projection` to `capture` and
+`--require-observed-projection` to `verify`. This makes signed requests
+to the existing metadata search (empty query, all titles and anchors) and
+per-kind signed indexed capability endpoints both **before and after**
+collection. If the bounded, complete visible search projection or index
+status/coverage differs, nothing is frozen. The observation (up to 500
+visible records per kind, 25 pages) is HMAC-bound to a v0.8.10 manifest.
+
+This is **not an immutable Neo4j corpus revision**. There is no read
+transaction across all requests. Aliases, editions, metadata beyond the
+exposed fields, unseen source text and graph links are not hashed; even
+equal observations do not rule out intermediate mutations (ABA).
+The status remains HOLD. Do not use these digests to assert source rights
+or claim a scholarly reproducibility guarantee.

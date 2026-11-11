@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.8.10] — 2026-11-11 (DRAFT — bounded search projection and index revision binding)
+
+- Added a signed private API observation of all bounded visible metadata
+  titles/source anchors and physical index capability for catalog entity kinds.
+- Optional --pin-observed-projection scans this observed projection both before
+  and after research capture, rejecting drift and incomplete/oversized scans.
+- Emits backward-compatible v0.8.10 HMAC-bound revision observation in
+  the capture manifest; offline verify checks exact catalog kinds, index
+  coverage, schema/rights flags and observation hash.
+- CI tests index drift rejection and exercises revision-pinned scan/indexed
+  metadata capture end-to-end over synthetic Neo4j.
+- Important limits: not a cryptographic whole-corpus revision. Aliases,
+  edition links, hidden text and graph edges are NOT observed; no snapshot
+  isolation or independent DB/server attestation is claimed; release HOLD.
+
+
 ## [0.8.9] — 2026-11-11 (DRAFT — signed localhost search capture)
 
 - Added an opt-in localhost-only research metadata capture tool using the

@@ -38,6 +38,8 @@ jobs:
             --output /tmp/neo4j-v088-review-form.json
       - name: Signed localhost capture HMAC, cursor chain and denial tests
         run: PYTHONPATH=scripts python -m unittest tests.test_search_capture -v
+      - name: Bounded observed revision pin and drift rejection unit smoke
+        run: PYTHONPATH=scripts python -m unittest tests.test_search_revision -v
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
