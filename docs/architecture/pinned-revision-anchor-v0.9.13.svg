@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 690" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.13 Ed25519 pinned audit revision anchor</title>
+<desc id="desc">A read-only verified Neo4j revision chain is captured as a bounded checkpoint, signed with a separately supplied Ed25519 private key, and verified using an operator-pinned public key. A later read-only comparison detects changes to anchored historical revisions while allowing new legitimate appends. No immutable graph or Object Lock claim is made.</desc>
+<rect width="1240" height="690" rx="24" fill="#111b2a"/>
+<text x="43" y="56" fill="#f4f8ff" font-family="Arial,sans-serif" font-weight="700" font-size="31">Neo4j v0.9.13 — Pinned revision anchors</text>
+<text x="43" y="89" fill="#b8c7df" font-family="Arial,sans-serif" font-size="17">Code-derived architecture · not a screenshot from a running application</text>
+<rect x="43" y="132" width="355" height="174" rx="17" fill="#214462" stroke="#89abd7" stroke-width="2"/>
+<text x="64" y="174" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="21">1 · Verify ledger history</text>
+<text x="64" y="218" fill="#e6f1ff" font-family="Arial,sans-serif" font-size="18">Neo4j revisions 0–32</text>
+<text x="64" y="256" fill="#e6f1ff" font-family="Arial,sans-serif" font-size="17">Capture sequence + chain hash</text>
+<path d="M398 217 H444" fill="none" stroke="#91c5f1" stroke-width="4"/>
+<rect x="449" y="132" width="342" height="174" rx="17" fill="#165b59" stroke="#6cc2a9" stroke-width="2"/>
+<text x="470" y="174" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="21">2 · Offline Ed25519 sign</text>
+<text x="470" y="218" fill="#def8eb" font-family="Arial,sans-serif" font-size="18">Separate protected private key</text>
+<text x="470" y="256" fill="#def8eb" font-family="Arial,sans-serif" font-size="17">Domain-separated signature</text>
+<path d="M791 217 H835" fill="none" stroke="#91c5f1" stroke-width="4"/>
+<rect x="840" y="132" width="356" height="174" rx="17" fill="#4c3f5a" stroke="#ae9acb" stroke-width="2"/>
+<text x="860" y="174" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="21">3 · Pinned public key</text>
+<text x="860" y="218" fill="#f2eaf9" font-family="Arial,sans-serif" font-size="18">Signer + directed Work scope</text>
+<text x="860" y="256" fill="#f2eaf9" font-family="Arial,sans-serif" font-size="17">Verify without database access</text>
+<path d="M1007 307 V358 H620 V387" fill="none" stroke="#91c5f1" stroke-width="4"/>
+<rect x="296" y="392" width="648" height="112" rx="18" fill="#304357" stroke="#9db5d0" stroke-width="2"/>
+<text x="318" y="437" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="21">4 · Compare signed prefix with live Neo4j</text>
+<text x="318" y="477" fill="#e2ecf8" font-family="Arial,sans-serif" font-size="17">Existing history hash must match · later valid append allowed</text>
+<path d="M437 505 V545 H268 V567" fill="none" stroke="#dfa2a2" stroke-width="4"/>
+<path d="M804 505 V545 H971 V567" fill="none" stroke="#81d9b8" stroke-width="4"/>
+<rect x="52" y="572" width="519" height="69" rx="16" fill="#663c40" stroke="#d79a9c" stroke-width="2"/>
+<text x="77" y="614" fill="#ffe9ed" font-family="Arial,sans-serif" font-size="20" font-weight="700">Changed / deleted prefix → Reject</text>
+<rect x="665" y="572" width="529" height="69" rx="16" fill="#245949" stroke="#7ed1af" stroke-width="2"/>
+<text x="690" y="614" fill="#edfff4" font-family="Arial,sans-serif" font-size="20" font-weight="700">Matching prefix → Verify</text>
+<text x="44" y="672" fill="#f5d6a9" font-family="Arial,sans-serif" font-size="17">Not an immutable source graph · No verified Object Lock · No independent signer identity · HOLD</text>
+</svg>
