@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="455" viewBox="0 0 1080 455" role="img" aria-label="Neo4j v0.8.13 complete observed source-set membership witness">
+<rect width="1080" height="455" rx="24" fill="#0e1727"/>
+<text x="32" y="50" font-family="Arial,sans-serif" font-weight="bold" font-size="27" fill="#f8fafc">Neo4j v0.8.13 · Source membership witness</text>
+<text x="32" y="77" font-family="Arial,sans-serif" font-size="14" fill="#94a3b8">Code-derived diagram — not a production screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="27" y="125" width="228" height="140" rx="14" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="141" y="162" font-size="19" fill="white" font-weight="bold">Signed capture</text>
+<text x="141" y="192" fill="#cbd5e1" font-size="14">v0.8.11 HMAC</text>
+<text x="141" y="219" fill="#cbd5e1" font-size="14">Expected sources SHA</text>
+<text x="141" y="244" fill="#cbd5e1" font-size="13">Bounded source count</text>
+<rect x="285" y="125" width="236" height="140" rx="14" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="403" y="162" font-size="18" fill="white" font-weight="bold">Full source scan</text>
+<text x="403" y="192" fill="#cbd5e1" font-size="14">Signed local API GETs</text>
+<text x="403" y="219" fill="#cbd5e1" font-size="14">Complete ordered pages</text>
+<text x="403" y="244" fill="#cbd5e1" font-size="13">Exact framed SHA256</text>
+<rect x="551" y="125" width="230" height="140" rx="14" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+<text x="666" y="162" font-size="18" fill="white" font-weight="bold">Receipt membership</text>
+<text x="666" y="192" fill="#cbd5e1" font-size="14">v0.8.12 local bytes</text>
+<text x="666" y="219" fill="#cbd5e1" font-size="14">Exact SourceRecord row</text>
+<text x="666" y="244" fill="#cbd5e1" font-size="13">Fail closed if missing</text>
+<rect x="810" y="125" width="242" height="140" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="931" y="162" font-size="18" fill="white" font-weight="bold">Private witness</text>
+<text x="931" y="192" fill="#cbd5e1" font-size="14">HMAC + mode 0600</text>
+<text x="931" y="219" fill="#cbd5e1" font-size="14">Offline verification</text>
+<text x="931" y="244" fill="#cbd5e1" font-size="13">No provider approval</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M255 194h26"/><path d="M521 194h26"/><path d="M781 194h25"/></g>
+<g fill="#94a3b8"><path d="M281 194l-9 -6v12z"/><path d="M547 194l-9 -6v12z"/><path d="M806 194l-9 -6v12z"/></g>
+<rect x="27" y="305" width="1025" height="115" rx="14" fill="#1a2c46" stroke="#3c506c"/>
+<text x="51" y="340" fill="white" font-family="Arial,sans-serif" font-size="19" font-weight="bold">Research release: HOLD</text>
+<text x="51" y="366" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="15">Captured observed metadata membership ≠ immutable graph membership or authenticated provider delivery.</text>
+<text x="51" y="395" fill="#fda4af" font-family="Arial,sans-serif" font-size="14">External signatures, source rights, human reviewers and production authorization remain pending.</text>
+</svg>

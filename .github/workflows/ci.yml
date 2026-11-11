@@ -44,6 +44,8 @@ jobs:
         run: PYTHONPATH=scripts python -m unittest tests.test_source_provenance -v
       - name: Local retained source receipt and signature-negative tests
         run: PYTHONPATH=scripts python -m unittest tests.test_source_receipts -v
+      - name: Complete bounded source membership and capture HMAC unit tests
+        run: PYTHONPATH=scripts python -m unittest tests.test_source_membership -v
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
@@ -111,6 +113,8 @@ jobs:
         run: python scripts/capture_smoke.py
       - name: Retained synthetic source bytes versus live signed SourceRecord
         run: python scripts/source_receipt_smoke.py
+      - name: Complete captured source membership against signed real CI Neo4j
+        run: python scripts/source_membership_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py
       - name: Stop local test environment
