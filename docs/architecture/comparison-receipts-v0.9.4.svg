@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img" aria-labelledby="title description">
+<title id="title">Neo4j v0.9.4 reproducible comparison receipts</title>
+<desc id="description">Private request for two Work IDs retrieves ordered author metadata and directional evidence-linked graph samples. The validated comparison is encoded as sorted-key UTF-8 JSON and SHA-256 hashed. A separate SHA-256 is computed from fixed query templates. The unsigned receipt explicitly does not prove graph snapshot isolation, source rights, corpus completeness or historical influence.</desc>
+<rect width="1200" height="640" rx="24" fill="#101927"/>
+<text x="48" y="61" fill="#f1f6fc" font-family="Arial, sans-serif" font-size="30" font-weight="700">Neo4j / v0.9.4 — Repeatable comparison receipt</text>
+<text x="48" y="94" fill="#b8c9dd" font-family="Arial, sans-serif" font-size="17">Code-derived architecture schematic • not a screenshot of running software</text>
+<rect x="47" y="155" width="264" height="131" rx="17" fill="#213f62" stroke="#83a9d1" stroke-width="2"/>
+<text x="69" y="193" fill="#fff" font-family="Arial, sans-serif" font-size="20" font-weight="700">Private Research API</text>
+<text x="69" y="226" fill="#dcebf9" font-family="Arial, sans-serif" font-size="17">2 canonical Work IDs</text>
+<text x="69" y="257" fill="#dcebf9" font-family="Arial, sans-serif" font-size="16">Bearer / optional signature</text>
+<path d="M311 221 H379" stroke="#95c8f7" stroke-width="4" fill="none"/>
+<path d="M367 213 L380 221 L367 229" stroke="#95c8f7" stroke-width="4" fill="none"/>
+<rect x="382" y="139" width="372" height="166" rx="17" fill="#15515b" stroke="#64bdb4" stroke-width="2"/>
+<text x="403" y="177" fill="#fff" font-family="Arial, sans-serif" font-size="20" font-weight="700">Fixed Neo4j reads</text>
+<text x="403" y="213" fill="#d9f2ef" font-family="Arial, sans-serif" font-size="16">Ordered author-ID lookahead</text>
+<text x="403" y="243" fill="#d9f2ef" font-family="Arial, sans-serif" font-size="16">SOURCE_LINK in both directions</text>
+<text x="403" y="274" fill="#d9f2ef" font-family="Arial, sans-serif" font-size="16">Exact Evidence IDs + statuses</text>
+<path d="M568 305 V351" stroke="#95c8f7" stroke-width="4" fill="none"/>
+<path d="M559 339 L568 353 L577 339" stroke="#95c8f7" stroke-width="4" fill="none"/>
+<rect x="382" y="353" width="372" height="141" rx="17" fill="#15515b" stroke="#64bdb4" stroke-width="2"/>
+<text x="403" y="391" fill="#fff" font-family="Arial, sans-serif" font-size="20" font-weight="700">Deterministic encoding</text>
+<text x="403" y="427" fill="#d9f2ef" font-family="Arial, sans-serif" font-size="16">Canonical JSON → SHA-256</text>
+<text x="403" y="462" fill="#d9f2ef" font-family="Arial, sans-serif" font-size="16">Fixed query templates → SHA-256</text>
+<rect x="818" y="190" width="340" height="273" rx="17" fill="#4a3a2e" stroke="#d5ad79" stroke-width="2"/>
+<text x="840" y="230" fill="#fff4e5" font-family="Arial, sans-serif" font-size="21" font-weight="700">Unsigned receipt</text>
+<text x="840" y="273" fill="#f9e0c2" font-family="Arial, sans-serif" font-size="17">Exact observed rows only</text>
+<text x="840" y="312" fill="#f9e0c2" font-family="Arial, sans-serif" font-size="17">No graph snapshot proof</text>
+<text x="840" y="351" fill="#f9e0c2" font-family="Arial, sans-serif" font-size="17">No corpus coverage proof</text>
+<text x="840" y="390" fill="#f9e0c2" font-family="Arial, sans-serif" font-size="17">No source-rights clearance</text>
+<text x="840" y="429" fill="#f9e0c2" font-family="Arial, sans-serif" font-size="17">No influence assertion</text>
+<path d="M754 424 H818" stroke="#95c8f7" stroke-width="4" fill="none"/>
+<path d="M806 416 L819 424 L806 432" stroke="#95c8f7" stroke-width="4" fill="none"/>
+<rect x="47" y="544" width="1111" height="63" rx="14" fill="#28384b" stroke="#879ab4" stroke-width="2"/>
+<text x="68" y="581" fill="#ffdcad" font-family="Arial, sans-serif" font-size="20" font-weight="700">20 synthetic replay samples • descriptive CI p50/p95 only • release HOLD</text>
+</svg>
