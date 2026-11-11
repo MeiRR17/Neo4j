@@ -479,8 +479,11 @@ READ_OPERATIONS["analysis_work_cross_links"] = """
 MATCH (a:Passage {work_id:$source_work_id})
 USING INDEX a:Passage(work_id)
 WITH a
-MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
-WHERE coalesce(b.work_id, '') = $target_work_id
+CALL (a) {
+  MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
+  WHERE coalesce(b.work_id, '') = $target_work_id
+  RETURN r, b
+}
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL
   AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
@@ -507,9 +510,12 @@ READ_OPERATIONS["analysis_work_cross_link_page"] = """
 MATCH (a:Passage {work_id:$source_work_id})
 USING INDEX a:Passage(work_id)
 WITH a
-MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
-WHERE coalesce(b.work_id, '') = $target_work_id
-  AND r.id > $after_edge_id
+CALL (a) {
+  MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
+  WHERE coalesce(b.work_id, '') = $target_work_id
+    AND r.id > $after_edge_id
+  RETURN r, b
+}
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.claim_kind = 'OBSERVED_SOURCE_LINK'
   AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'

@@ -166,6 +166,8 @@ class AnalyticsCostDeltaTests(unittest.TestCase):
         self.assertIn("USING INDEX a:Passage(work_id)", statement)
         self.assertIn("MATCH (a)-[r:SOURCE_LINK]->(b:Passage)", statement)
         self.assertIn("WHERE coalesce(b.work_id, '') = $target_work_id", statement)
+        self.assertIn("WITH a\nCALL (a) {", statement)
+        self.assertIn("RETURN r, b\n}", statement)
         self.assertIn("MATCH (ev:Evidence {id:r.evidence_id})", statement)
         self.assertIn("ORDER BY edge_id", statement)
         self.assertIn("LIMIT $fetch_limit", statement)

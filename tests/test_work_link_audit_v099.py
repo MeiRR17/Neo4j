@@ -226,9 +226,16 @@ class AuditLinkTests(unittest.TestCase):
         self.assertIn("MATCH (ev:Evidence {id:r.evidence_id})", stmt)
         self.assertIn("ORDER BY edge_id", stmt)
         self.assertIn("LIMIT $fetch_limit", stmt)
+        # Exactly one fixed, correlated *read-only* CALL subquery is
+        # allowed to prevent the planner from rescanning global links.
+        # All other CALL/procedure forms and writes remain forbidden.
+        self.assertIn("WITH a\nCALL (a) {", stmt)
+        self.assertIn("RETURN r, b\n}", stmt)
+        self.assertEqual(stmt.upper().count("CALL (A) {"), 1)
+        internal_read = stmt.upper().replace("CALL (A) {", "")
         for forbidden in ("CREATE ", "DELETE ", "MERGE ", "LOAD CSV",
                           "CALL ", "APOC."):
-            self.assertNotIn(forbidden, stmt.upper())
+            self.assertNotIn(forbidden, internal_read)
         openapi = self.client.get("/openapi.json").json()
         self.assertIn("/v1/analysis/works/links/audit", openapi["paths"])
         self.assertIn("WorkLinkAuditPage", openapi["components"]["schemas"])
