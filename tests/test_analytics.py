@@ -129,7 +129,13 @@ class AnalysisTests(unittest.TestCase):
                 r = self.client.get("/v1/analysis/source-links",
                                     params={"passage_id": FOCUS}, headers=self.auth)
                 self.assertEqual(r.status_code, 503, r.text)
-                self.assertNotIn("bad", r.text)
+                # The request_id is a random UUID and may legitimately
+                # contain "bad" as hex. Verify only the sanitized error
+                # surface, not the opaque request correlation identifier.
+                error = r.json()["error"]
+                self.assertEqual(error["code"], "UNAVAILABLE")
+                self.assertEqual(error["message"],
+                                 "Research storage or configuration unavailable.")
             finally:
                 row[key] = old
         self.store.data["analysis_source_links"][0]["source_text"] = "UNLICENSED"

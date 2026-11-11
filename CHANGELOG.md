@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.9.6] — 2026-11-11 (DRAFT — index-anchored traversal / pinned costs)
+
+- Measured v0.9.5 synthetic baseline: directed cross-Work link query
+  required 4,366 dbHits at 32 SOURCE_LINKs and 66,382 at 128,
+  compared with stable 12-hit Work descriptors and 15-hit frequencies.
+- Re-anchored the fixed read-only cross-Work Cypher to the existing
+  Passage.work_id index before expanding a directed SOURCE_LINK,
+  filtering target Work and verifying exact Evidence IDs/review states.
+- Added sanitized pinned historical median-dbHits comparisons, change and
+  scaling indicators. CI stores a seven-day delta artifact.
+- The first index-hinted revision had NO cost improvement. A second
+  revision uses a non-indexable target Work filter to prevent the
+  unintended two-sided index-join plan while preserving results.
+- Exact-head isolated CI #43102371908 measured 334 dbHits at 32 links
+  (92.35% below baseline) and 1,102 at 128 (98.34% below baseline)
+  in both directions; growth fell from 15.204x to 3.299x.
+- Twelve synthetic security/regression tests and a fixture-only CI gate
+  now guard conservative dbHits and scaling ceilings. These do not
+  certify performance on real corpora. Research release HOLD.
+
+
 ## [0.9.5] — 2026-11-11 (DRAFT — deterministic synthetic graph cost fixtures)
 
 - Added deterministic 32- and 128-edge benchmark datasets spanning two

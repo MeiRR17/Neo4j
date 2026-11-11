@@ -131,6 +131,33 @@ jobs:
           path: local_staging/analytics-cost-v095.json
           if-no-files-found: error
           retention-days: 7
+      - name: Compare anchored graph dbHits with pinned v0.9.5 CI baseline
+        run: |
+          python scripts/analytics_cost_delta_v096.py \
+            --input local_staging/analytics-cost-v095.json \
+            --output local_staging/analytics-delta-v096.json \
+            --require-synthetic-cost-gate
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path("local_staging/analytics-delta-v096.json").read_text())
+          assert report["schema_version"] == "0.9.6"
+          assert report["baseline_run_id"] == 43099681819
+          assert report["fixture_scales"] == [32, 128]
+          assert report["regression_gate_enforced"] is True
+          assert report["synthetic_regression_gate_passed"] is True
+          assert report["research_release_status"] == "HOLD"
+          assert not report["representative_performance_proven"]
+          print("[OK] v0.9.6 fixed-fixture dbHits regression gate passed; "
+                "the threshold is synthetic-only and not a production SLO.")
+          PY
+      - name: Retain sanitized v0.9.6 anchored cost comparison
+        uses: actions/upload-artifact@v4
+        with:
+          name: analytics-delta-v096-synthetic
+          path: local_staging/analytics-delta-v096.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Plan, apply and verify metadata-only search index (isolated CI)
         run: |
           python scripts/search_index_backfill.py dry-run --kind works
