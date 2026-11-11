@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="490" viewBox="0 0 1200 490" role="img" aria-label="Architecture diagram for v0.8.15: signed source proof to read-only S3 HEAD and retention checks, fail-closed research hold">
+<rect width="1200" height="490" fill="#0b1220"/>
+<text x="44" y="58" fill="#ecf3ff" font-size="29" font-family="DejaVu Sans,sans-serif" font-weight="700">Neo4j v0.8.15 · S3 archive evidence verifier</text>
+<text x="44" y="90" fill="#91a8c6" font-size="17" font-family="DejaVu Sans,sans-serif">IMPLEMENTED CODE PATH · architecture illustration, not a UI screenshot</text>
+<g font-family="DejaVu Sans,sans-serif" font-size="17" text-anchor="middle">
+<rect x="45" y="155" width="255" height="176" rx="15" fill="#142943" stroke="#4a93d3" stroke-width="2"/>
+<text x="172" y="192" fill="#c1e0ff" font-weight="700">Signed local evidence</text>
+<text x="172" y="225" fill="#ecf3ff">Ed25519 operator claim</text>
+<text x="172" y="254" fill="#ecf3ff">v0.8.11–13 chain</text>
+<text x="172" y="283" fill="#91a8c6">Verified before S3 calls</text>
+<rect x="365" y="155" width="270" height="176" rx="15" fill="#142943" stroke="#4a93d3" stroke-width="2"/>
+<text x="500" y="192" fill="#c1e0ff" font-weight="700">AWS S3 HEAD (read-only)</text>
+<text x="500" y="225" fill="#ecf3ff">Exact VersionId + bytes</text>
+<text x="500" y="254" fill="#ecf3ff">FULL_OBJECT SHA-256</text>
+<text x="500" y="283" fill="#91a8c6">ExpectedBucketOwner pinned</text>
+<rect x="700" y="155" width="280" height="176" rx="15" fill="#142943" stroke="#4a93d3" stroke-width="2"/>
+<text x="840" y="192" fill="#c1e0ff" font-weight="700">GetObjectRetention</text>
+<text x="840" y="225" fill="#ecf3ff">Same object version</text>
+<text x="840" y="254" fill="#ecf3ff">Mode + date agreement</text>
+<text x="840" y="283" fill="#91a8c6">Reject expiry / mismatch</text>
+<rect x="1010" y="155" width="151" height="176" rx="15" fill="#233445" stroke="#f59e74" stroke-width="2"/>
+<text x="1085" y="198" fill="#ffc09a" font-weight="700">Report</text>
+<text x="1085" y="238" fill="#ecf3ff">0600 private</text>
+<text x="1085" y="273" fill="#ffc09a" font-weight="700">HOLD</text>
+</g>
+<g stroke="#62c0e6" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M305 243h54m-10-8 10 8-10 8"/><path d="M641 243h53m-10-8 10 8-10 8"/><path d="M985 243h19m-10-8 10 8-10 8"/></g>
+<rect x="45" y="365" width="1116" height="84" rx="12" fill="#1b2837"/>
+<text x="66" y="399" fill="#f5c18c" font-size="18" font-family="DejaVu Sans,sans-serif" font-weight="700">NEVER PROMOTED TO VERIFIED</text>
+<text x="66" y="426" fill="#dce6f4" font-size="16" font-family="DejaVu Sans,sans-serif">Immutable history · signer organization · legal rights · research approval · Neo4j snapshot isolation</text>
+</svg>

@@ -1,0 +1,3 @@
+# v0.8.15 explicit opt-in AWS S3 HEAD and GetObjectRetention probe.
+-r provenance-attestation.txt
+boto3==1.44.0

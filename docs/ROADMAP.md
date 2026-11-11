@@ -111,6 +111,18 @@ The existing main branch contains README.md, docker-compose.yml, one Sefaria Pyt
 **Implemented:** a private, offline Ed25519 public-key verification interface with operator-pinned trust policy and restricted archival namespace; binds a signed archive-operator claim to the exact 0.8.13 bounded source membership witness, 0.8.12 file checksum receipt, 0.8.11 capture manifest and claimed versioned S3 Object Lock metadata report. Fail-closed envelope, replay, role, schema, rights, content and retention checks. No production trust keys or source reports in repository; synthetic-only CI.
 **Remaining:** external organizational identity validation, authenticated provider archive APIs/version metadata, independently checked Object Lock retention/WORM immutability, verifiable timestamp/third-party trust governance, source license and scholarly reviews. Cryptographic validity of a pinned key is NOT independent archive immutability. HOLD.
 
+### v0.8.15 — Version-scoped AWS S3 checksum and Object Lock observation (DRAFT)
+**Implemented:** optional read-only AWS S3 HeadObject + GetObjectRetention checks,
+after the verified 0.8.14 signed operator claim and 0.8.11–0.8.13 local chain.
+ExpectedBucketOwner, object version, FULL_OBJECT SHA-256, content length, mode,
+retain-until and successful API status must agree exactly; region/HTTPS/SigV4
+client and standard endpoint required. Private failure-closed 0600 report,
+synthetic-only tests, pinned opt-in boto3 dependency and accurate architecture
+diagram. No live AWS account or production credentials were available.
+**Remaining:** independent archive history/custody attestation, signer organization
+onboarding/revocation, legal rights, trusted non-synthetic S3 evidence,
+50 human scholarly judgments and production signoffs. No research release; HOLD.
+
 ### v0.9.0 — Research-grade graph analytics [P1; 2 cycles]
 **Changes:** five original questions rewritten as versioned, parameterized API analyses; shortest path with edge provenance; centrality as frequency measure not authority; co-citation as hypothesis; chronology constraints; author/work/period comparisons; analysis results include definition and limitations.  
 **Acceptance:** 100+ gold-set links and at least 20 manually checked analytical examples; no assertion of influence without supported temporal/primary evidence; performance tests with published fixture sizes. **Depends:** v0.8.0.
