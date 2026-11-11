@@ -48,6 +48,8 @@ jobs:
         run: PYTHONPATH=scripts python -m unittest tests.test_source_membership -v
       - name: Pinned Ed25519 archive attestation and trust-policy denial tests
         run: PYTHONPATH=scripts python -m unittest tests.test_external_archive_attestation -v
+      - name: AWS version-pinned HEAD, SHA256 and Object Lock validation (mocked only)
+        run: PYTHONPATH=scripts python -m unittest tests.test_live_s3_version_verify -v
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
@@ -115,7 +117,7 @@ jobs:
         run: python scripts/capture_smoke.py
       - name: Retained synthetic source bytes versus live signed SourceRecord
         run: python scripts/source_receipt_smoke.py
-      - name: Complete captured source membership and synthetic archive signature
+      - name: Complete captured source chain with mocked AWS S3 API
         run: python scripts/source_membership_smoke.py
       - name: Verify actual data persistence across restart
         run: python scripts/persistence_smoke.py

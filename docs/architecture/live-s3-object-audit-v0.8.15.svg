@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="472" viewBox="0 0 1150 472" role="img" aria-label="Neo4j v0.8.15 versioned AWS S3 HEAD and retention checks">
+<rect width="1150" height="472" rx="24" fill="#0c1729"/>
+<text x="35" y="50" font-size="27" font-weight="bold" font-family="Arial,sans-serif" fill="#f8fafc">Neo4j v0.8.15 — Versioned S3 archive audit</text>
+<text x="35" y="80" font-size="14" font-family="Arial,sans-serif" fill="#94a3b8">Diagram of implemented code; NOT a real AWS or production screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="25" y="135" width="257" height="136" rx="13" fill="#202b43" stroke="#60a5fa" stroke-width="2"/>
+<text x="153" y="169" font-size="19" font-weight="bold" fill="white">Authenticated chain</text>
+<text x="153" y="198" font-size="14" fill="#cbd5e1">Capture + local byte receipt</text>
+<text x="153" y="221" font-size="14" fill="#cbd5e1">Membership + Ed25519</text>
+<text x="153" y="246" font-size="13" fill="#cbd5e1">Fail before AWS if invalid</text>
+<rect x="317" y="135" width="253" height="136" rx="13" fill="#202b43" stroke="#a78bfa" stroke-width="2"/>
+<text x="443" y="169" font-size="19" font-weight="bold" fill="white">Exact-version HEAD</text>
+<text x="443" y="198" font-size="14" fill="#cbd5e1">Owner + VersionId pinned</text>
+<text x="443" y="221" font-size="14" fill="#cbd5e1">FULL_OBJECT SHA256</text>
+<text x="443" y="246" font-size="13" fill="#cbd5e1">Byte count equals receipt</text>
+<rect x="605" y="135" width="254" height="136" rx="13" fill="#202b43" stroke="#fbbf24" stroke-width="2"/>
+<text x="732" y="169" font-size="19" font-weight="bold" fill="white">GetObjectRetention</text>
+<text x="732" y="198" font-size="14" fill="#cbd5e1">Same account/version</text>
+<text x="732" y="221" font-size="14" fill="#cbd5e1">COMPLIANCE + expiry</text>
+<text x="732" y="246" font-size="13" fill="#cbd5e1">Match HEAD + claim</text>
+<rect x="895" y="135" width="228" height="136" rx="13" fill="#202b43" stroke="#34d399" stroke-width="2"/>
+<text x="1009" y="169" font-size="18" font-weight="bold" fill="white">Private observation</text>
+<text x="1009" y="198" font-size="14" fill="#cbd5e1">SHA256 digests + HMAC</text>
+<text x="1009" y="221" font-size="14" fill="#cbd5e1">Offline verification</text>
+<text x="1009" y="246" font-size="13" fill="#cbd5e1">Research HOLD</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M282 202h29"/><path d="M570 202h29"/><path d="M859 202h30"/></g>
+<g fill="#94a3b8"><path d="M311 202l-10 -6v12z"/><path d="M599 202l-10 -6v12z"/><path d="M889 202l-10 -6v12z"/></g>
+<rect x="25" y="309" width="1098" height="127" rx="13" fill="#1a2e48" stroke="#375172"/>
+<text x="49" y="343" fill="white" font-family="Arial,sans-serif" font-weight="bold" font-size="19">Research release: HOLD</text>
+<text x="49" y="373" fill="#cbd5e1" font-family="Arial,sans-serif" font-size="15">Live AWS SDK checks are opt-in. CI uses synthetic S3 responses; no real object verified here.</text>
+<text x="49" y="403" fill="#fda4af" font-family="Arial,sans-serif" font-size="14">Observed lock metadata is not independent end-to-end immutability, source licensing or scholarly approval.</text>
+</svg>

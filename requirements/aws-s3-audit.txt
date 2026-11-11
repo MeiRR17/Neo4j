@@ -1,0 +1,4 @@
+# v0.8.15 optional read-only live S3 object metadata checks.
+# Explicit AWS profile and expected bucket owner required by CLI.
+# The API server runtime does not need this optional dependency.
+boto3==1.44.0

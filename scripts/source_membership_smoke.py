@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 import base64
+from datetime import datetime, timezone
 from pathlib import Path
 import secrets
 import sys
@@ -29,6 +30,7 @@ from scripts.search_revision import observe_projection
 from scripts.source_receipts import MODES, issue_receipt
 from scripts.source_membership import issue_witness, verify_witness
 from scripts.external_archive_attestation import DOMAIN, verify_attestation
+from scripts.live_s3_version_verify import observe_s3_version, verify_observation
 from services.research_api.app import create_app
 from services.research_api.signature import CLIENT_ID, sign_request
 
@@ -134,13 +136,65 @@ def main() -> int:
             attestation_result["external_archive_immutability_verified"] is not False or
             attestation_result["research_release_status"] != "HOLD"):
             raise RuntimeError("Signed synthetic archival claim promoted trust.")
+        # A fake SDK object explicitly exercises the LIVE READ validation
+        # logic without any credentials or requests to real S3.
+        # Do not treat this test as a real archive-retention certification.
+        class FakeS3:
+            def head_object(self, **params):
+                if (params["VersionId"] != archive_report["version_id"] or
+                    params["ExpectedBucketOwner"] != "123456789012" or
+                    params["ChecksumMode"] != "ENABLED"):
+                    raise RuntimeError("Unpinned synthetic S3 HEAD.")
+                return {
+                    "ResponseMetadata": {
+                        "HTTPStatusCode": 200, "RequestId": "CI_SYNTHETIC_HEAD"},
+                    "VersionId": archive_report["version_id"],
+                    "ContentLength": receipt["observed_file_size_bytes"],
+                    "ChecksumSHA256": base64.b64encode(bytes.fromhex(
+                        receipt["observed_raw_file_sha256"])).decode("ascii"),
+                    "ChecksumType": "FULL_OBJECT",
+                    "ObjectLockMode": "COMPLIANCE",
+                    "ObjectLockRetainUntilDate": datetime(
+                        2028, 1, 1, tzinfo=timezone.utc),
+                }
+
+            def get_object_retention(self, **params):
+                if (params["VersionId"] != archive_report["version_id"] or
+                    params["ExpectedBucketOwner"] != "123456789012"):
+                    raise RuntimeError("Unpinned synthetic S3 retention.")
+                return {
+                    "ResponseMetadata": {
+                        "HTTPStatusCode": 200, "RequestId": "CI_SYNTHETIC_LOCK"},
+                    "Retention": {
+                        "Mode": "COMPLIANCE",
+                        "RetainUntilDate": datetime(
+                            2028, 1, 1, tzinfo=timezone.utc),
+                    },
+                }
+
+        s3_evidence = observe_s3_version(
+            FakeS3(), policy=policy, report=archive_report,
+            statement=signed, record=record, receipt=receipt,
+            witness=witness, capture=capture, source_file=FIXTURE,
+            local_key=client.key, account="123456789012",
+            region="il-central-1",
+            observed_at=datetime(2026, 11, 11, 13, tzinfo=timezone.utc))
+        verify_observation(
+            s3_evidence, policy=policy, report=archive_report,
+            statement=signed, record=record, receipt=receipt,
+            witness=witness, capture=capture, source_file=FIXTURE,
+            local_key=client.key, account="123456789012",
+            region="il-central-1")
+        if (s3_evidence["external_archive_immutability_end_to_end_verified"] is not False or
+            s3_evidence["aws_full_object_sha256_matched"] is not True):
+            raise RuntimeError("Synthetic S3 observation falsely upgraded trust.")
         if (witness["source_record_id"] != ident or
             witness["research_release_status"] != "HOLD" or
             witness["independent_provider_signature_verified"] is not False or
             witness["cross_request_snapshot_isolation"] is not False):
             raise RuntimeError("Source membership overclaimed independent trust.")
-    print("[OK] Signed source membership and synthetic Ed25519 archive claim "
-          "against isolated CI Neo4j; external immutability unverified; HOLD.")
+    print("[OK] Signed real Neo4j chain plus mocked S3 HEAD/retention + "
+          "Ed25519; NO live AWS used; external immutability unverified; HOLD.")
     return 0
 
 
