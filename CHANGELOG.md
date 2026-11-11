@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.9.2] — 2026-11-11 (DRAFT — source-link frequencies and author metadata)
+
+- Added authenticated source-link frequency metrics over the first 50
+  incident SOURCE_LINK edges by canonical ID, plus one lookahead.
+  Reports explicit denominator, incoming/outgoing links and internal
+  joint-approved/contested/pending statuses and fraction; no global
+  centrality, inferred authority or rights promotion.
+- Added authenticated author-lifetime indicators for one eligible direct
+  source link, with up to two per-Work author records to detect missing,
+  incomplete and ambiguous provenance. Dates come from unverified Person
+  metadata; never infer historical influence or composition order.
+- Fixed read-only Cypher, bounded typed DTOs, deny duplicate/unsupported
+  filters, unexpected fields, malformed authors, duplicate Evidence and
+  out-of-scope graph rows; no source text exposed.
+- Nine synthetic contract/negative cases plus isolated real-Neo4j API
+  integration, roadmap, operator guide and implementation schematic.
+- Research/production release remains HOLD.
+
+
 ## [0.9.1] — 2026-11-11 (DRAFT — evidence-bounded directed path discovery)
 
 - Added a private, authenticated /v1/graph/evidence-path operation with
