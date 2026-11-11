@@ -90,7 +90,7 @@ class FakeAdmin:
 
 
 class FakeProfiler:
-    def __init__(self):
+    def __init__(self, *_unused):
         self.calls = []
 
     def profile(self, operation, params):
