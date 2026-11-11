@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-labelledby="t d">
+<title id="t">Neo4j v0.9.2 bounded source-link frequency and author chronology</title>
+<desc id="d">Two private read-only graph analytics paths. First: up to fifty ordered incident SOURCE_LINK evidence records plus one lookahead produce an explicit denominator and status counts. Second: one evidence-linked source edge connects work author lifetime records, which are compared only with one dated author per distinct work. Rights, historical influence and release remain unverified.</desc>
+<rect width="1200" height="630" rx="24" fill="#10192b"/>
+<text x="52" y="62" fill="#f2f6fc" font-family="Arial,sans-serif" font-size="32" font-weight="700">Neo4j · v0.9.2  |  Research analytics</text>
+<text x="52" y="96" fill="#b7c6db" font-family="Arial,sans-serif" font-size="18">Implementation diagram based on committed code — not a live UI screenshot</text>
+<rect x="50" y="148" width="247" height="142" rx="15" fill="#223c60" stroke="#89a8d1" stroke-width="2"/>
+<text x="70" y="185" fill="#f7fbff" font-family="Arial,sans-serif" font-weight="700" font-size="20">Private Research API</text>
+<text x="70" y="224" fill="#dce8fa" font-family="Arial,sans-serif" font-size="16">Bearer / signed request</text>
+<text x="70" y="254" fill="#dce8fa" font-family="Arial,sans-serif" font-size="16">Canonical passage IDs</text>
+<path d="M297 203 H370" stroke="#88bcf5" stroke-width="4" fill="none"/>
+<path d="M357 195 l14 8 -14 8" stroke="#88bcf5" stroke-width="4" fill="none"/>
+<rect x="371" y="130" width="393" height="157" rx="15" fill="#164e55" stroke="#54b8ad" stroke-width="2"/>
+<text x="393" y="168" fill="#ffffff" font-family="Arial,sans-serif" font-weight="700" font-size="21">Observed link frequency</text>
+<text x="393" y="207" fill="#d4f2ed" font-family="Arial,sans-serif" font-size="17">First 50 edges + 1 lookahead</text>
+<text x="393" y="241" fill="#d4f2ed" font-family="Arial,sans-serif" font-size="17">Explicit sample denominator</text>
+<text x="393" y="268" fill="#d4f2ed" font-family="Arial,sans-serif" font-size="16">Incoming / outgoing / review status</text>
+<path d="M297 240 H330 V406 H371" stroke="#88bcf5" stroke-width="4" fill="none"/>
+<path d="M357 398 l14 8 -14 8" stroke="#88bcf5" stroke-width="4" fill="none"/>
+<rect x="371" y="319" width="393" height="171" rx="15" fill="#164e55" stroke="#54b8ad" stroke-width="2"/>
+<text x="393" y="357" fill="#ffffff" font-family="Arial,sans-serif" font-weight="700" font-size="21">Author lifetime indicator</text>
+<text x="393" y="394" fill="#d4f2ed" font-family="Arial,sans-serif" font-size="17">One eligible observed direct link</text>
+<text x="393" y="427" fill="#d4f2ed" font-family="Arial,sans-serif" font-size="17">At most 2 authors per Work</text>
+<text x="393" y="459" fill="#d4f2ed" font-family="Arial,sans-serif" font-size="17">Missing / ambiguous years → unknown</text>
+<rect x="815" y="178" width="330" height="280" rx="15" fill="#4b392c" stroke="#dab381" stroke-width="2"/>
+<text x="837" y="219" fill="#fffaf1" font-family="Arial,sans-serif" font-size="21" font-weight="700">Evidence safety checks</text>
+<text x="837" y="264" fill="#f6dfc1" font-family="Arial,sans-serif" font-size="17">Matching Evidence nodes</text>
+<text x="837" y="302" fill="#f6dfc1" font-family="Arial,sans-serif" font-size="17">Exact ID and status rules</text>
+<text x="837" y="340" fill="#f6dfc1" font-family="Arial,sans-serif" font-size="17">No unlicensed source text</text>
+<text x="837" y="378" fill="#f6dfc1" font-family="Arial,sans-serif" font-size="17">No verified composition dates</text>
+<text x="837" y="416" fill="#f6dfc1" font-family="Arial,sans-serif" font-size="17">No historical influence claim</text>
+<path d="M764 208 H815" stroke="#88bcf5" stroke-width="4" fill="none"/>
+<path d="M764 407 H793 V304 H815" stroke="#88bcf5" stroke-width="4" fill="none"/>
+<rect x="50" y="532" width="1095" height="65" rx="13" fill="#29364b" stroke="#8295b5" stroke-width="2"/>
+<text x="70" y="571" fill="#ffe0b8" font-family="Arial,sans-serif" font-size="20" font-weight="700">Metadata only · no global centrality, rights, historical proof or production release · HOLD</text>
+</svg>
