@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.9 evidence-link audit pagination architecture</title>
+<desc id="desc">An authenticated Work pair and optional canonical Edge cursor lead to a fixed indexed directed SOURCE_LINK read of at most 21 graph records including lookahead, exact matching Evidence verification, strict projection and order checks, then at most 20 metadata-only returned links plus a continuation cursor. All rights, snapshot, historical influence and research release claims remain unverified.</desc>
+<rect width="1200" height="640" rx="22" fill="#101b2c"/>
+<text x="46" y="56" fill="#f4f8fc" font-family="Arial,sans-serif" font-weight="700" font-size="29">Neo4j v0.9.9 — Evidence-linked audit pages</text>
+<text x="46" y="88" fill="#b4c5d9" font-family="Arial,sans-serif" font-size="17">Code-derived implementation diagram — not a live software screenshot</text>
+<rect x="42" y="137" width="304" height="194" rx="17" fill="#273e61" stroke="#93b5de" stroke-width="2"/>
+<text x="63" y="177" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Private authenticated GET</text>
+<text x="63" y="216" fill="#daeafb" font-family="Arial,sans-serif" font-size="17">Canonical Work A → Work B</text>
+<text x="63" y="252" fill="#daeafb" font-family="Arial,sans-serif" font-size="17">Optional edge-ID cursor</text>
+<text x="63" y="287" fill="#daeafb" font-family="Arial,sans-serif" font-size="17">Limit 1–20 · strict query keys</text>
+<path d="M347 234 H391" stroke="#90c8fa" stroke-width="4"/>
+<rect x="394" y="137" width="366" height="195" rx="17" fill="#19565d" stroke="#6cc2b2" stroke-width="2"/>
+<text x="416" y="177" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Indexed, directed traversal</text>
+<text x="416" y="216" fill="#def6ec" font-family="Arial,sans-serif" font-size="17">Passage(work_id) index</text>
+<text x="416" y="251" fill="#def6ec" font-family="Arial,sans-serif" font-size="17">SOURCE_LINK → target Work</text>
+<text x="416" y="287" fill="#def6ec" font-family="Arial,sans-serif" font-size="17">Exact Evidence ID and statuses</text>
+<path d="M762 234 H802" stroke="#90c8fa" stroke-width="4"/>
+<rect x="806" y="137" width="351" height="195" rx="17" fill="#4a3d31" stroke="#dcb58c" stroke-width="2"/>
+<text x="827" y="177" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">Fail-closed row validation</text>
+<text x="827" y="216" fill="#f9e2c2" font-family="Arial,sans-serif" font-size="17">Edge IDs strictly ascending</text>
+<text x="827" y="251" fill="#f9e2c2" font-family="Arial,sans-serif" font-size="17"><=21 rows incl. lookahead</text>
+<text x="827" y="287" fill="#f9e2c2" font-family="Arial,sans-serif" font-size="17">No private source text</text>
+<path d="M962 332 V386 H589 V419" fill="none" stroke="#90c8fa" stroke-width="4"/>
+<rect x="239" y="426" width="741" height="118" rx="17" fill="#2a4058" stroke="#94b3d4" stroke-width="2"/>
+<text x="260" y="466" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">Up to 20 links · review counters · next_cursor</text>
+<text x="260" y="505" fill="#e1edf9" font-family="Arial,sans-serif" font-size="17">One ordered page only; continue with last included Edge ID</text>
+<rect x="46" y="572" width="1110" height="45" rx="12" fill="#354054" stroke="#8399b6" stroke-width="2"/>
+<text x="64" y="601" fill="#f9dfb7" font-family="Arial,sans-serif" font-size="17">No graph snapshot guarantee · no rights or influence verification · Research HOLD</text>
+</svg>
