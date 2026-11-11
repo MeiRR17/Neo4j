@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.12] — 2026-11-11 (DRAFT — retained local source receipts)
+
+- Offline issue/verify CLI computes source snapshots from actual retained
+  local file content and compares them with an exported SourceRecord digest,
+  version identifier, URI, canonical ID and metadata-only rights tag.
+- Supports two explicit, noninterchangeable modes: Sefaria links CSV raw-byte
+  SHA256 and Sefaria version-metadata JSON canonical SHA256. Also records
+  the raw JSON file SHA256 to detect changed representation.
+- Domain-separated HMAC receipt; exclusive 0600 output; source file is
+  bounded, never uploaded or printed. Optional v0.8.11 capture-event
+  manifest attachment is authenticated but does not prove individual
+  source membership in that graph observation.
+- Synthetic negative tests and live signed SourceRecord comparison against
+  locally retained synthetic CSV in isolated Neo4j CI.
+- NOT an independent provider attestation, legal rights certification,
+  external immutable archive, graph snapshot, or scholarly signoff. HOLD.
+
+
 ## [0.8.11] — 2026-11-11 (DRAFT — source/edition/evidence provenance observation)
 
 - Implemented a new authenticated, bounded, metadata-only provenance API
