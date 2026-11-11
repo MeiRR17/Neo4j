@@ -273,3 +273,40 @@ class AnalysisPage(StrictModel):
     historical_influence_proven: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.9.1 bounded directed path evidence; not a scholarly influence claim.
+class EvidencePathEdge(StrictModel):
+    edge_id: str
+    from_passage_id: str
+    to_passage_id: str
+    evidence_id: str
+    claim_kind: Literal["OBSERVED_SOURCE_LINK"]
+    edge_review_status: Literal["unreviewed", "approved"]
+    evidence_review_status: Literal["unreviewed", "approved"]
+    source_ref: str | None
+    version_id: str | None
+    rights_tag: str | None
+
+
+class EvidencePathRecord(StrictModel):
+    passage_ids: list[str]
+    edges: list[EvidencePathEdge]
+    hop_count: Literal[1, 2]
+
+
+class EvidencePathPage(StrictModel):
+    schema_version: Literal["0.9.1"] = "0.9.1"
+    source_passage_id: str
+    target_passage_id: str
+    paths: list[EvidencePathRecord]
+    observed_shortest_hops: Literal[1, 2] | None
+    has_more: bool
+    max_hops: Literal[2] = 2
+    eligible_review_statuses: list[Literal["unreviewed", "approved"]]
+    whole_graph_shortest_path_proven: Literal[False] = False
+    graph_snapshot_isolation_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str

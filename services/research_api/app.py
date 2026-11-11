@@ -24,7 +24,7 @@ from services.research_api.db import DatabaseUnavailable, ReadOnlyQueryClient
 from services.research_api.models import (
     Concept, ErrorResponse, EvidenceLink, Neighborhood, Page, Passage, Person, Readiness,
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
-    IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage,
+    IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -33,6 +33,7 @@ from services.research_api.metadata_search import search_metadata, validate_sear
 from services.research_api.search_index import search_indexed_metadata, indexed_capability
 from services.research_api.provenance import provenance_page, KINDS as PROVENANCE_KINDS
 from services.research_api.analytics import analysis_page
+from services.research_api.evidence_paths import evidence_path_page
 
 
 security = HTTPBearer(auto_error=False)
@@ -397,6 +398,23 @@ def create_app(*, backend=None, token_path: Path | None = None,
              dependencies=[Depends(require_service_token)])
     def source(source_id: str):
         return lookup("source", source_id, SourceRecord)
+
+    @app.get("/v1/graph/evidence-path", response_model=EvidencePathPage,
+             tags=["Graph"], dependencies=[Depends(require_service_token)])
+    def evidence_path(request: Request, source_id: str = Query(...),
+                      target_id: str = Query(...),
+                      limit: int = Query(default=5, ge=1, le=10)):
+        # Two canonical IDs only; no Cypher, wildcard, edge type or depth input.
+        names = [name for name, _ in request.query_params.multi_items()]
+        if (len(names) != len(set(names)) or
+                set(names) - {"source_id", "target_id", "limit"} or
+                "source_id" not in names or "target_id" not in names):
+            raise_http(422)
+        try:
+            return evidence_path_page(
+                store, source_id=source_id, target_id=target_id, limit=limit)
+        except (ValueError, TypeError):
+            raise_http(422)
 
     @app.get("/v1/graph/neighborhood", response_model=Neighborhood,
              tags=["Graph"], dependencies=[Depends(require_service_token)])
