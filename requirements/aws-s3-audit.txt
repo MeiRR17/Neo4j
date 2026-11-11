@@ -10,3 +10,6 @@ boto3==1.44.0
 # use the existing pinned boto3; never require mutation credentials.
 # v0.8.19 rechecks IAM default versions and SCP content with the existing
 # read-only boto3 dependency; no new runtime package or mutation privilege.
+# v0.8.20 optional read-only S3 GetBucketPolicy, S3Control
+# GetAccessPointPolicy and IAM GetRole policy body inspection use boto3
+# already pinned above; no new dependencies or write access.

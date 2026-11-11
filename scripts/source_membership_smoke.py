@@ -35,6 +35,7 @@ from scripts.s3_governance import observe_governance, verify_governance
 from scripts.aws_access_surface import observe_access_surface, verify_access_surface
 from scripts.aws_policy_documents import observe_policy_documents, verify_policy_report
 from scripts.aws_policy_revision import observe_revision, verify_revision
+from scripts.aws_resource_trust import observe_resource_trust, verify_resource_trust
 from services.research_api.app import create_app
 from services.research_api.signature import CLIENT_ID, sign_request
 
@@ -314,13 +315,34 @@ def main() -> int:
         if (revision_evidence["research_release_status"] != "HOLD" or
             revision_evidence["effective_iam_or_scp_permissions_computed"] is not False):
             raise RuntimeError("Synthetic revision scan promoted effective access.")
+        from tests.test_aws_resource_trust import (
+            S3PolicyMock, AccessPolicyMock, RoleTrustMock,
+        )
+        scoped = observe_resource_trust(
+            S3PolicyMock(archive_report), FakeSTS(),
+            AccessPolicyMock(archive_report["bucket"]),
+            RoleTrustMock(), PolicyOrg(),
+            policy=policy, report=archive_report, statement=signed,
+            record=record, receipt=receipt, witness=witness, capture=capture,
+            source_file=FIXTURE, local_key=client.key,
+            account="123456789012", region="il-central-1",
+            observed_at=datetime(2026, 11, 11, 13, tzinfo=timezone.utc))
+        verify_resource_trust(
+            scoped,
+            policy=policy, report=archive_report, statement=signed,
+            record=record, receipt=receipt, witness=witness, capture=capture,
+            source_file=FIXTURE, local_key=client.key,
+            account="123456789012", region="il-central-1")
+        if (scoped["cross_account_access_proven"] is not False or
+            scoped["research_release_status"] != "HOLD"):
+            raise RuntimeError("Synthetic resource policy promoted cross-account access.")
         if (witness["source_record_id"] != ident or
             witness["research_release_status"] != "HOLD" or
             witness["independent_provider_signature_verified"] is not False or
             witness["cross_request_snapshot_isolation"] is not False):
             raise RuntimeError("Source membership overclaimed independent trust.")
-    print("[OK] Isolated Neo4j source chain + mocked IAM/SCP version rechecks;"
-          " no live AWS; effective permissions unverified; research HOLD.")
+    print("[OK] Isolated Neo4j source chain + synthetic S3 bucket/AP/role trust"
+          " policy reads; no live AWS; cross-account access unverified; HOLD.")
     return 0
 
 

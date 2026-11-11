@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="480" viewBox="0 0 1180 480" role="img" aria-label="Neo4j v0.8.20 code-derived resource and role trust policy audit">
+<rect width="1180" height="480" rx="24" fill="#0e192a"/>
+<text x="35" y="50" font-family="DejaVu Sans,Arial,sans-serif" font-size="28" font-weight="bold" fill="#f8fafc">Neo4j v0.8.20 — S3 resource &amp; IAM trust audit</text>
+<text x="35" y="80" font-family="DejaVu Sans,Arial,sans-serif" font-size="14" fill="#94a3b8">Code-derived implementation diagram — NOT an AWS console or production screenshot</text>
+<g font-family="DejaVu Sans,Arial,sans-serif" text-anchor="middle">
+<rect x="26" y="140" width="266" height="158" rx="14" fill="#1d2c44" stroke="#60a5fa" stroke-width="2"/>
+<text x="159" y="175" font-size="18" font-weight="bold" fill="#fff">Signed v0.8.19 chain</text>
+<text x="159" y="205" font-size="13" fill="#cbd5e1">Source / Ed25519 / HMAC</text>
+<text x="159" y="233" font-size="13" fill="#cbd5e1">IAM role + Access Point census</text>
+<text x="159" y="264" font-size="12" fill="#cbd5e1">Reject if provenance differs</text>
+<rect x="322" y="140" width="263" height="158" rx="14" fill="#1d2c44" stroke="#a78bfa" stroke-width="2"/>
+<text x="454" y="175" font-size="18" font-weight="bold" fill="#fff">Resource policy reads</text>
+<text x="454" y="205" font-size="13" fill="#cbd5e1">S3 GetBucketPolicy</text>
+<text x="454" y="233" font-size="13" fill="#cbd5e1">S3Control GetAccessPointPolicy</text>
+<text x="454" y="264" font-size="12" fill="#cbd5e1">IAM GetRole trust document</text>
+<rect x="616" y="140" width="266" height="158" rx="14" fill="#1d2c44" stroke="#fbbf24" stroke-width="2"/>
+<text x="749" y="175" font-size="18" font-weight="bold" fill="#fff">Structural risk flags</text>
+<text x="749" y="205" font-size="13" fill="#cbd5e1">Foreign / wildcard principals</text>
+<text x="749" y="233" font-size="13" fill="#cbd5e1">Conditions &amp; NotPrincipal</text>
+<text x="749" y="264" font-size="12" fill="#cbd5e1">2 bounded rounds; drift = fail</text>
+<rect x="910" y="140" width="245" height="158" rx="14" fill="#1d2c44" stroke="#34d399" stroke-width="2"/>
+<text x="1032" y="175" font-size="18" font-weight="bold" fill="#fff">Private audit report</text>
+<text x="1032" y="205" font-size="13" fill="#cbd5e1">Counts + SHA256 + HMAC</text>
+<text x="1032" y="233" font-size="13" fill="#cbd5e1">Offline integrity verification</text>
+<text x="1032" y="264" font-size="12" fill="#cbd5e1">Research release: HOLD</text>
+</g>
+<g stroke="#9ca3af" stroke-width="3"><path d="M292 218h23"/><path d="M585 218h23"/><path d="M882 218h22"/></g>
+<g fill="#9ca3af"><path d="M315 218l-9 -6v12z"/><path d="M608 218l-9 -6v12z"/><path d="M904 218l-9 -6v12z"/></g>
+<rect x="26" y="335" width="1129" height="112" rx="14" fill="#1b3048" stroke="#395471"/>
+<text x="50" y="368" font-family="DejaVu Sans,Arial,sans-serif" font-size="18" font-weight="bold" fill="#fff">Cross-account principal evidence is not effective authorization</text>
+<text x="50" y="395" font-family="DejaVu Sans,Arial,sans-serif" font-size="14" fill="#cbd5e1">Session / SCP / RCP / VPC endpoint rules, unknown external roles and AWS context still unreviewed.</text>
+<text x="50" y="422" font-family="DejaVu Sans,Arial,sans-serif" font-size="13" fill="#fca5a5">Only mocked AWS tests, no real retention, source licensing or production release certification.</text>
+</svg>
