@@ -33,6 +33,30 @@ from scripts.migrate import LocalQueryClient
 MAX_STRESS_DB_HITS = 250_000
 MAX_RESPONSE_MS = 8_000.0
 
+# Stable diagnostic codes only: never echo the original profiler error,
+# Neo4j response, graph data, plan Details, credentials or source text.
+SAFE_PROFILE_REASONS = {
+    "Graph profiler request unavailable.": "transport_or_timeout",
+    "Profiler wall-clock safety budget exceeded.": "wall_clock_budget",
+    "Total profiler db-hits budget exceeded.": "aggregate_db_hits_budget",
+    "Profiler db-hits budget exceeded.": "operator_db_hits_budget",
+    "Profile result exceeded row budget.": "result_row_budget",
+    "Profile was not a clean read-only observation.": "read_only_denial",
+    "Missing profiler operator tree.": "missing_operator_tree",
+    "Stress PROFILE produced inconsistent sampled rows.": "sampled_row_mismatch",
+    "Synthetic stress budget exceeded.": "stress_cost_or_latency_bound",
+    "Malformed profiler operator list.": "operator_shape",
+}
+SAFE_STAGE = frozenset({"seed", *OPERATIONS})
+
+
+def _safe_failure(stage: str, exc: Exception) -> str:
+    if stage not in SAFE_STAGE:
+        stage = "seed"
+    category = SAFE_PROFILE_REASONS.get(str(exc), "unclassified_denial")
+    return "stage_" + stage + "_reason_" + category
+
+
 
 def _count_existing(admin, ids: list[str]) -> int:
     found = admin.query(
@@ -124,9 +148,12 @@ def run_case(admin: LocalQueryClient, profiler: FixedAnalyticsProfiler,
             raise PlanEvidenceError("Synthetic stress seed cardinality mismatch.")
         metrics = []
         for op in OPERATIONS:
-            params = profile_params(case, op)
-            samples = [profiler.profile(op, params) for _ in range(REPEATS)]
-            metrics.append(summarize_stress(case, op, samples))
+            try:
+                params = profile_params(case, op)
+                samples = [profiler.profile(op, params) for _ in range(REPEATS)]
+                metrics.append(summarize_stress(case, op, samples))
+            except PlanEvidenceError as exc:
+                raise PlanEvidenceError(_safe_failure(op, exc)) from None
         return {
             "case": case["name"],
             "topology": case["topology"],
@@ -190,9 +217,17 @@ def run_stress(*, cases: tuple[str, ...] = CASES,
         except (PlanEvidenceError, ValueError, OSError, RuntimeError) as exc:
             # Only controlled case labels and exception CLASS are emitted:
             # never error bodies, query details, source rows or credentials.
+            category = (
+                str(exc) if isinstance(exc, PlanEvidenceError) and
+                str(exc).startswith("stage_") and
+                str(exc) in {
+                    _safe_failure(op, PlanEvidenceError(reason))
+                    for op in SAFE_STAGE
+                    for reason in (*SAFE_PROFILE_REASONS, "__unknown__")
+                } else type(exc).__name__
+            )
             raise PlanEvidenceError(
-                "synthetic case " + name + " failed: " +
-                type(exc).__name__
+                "synthetic case " + name + " failed: " + category
             ) from None
     return {
         "schema_version": "0.9.7",
