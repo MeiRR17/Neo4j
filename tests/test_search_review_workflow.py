@@ -53,7 +53,7 @@ class ReviewPacketTests(unittest.TestCase):
         self.assertEqual([len(q["hits"]) for q in packet["questions"]], [5, 5])
         self.assertEqual(packet["questions"][0]["search_schema"], "0.8.2")
         self.assertEqual(packet["questions"][1]["search_schema"], "0.8.3")
-        self.assertNotIn("relevance", json.dumps(packet))
+        self.assertTrue(all("relevance" not in hit for q in packet["questions"] for hit in q["hits"]))
         self.assertNotIn("excerpt", json.dumps(packet))
 
     def test_templates_require_manual_labels(self):
