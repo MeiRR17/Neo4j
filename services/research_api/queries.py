@@ -442,3 +442,39 @@ RETURN r.id AS edge_id, ev.id AS evidence_id,
           date_to_year:ta.date_to_year}][..2] AS target_authors
 LIMIT 1
 """.strip()
+
+
+# v0.9.3: a bounded Work descriptor with a third author reference as
+# lookahead to expose ambiguity. No source text or identity assertion.
+READ_OPERATIONS["analysis_work_descriptor"] = """
+MATCH (w:Work {id:$work_id})
+RETURN w.id AS id, w.title AS title, w.provider_ref AS provider_ref,
+       [(w)<-[:AUTHORED]-(p:Person) |
+         {id:p.id, date_from_year:p.date_from_year,
+          date_to_year:p.date_to_year}][..3] AS author_sample
+LIMIT 2
+""".strip()
+
+# v0.9.3: separate fixed, directed, bounded source-link windows between
+# two canonical Work IDs, with per-link Evidence verification. Query twice
+# with reversed parameters to avoid silently collapsing direction.
+READ_OPERATIONS["analysis_work_cross_links"] = """
+MATCH (a:Passage {work_id:$source_work_id})-[r:SOURCE_LINK]->
+      (b:Passage {work_id:$target_work_id})
+MATCH (ev:Evidence {id:r.evidence_id})
+WHERE r.id IS NOT NULL
+  AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND r.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND ev.review_status IN ['unreviewed','approved','rejected','disputed']
+RETURN r.id AS edge_id, a.work_id AS source_work_id,
+       b.work_id AS target_work_id, a.id AS source_passage_id,
+       b.id AS target_passage_id, ev.id AS evidence_id,
+       r.review_status AS edge_review_status,
+       ev.review_status AS evidence_review_status,
+       a.source_ref AS source_ref, b.source_ref AS target_ref,
+       ev.source_ref AS evidence_source_ref,
+       ev.version_id AS version_id, ev.rights_tag AS rights_tag
+ORDER BY edge_id
+LIMIT $fetch_limit
+""".strip()
