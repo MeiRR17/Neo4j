@@ -2,3 +2,5 @@
 # Explicit AWS profile and expected bucket owner required by CLI.
 # The API server runtime does not need this optional dependency.
 boto3==1.44.0
+# v0.8.16 STS and bucket governance use the same pinned boto3/botocore SDK.
+# Runtime has no new optional dependencies.

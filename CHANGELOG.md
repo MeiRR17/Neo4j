@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.8.16] — 2026-11-11 (DRAFT — read-only bucket governance and repeat observations)
+
+- Added a private operator-acknowledged AWS account/bucket governance audit,
+  bound to the exact v0.8.15 S3 object version and existing v0.8.11–14
+  source, HMAC and pinned Ed25519 attestations.
+- Uses a single named-profile AWS session to read STS GetCallerIdentity,
+  S3 GetBucketVersioning, GetPublicAccessBlock, GetBucketPolicyStatus,
+  GetObjectLockConfiguration, and independently rechecks HEAD/retention
+  of the exact previously signed object VersionId. All bucket requests
+  require ExpectedBucketOwner and only fixed HTTPS regional endpoints.
+- Rejects STS account mismatch, suspended versioning, one missing
+  Block Public Access switch, a public/unknown bucket policy, missing
+  bucket Object Lock, malformed responses and unsupported IAM identity.
+- Emits an exclusive mode-0600 HMAC observation whose fixed safety flags
+  distinguish observed bucket controls from complete IAM/SCP/AccessPoint
+  auditing or independently certified permanent immutability.
+- Added offline comparison of two separately authenticated observations
+  at least 24h apart, verifying repeated version/retention checks with
+  different read request IDs. **No continuous retention guarantee**:
+  observation timestamps and HMAC are not a trusted external clock.
+- Unit tests mock S3/STS only, and the real isolated Neo4j integration
+  uses mocked S3 governance/STS. No live AWS credentials or endpoints
+  accessed in CI. Research release remains HOLD.
+
+
 ## [0.8.15] — 2026-11-11 (DRAFT — read-only live S3 object-version audit)
 
 - Added opt-in AWS S3 SDK verifier using an explicitly selected named
