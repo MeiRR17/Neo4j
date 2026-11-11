@@ -26,7 +26,7 @@ from services.research_api.models import (
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
     IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
     SourceLinkFrequency, SourceLinkAuthorChronology, WorkComparison,
-    WorkComparisonReceipt,
+    WorkComparisonReceipt, WorkLinkAuditPage,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -39,6 +39,7 @@ from services.research_api.evidence_paths import evidence_path_page
 from services.research_api.metric_chronology import link_frequency, author_chronology
 from services.research_api.work_comparison import compare_works
 from services.research_api.comparison_receipts import comparison_receipt
+from services.research_api.work_link_audit import audit_work_link_page
 
 
 security = HTTPBearer(auto_error=False)
@@ -337,6 +338,30 @@ def create_app(*, backend=None, token_path: Path | None = None,
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
         except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/analysis/works/links/audit",
+             response_model=WorkLinkAuditPage, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def audit_work_links(request: Request,
+                         source_work_id: str = Query(...),
+                         target_work_id: str = Query(...),
+                         cursor: str | None = Query(default=None),
+                         limit: int = Query(default=10, ge=1, le=20)):
+        names = [key for key, _ in request.query_params.multi_items()]
+        allowed = {"source_work_id", "target_work_id", "cursor", "limit"}
+        if (len(names) != len(set(names)) or
+                set(names) - allowed or
+                not {"source_work_id", "target_work_id"}.issubset(names)):
+            raise_http(422)
+        try:
+            return audit_work_link_page(
+                store, source_work_id=source_work_id,
+                target_work_id=target_work_id,
+                after_edge_id=cursor, limit=limit)
+        except LookupError:
+            raise_http(404)
+        except (TypeError, ValueError):
             raise_http(422)
 
     @app.get("/v1/analysis/works/compare/receipt",

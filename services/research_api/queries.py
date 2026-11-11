@@ -401,8 +401,15 @@ LIMIT $fetch_limit
 
 # v0.9.2: a fixed 50+1 incident source-link metadata sample, ordered by
 # canonical edge ID. This is NOT whole-graph centrality or an inferred citation.
+# v0.9.9 regression fix: anchor the exact Passage.id unique index BEFORE
+# expanding incident SOURCE_LINKs. The old combined pattern could select
+# graph-wide relationship expansion after a plan-cache/planner change,
+# making small synthetic incidence costs grow with unrelated link counts.
 READ_OPERATIONS["analysis_frequency_window"] = """
-MATCH (p:Passage {id:$passage_id})-[r:SOURCE_LINK]-(q:Passage)
+MATCH (p:Passage {id:$passage_id})
+USING INDEX p:Passage(id)
+WITH p
+MATCH (p)-[r:SOURCE_LINK]-(q:Passage)
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL
   AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
@@ -476,6 +483,34 @@ WHERE coalesce(b.work_id, '') = $target_work_id
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL
   AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND r.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND ev.review_status IN ['unreviewed','approved','rejected','disputed']
+RETURN r.id AS edge_id, a.work_id AS source_work_id,
+       b.work_id AS target_work_id, a.id AS source_passage_id,
+       b.id AS target_passage_id, ev.id AS evidence_id,
+       r.review_status AS edge_review_status,
+       ev.review_status AS evidence_review_status,
+       a.source_ref AS source_ref, b.source_ref AS target_ref,
+       ev.source_ref AS evidence_source_ref,
+       ev.version_id AS version_id, ev.rights_tag AS rights_tag
+ORDER BY edge_id
+LIMIT $fetch_limit
+""".strip()
+
+
+# v0.9.9: keyset page of directed source links, only after a canonical edge
+# ID. Exactly one Work-side index anchor, then directional expansion and
+# Evidence-node verification. Stable edge ordering is not a graph snapshot.
+READ_OPERATIONS["analysis_work_cross_link_page"] = """
+MATCH (a:Passage {work_id:$source_work_id})
+USING INDEX a:Passage(work_id)
+WITH a
+MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
+WHERE coalesce(b.work_id, '') = $target_work_id
+  AND r.id > $after_edge_id
+MATCH (ev:Evidence {id:r.evidence_id})
+WHERE r.claim_kind = 'OBSERVED_SOURCE_LINK'
   AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
   AND r.review_status IN ['unreviewed','approved','rejected','disputed']
   AND ev.review_status IN ['unreviewed','approved','rejected','disputed']

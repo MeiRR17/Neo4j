@@ -450,3 +450,27 @@ class WorkComparisonReceipt(StrictModel):
     historical_influence_proven: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.9.9: directed evidence-linked keyset pagination. No graph snapshot
+# isolation, complete corpus accounting, independent source verification or
+# documented source rights are implied by reaching the last observed page.
+class WorkLinkAuditPage(StrictModel):
+    schema_version: Literal["0.9.9"] = "0.9.9"
+    source_work_id: str
+    target_work_id: str
+    requested_limit: int = Field(ge=1, le=20)
+    after_edge_id: str | None
+    links: list[WorkCrossLink] = Field(max_length=20)
+    observed_window_denominator: int = Field(ge=0, le=20)
+    joint_approved_status_links: int = Field(ge=0, le=20)
+    contested_status_links: int = Field(ge=0, le=20)
+    pending_status_links: int = Field(ge=0, le=20)
+    has_more: bool
+    next_cursor: str | None
+    sampled_window_only: Literal[True] = True
+    snapshot_consistency_verified: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
