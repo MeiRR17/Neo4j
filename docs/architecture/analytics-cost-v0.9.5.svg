@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 630" role="img" aria-labelledby="title description">
+<title id="title">Neo4j v0.9.5 synthetic graph benchmark pipeline</title>
+<desc id="description">Only in acknowledged isolated CI, deterministic 32 and 128 link datasets are created, four fixed read-only Neo4j PROFILE queries are run three times, and bounded sanitized database hit counts, operator names and timing are collected into a short-lived artifact. Dataset nodes are cleaned up. No authentic corpus, source-rights or production performance is certified.</desc>
+<rect width="1190" height="630" rx="24" fill="#0f1929"/>
+<text x="45" y="58" font-family="Arial,sans-serif" font-weight="700" font-size="31" fill="#f2f5fc">Neo4j / v0.9.5  —  Synthetic cost evidence</text>
+<text x="45" y="90" font-family="Arial,sans-serif" font-size="18" fill="#b7c7d9">Code-derived architecture · not a screenshot of a running application</text>
+<rect x="44" y="141" width="263" height="152" rx="17" fill="#233e61" stroke="#8eafd6" stroke-width="2"/>
+<text x="63" y="178" font-family="Arial,sans-serif" font-weight="700" font-size="19" fill="#fff">1. CI-only guard</text>
+<text x="63" y="214" font-family="Arial,sans-serif" font-size="16" fill="#deebf9">CI=true + explicit ack</text>
+<text x="63" y="245" font-family="Arial,sans-serif" font-size="16" fill="#deebf9">localhost, no existing IDs</text>
+<text x="63" y="272" font-family="Arial,sans-serif" font-size="16" fill="#deebf9">no production data</text>
+<path d="M307 217 H368" stroke="#92bff3" stroke-width="4" fill="none"/>
+<path d="M357 209 l13 8 -13 8" stroke="#92bff3" stroke-width="4" fill="none"/>
+<rect x="370" y="141" width="357" height="152" rx="17" fill="#17515a" stroke="#6ac7ba" stroke-width="2"/>
+<text x="391" y="178" font-family="Arial,sans-serif" font-weight="700" font-size="19" fill="#fff">2. Deterministic graph</text>
+<text x="391" y="212" font-family="Arial,sans-serif" font-size="17" fill="#daf4f1">32 SOURCE_LINKs → 128 links</text>
+<text x="391" y="242" font-family="Arial,sans-serif" font-size="16" fill="#daf4f1">2 Works · 2 Persons · Evidence</text>
+<text x="391" y="269" font-family="Arial,sans-serif" font-size="16" fill="#daf4f1">stable canonical fixture digest</text>
+<path d="M549 293 V350" stroke="#92bff3" stroke-width="4" fill="none"/>
+<path d="M541 339 l8 13 8 -13" stroke="#92bff3" stroke-width="4" fill="none"/>
+<rect x="370" y="355" width="357" height="140" rx="17" fill="#17515a" stroke="#6ac7ba" stroke-width="2"/>
+<text x="391" y="392" font-family="Arial,sans-serif" font-weight="700" font-size="19" fill="#fff">3. Fixed read-only PROFILE</text>
+<text x="391" y="428" font-family="Arial,sans-serif" font-size="16" fill="#daf4f1">4 queries × 3 samples × 2 sizes</text>
+<text x="391" y="462" font-family="Arial,sans-serif" font-size="16" fill="#daf4f1">dbHits · scans · p50 / p95</text>
+<rect x="785" y="178" width="357" height="255" rx="17" fill="#4c3b2d" stroke="#deba87" stroke-width="2"/>
+<text x="805" y="217" font-family="Arial,sans-serif" font-weight="700" font-size="19" fill="#fff4e8">4. Sanitized report</text>
+<text x="805" y="254" font-family="Arial,sans-serif" font-size="17" fill="#fbe2c1">No graph row values</text>
+<text x="805" y="290" font-family="Arial,sans-serif" font-size="17" fill="#fbe2c1">No plan Details or credentials</text>
+<text x="805" y="326" font-family="Arial,sans-serif" font-size="17" fill="#fbe2c1">7-day CI artifact</text>
+<text x="805" y="362" font-family="Arial,sans-serif" font-size="17" fill="#fbe2c1">Deterministic node cleanup</text>
+<text x="805" y="398" font-family="Arial,sans-serif" font-size="17" fill="#fbe2c1">No production SLO claim</text>
+<path d="M727 425 H784" stroke="#92bff3" stroke-width="4" fill="none"/>
+<path d="M772 417 l13 8 -13 8" stroke="#92bff3" stroke-width="4" fill="none"/>
+<rect x="45" y="537" width="1097" height="61" rx="13" fill="#2b374b" stroke="#879ab4" stroke-width="2"/>
+<text x="66" y="574" font-family="Arial,sans-serif" font-size="20" fill="#fbe0b9" font-weight="700">Synthetic measurements only · no research rights or graph snapshot proof · HOLD</text>
+</svg>
