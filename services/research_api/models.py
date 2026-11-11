@@ -167,3 +167,27 @@ class IndexedMetadataSearchPage(StrictModel):
     source_trail_verified: Literal[False] = False
     text_available: Literal[False] = False
     corpus_status: Literal["unreviewed_metadata_only"] = "unreviewed_metadata_only"
+
+
+class IndexedCapabilityCoverage(StrictModel):
+    total: int = Field(ge=0, le=1_000_000)
+    covered: int = Field(ge=0, le=1_000_000)
+    complete: bool
+
+
+class IndexedSearchCapability(StrictModel):
+    """Service-only index readiness, not proof of corpus rights or completeness."""
+    schema_version: Literal["0.8.5"] = "0.8.5"
+    kind: Literal["works", "persons", "passages", "concepts"]
+    index_version: Literal["search_key_v1"] = "search_key_v1"
+    index_status: Literal["ready", "missing", "not_online", "empty", "incomplete"]
+    indexed_prefix_ready: bool
+    index_coverage: IndexedCapabilityCoverage | None
+    bounded_scan_supported: Literal[True] = True
+    scan_candidate_window_limit: Literal[50] = 50
+    scan_requires_cursor_completion: Literal[True] = True
+    alias_matching_on_index: Literal[False] = False
+    full_text_indexed: Literal[False] = False
+    source_trail_verified: Literal[False] = False
+    text_available: Literal[False] = False
+    corpus_status: Literal["unreviewed_metadata_only"] = "unreviewed_metadata_only"

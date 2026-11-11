@@ -89,6 +89,22 @@ def main()->int:
             or any(hit.get("review_status")!="unreviewed"
                    or "excerpt" in hit for hit in result.get("items",[]))):
             raise RuntimeError("Indexed metadata provenance/rights contract is invalid.")
+        capability_target="/v1/search/metadata/indexed/capability?kind=works"
+        capability=client.get(capability_target,
+                              headers=signed(capability_target,"6"*32))
+        if capability.status_code!=200:
+            raise RuntimeError(f"Signed index capability returned HTTP {capability.status_code}")
+        cap=capability.json()
+        if (cap.get("schema_version")!="0.8.5"
+            or cap.get("index_status")!="ready"
+            or cap.get("indexed_prefix_ready") is not True
+            or cap.get("index_coverage",{}).get("complete") is not True
+            or cap.get("text_available") is not False
+            or cap.get("source_trail_verified") is not False
+            or "items" in cap):
+            raise RuntimeError("Signed capability contract mismatch.")
+        if client.get(capability_target).status_code!=401:
+            raise RuntimeError("Capability bypassed bearer authentication.")
         if client.get("/v1/works").status_code!=401:
             raise RuntimeError("Unauthenticated request was not blocked.")
     print("[OK] Signed DvirOS service, real Neo4j metadata search, rights and replay guards.")

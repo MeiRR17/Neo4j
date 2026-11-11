@@ -149,3 +149,47 @@ latency meets production goals. Those still require representative local
 `EXPLAIN`/`PROFILE` benchmarks, human research evaluation, and deployment
 review. Existing CI exercises the signed route against a disposable Neo4j
 instance with migration 004; it never runs a live production backfill.
+
+## v0.8.5 — signed index capability discovery (DRAFT)
+
+Read-only, service-authenticated (bearer plus configured DvirOS HMAC) endpoint:
+`GET /v1/search/metadata/indexed/capability?kind=works`.
+The only accepted query key is one `kind`: works, persons, passages or
+concepts. Duplicate or unknown keys and facets are refused with HTTP 422.
+
+Example **synthetic** response (not production evidence):
+
+```json
+{
+  "schema_version": "0.8.5",
+  "kind": "works",
+  "index_version": "search_key_v1",
+  "index_status": "ready",
+  "indexed_prefix_ready": true,
+  "index_coverage": {"total": 3, "covered": 3, "complete": true},
+  "bounded_scan_supported": true,
+  "scan_candidate_window_limit": 50,
+  "scan_requires_cursor_completion": true,
+  "alias_matching_on_index": false,
+  "full_text_indexed": false,
+  "source_trail_verified": false,
+  "text_available": false,
+  "corpus_status": "unreviewed_metadata_only"
+}
+```
+
+Status is one of ready, missing, not_online, empty or incomplete. No raw
+index names, titles, excerpts, source bodies, arbitrary Cypher or human
+approval are returned. A missing index yields null coverage; malformed index
+definitions/counts and storage errors fail closed with sanitized HTTP 503.
+This endpoint never initiates a backfill or graph query for search hits.
+
+`bounded_scan_supported` means the separate v0.8.2 scanner exists, not
+that the graph is healthy or the result set is complete. A client that
+explicitly uses it must paginate until `search_complete=true`. No automatic
+fallback or feature switch is implemented here. A capability probe is a
+point-in-time observation: every indexed search independently revalidates
+index state and complete current metadata coverage.
+
+DvirOS BFF #148 remains on the v0.8.2 scan contract. Session/RBAC, schema
+wiring, real corpus evaluation and operational activation are not approved.

@@ -17,6 +17,7 @@ from services.research_api.db import DatabaseUnavailable
 from services.research_api.queries import READ_OPERATIONS
 from services.research_api.search_index import (
     INDEX_SCHEMA, verify_online_index, verify_coverage, search_indexed_metadata,
+    indexed_capability,
 )
 
 A = stable_id("work", "fixture", "a")
@@ -105,6 +106,36 @@ class IndexSearchTests(unittest.TestCase):
                 self.assertEqual([op for op, _ in self.store.calls], ["index_state"])
         self.store.index_rows = [baseline]
         verify_online_index(self.store, "works")
+
+    def test_capability_states_without_executing_search(self):
+        ready = indexed_capability(self.store, kind="works")
+        self.assertEqual(ready["schema_version"], "0.8.5")
+        self.assertTrue(ready["indexed_prefix_ready"])
+        self.assertEqual(ready["index_coverage"]["covered"], 3)
+        self.assertFalse(ready["text_available"])
+        self.assertNotIn("indexed_works", [op for op, _ in self.store.calls])
+        baseline = dict(self.store.index_rows[0])
+        self.store.index_rows = []
+        self.store.calls.clear()
+        missing = indexed_capability(self.store, kind="works")
+        self.assertEqual(missing["index_status"], "missing")
+        self.assertIsNone(missing["index_coverage"])
+        self.assertEqual([op for op, _ in self.store.calls], ["index_state"])
+        self.store.index_rows = [{**baseline, "state": "POPULATING"}]
+        self.assertEqual(indexed_capability(self.store, kind="works")["index_status"], "not_online")
+        self.store.index_rows = [baseline]
+        self.store.coverage = {"total": 3, "covered": 2}
+        self.assertEqual(indexed_capability(self.store, kind="works")["index_status"], "incomplete")
+        self.store.coverage = {"total": 0, "covered": 0}
+        self.assertEqual(indexed_capability(self.store, kind="works")["index_status"], "empty")
+        self.store.coverage = {"total": "3", "covered": 2}
+        with self.assertRaises(DatabaseUnavailable):
+            indexed_capability(self.store, kind="works")
+        self.store.index_rows = [{**baseline, "properties": ["wrong"]}]
+        with self.assertRaises(DatabaseUnavailable):
+            indexed_capability(self.store, kind="works")
+        with self.assertRaises(ValueError):
+            indexed_capability(self.store, kind="other")
 
     def test_nonempty_prefix_only_and_pagination(self):
         page = search_indexed_metadata(self.store, kind="works",
@@ -246,6 +277,40 @@ class IndexedHttpTests(unittest.TestCase):
         self.assertFalse(payload["full_text_indexed"])
         self.assertTrue(all("excerpt" not in item for item in payload["items"]))
         self.assertEqual(result.headers["Cache-Control"], "no-store")
+
+    def test_capability_endpoint_auth_contract_and_strict_parameters(self):
+        target = "/v1/search/metadata/indexed/capability?kind=works"
+        self.assertEqual(self.client.get(target).status_code, 401)
+        self.assertEqual(self.store.calls, [])
+        ok = self.client.get(target, headers=self.auth)
+        self.assertEqual(ok.status_code, 200, ok.text)
+        payload = ok.json()
+        self.assertEqual(payload["schema_version"], "0.8.5")
+        self.assertEqual(payload["index_status"], "ready")
+        self.assertEqual(payload["scan_candidate_window_limit"], 50)
+        self.assertTrue(payload["scan_requires_cursor_completion"])
+        self.assertFalse(payload["full_text_indexed"])
+        self.assertFalse(payload["source_trail_verified"])
+        self.assertNotIn("items", payload)
+        self.assertEqual(ok.headers["Cache-Control"], "no-store")
+        for query in ("", "?kind=works&query=secret", "?kind=works&kind=persons",
+                      "?kind=other", "?kind=works&author=approved"):
+            with self.subTest(query=query):
+                self.store.calls.clear()
+                invalid = self.client.get(
+                    "/v1/search/metadata/indexed/capability" + query,
+                    headers=self.auth)
+                self.assertEqual(invalid.status_code, 422)
+                self.assertEqual(self.store.calls, [])
+        self.store.index_rows = []
+        missing = self.client.get(target, headers=self.auth)
+        self.assertEqual(missing.status_code, 200)
+        self.assertEqual(missing.json()["index_status"], "missing")
+        self.store.index_rows = FakeStore().index_rows
+        self.store.coverage = {"total": -1, "covered": 0}
+        failed = self.client.get(target, headers=self.auth)
+        self.assertEqual(failed.status_code, 503)
+        self.assertNotIn("covered", failed.text)
 
     def test_incomplete_index_returns_sanitized_503(self):
         self.store.coverage = {"total": 3, "covered": 2}

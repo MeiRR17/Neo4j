@@ -24,12 +24,13 @@ from services.research_api.db import DatabaseUnavailable, ReadOnlyQueryClient
 from services.research_api.models import (
     Concept, ErrorResponse, EvidenceLink, Neighborhood, Page, Passage, Person, Readiness,
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
+    IndexedSearchCapability,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
 )
 from services.research_api.metadata_search import search_metadata, validate_search
-from services.research_api.search_index import search_indexed_metadata
+from services.research_api.search_index import search_indexed_metadata, indexed_capability
 
 
 security = HTTPBearer(auto_error=False)
@@ -302,6 +303,16 @@ def create_app(*, backend=None, token_path: Path | None = None,
                 limit=limit, language=language)
         except (ValueError, TypeError):
             raise_http(422)
+
+    @app.get("/v1/search/metadata/indexed/capability",
+             response_model=IndexedSearchCapability, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def indexed_search_capability(request: Request, kind: str = Query(...)):
+        # No extra facets or duplicated keys: one bounded read per kind only.
+        keys = [key for key, _ in request.query_params.multi_items()]
+        if keys != ["kind"] or kind not in ("works", "persons", "passages", "concepts"):
+            raise_http(422)
+        return indexed_capability(store, kind=kind)
 
     @app.get("/v1/links", response_model=Page[EvidenceLink], tags=["Research"],
              dependencies=[Depends(require_service_token)])
