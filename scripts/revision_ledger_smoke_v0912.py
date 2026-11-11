@@ -46,8 +46,8 @@ def run(*, url: str = "http://127.0.0.1:7474",
     bootstrapped = False
     first = second = None
     try:
-        bootstrapped = True
         initial = bootstrap_head(client, signed, secret=token)
+        bootstrapped = True
         if initial["sequence"] != 0 or initial["chain_sha256"] != ZERO_CHAIN:
             raise RevisionLedgerError("Unexpected initialized ledger head.")
         first = append_revision(
