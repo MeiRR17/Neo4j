@@ -458,6 +458,8 @@ RETURN w.id AS id, w.title AS title, w.provider_ref AS provider_ref,
 LIMIT 2
 """.strip()
 
+# v0.9.6 refinement: target coalesce() preserves nonempty canonical ID
+# equality without a separate target-side indexed join predicate.
 # v0.9.6: start at :Passage(work_id) via migration 002's existing
 # passage_work_lookup index, then expand only directed SOURCE_LINKs and
 # filter target Work. Do not independently seed both sides of a large
@@ -470,7 +472,7 @@ MATCH (a:Passage {work_id:$source_work_id})
 USING INDEX a:Passage(work_id)
 WITH a
 MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
-WHERE b.work_id = $target_work_id
+WHERE coalesce(b.work_id, '') = $target_work_id
 MATCH (ev:Evidence {id:r.evidence_id})
 WHERE r.id IS NOT NULL
   AND r.claim_kind = 'OBSERVED_SOURCE_LINK'

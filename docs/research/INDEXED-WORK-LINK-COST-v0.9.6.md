@@ -27,7 +27,9 @@ The new fixed read-only template explicitly:
 2. Uses the existing Neo4j Passage(work_id) index (passage_work_lookup,
    defined by migration 002_lookup_indexes.cypher).
 3. Expands an outgoing SOURCE_LINK to the target Passage and filters its
-   target work_id.
+   target work_id with coalesce(b.work_id, ''). This preserves equality for
+   a nonempty canonical Work ID, while avoiding a second independent
+   indexable target-Passage predicate as a join starting point.
 4. Requires a matching Evidence node for the edge ID and observed-source
    claim kind; projects exact Work, Passage, Edge, Evidence, source refs,
    versions and independent review states. It retains canonical edge-ID

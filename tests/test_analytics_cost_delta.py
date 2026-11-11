@@ -165,7 +165,7 @@ class AnalyticsCostDeltaTests(unittest.TestCase):
         statement = READ_OPERATIONS["analysis_work_cross_links"]
         self.assertIn("USING INDEX a:Passage(work_id)", statement)
         self.assertIn("MATCH (a)-[r:SOURCE_LINK]->(b:Passage)", statement)
-        self.assertIn("WHERE b.work_id = $target_work_id", statement)
+        self.assertIn("WHERE coalesce(b.work_id, '') = $target_work_id", statement)
         self.assertIn("MATCH (ev:Evidence {id:r.evidence_id})", statement)
         self.assertIn("ORDER BY edge_id", statement)
         self.assertIn("LIMIT $fetch_limit", statement)
