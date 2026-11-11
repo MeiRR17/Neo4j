@@ -193,3 +193,38 @@ index state and complete current metadata coverage.
 
 DvirOS BFF #148 remains on the v0.8.2 scan contract. Session/RBAC, schema
 wiring, real corpus evaluation and operational activation are not approved.
+
+## v0.8.6 — reproducible read-only query-plan evidence (draft)
+
+Neo4j Query API returns `queryPlan` after EXPLAIN, and `profiledQueryPlan`
+plus results after PROFILE. The new script uses only fixed `indexed_{kind}`
+registry entries, a localhost-only Query API connection, read access mode,
+five-second server execution bound, eight-second socket timeout and bounded
+256 KB response. It never prints query rows or original source titles.
+
+```sh
+# Safe EXPLAIN: plan only; no query execution or graph modifications.
+python scripts/search_index_plan.py --kind works --prefix synthetic
+
+# PROFILE executes the fixed read query, permitted ONLY for a disposable CI fixture:
+CI=true python scripts/search_index_plan.py --kind works --prefix synthetic \
+  --profile --ack-disposable-fixture
+
+# Optional strict gate for a representative authorized test dataset only:
+python scripts/search_index_plan.py --kind works --prefix synthetic \
+  --require-range-seek
+```
+
+The output schema `0.8.6` contains only allowlisted operator type names,
+`search_key_range_seek_planned`, `node_or_label_scan_planned` and, in fixture
+PROFILE mode only, row count, operator DB hits and optional Query API timing.
+It contains no Cypher plan details, text, credentials, titles, IDs, links or
+private source metadata. The CI stage after synthetic metadata-only backfill
+executes both EXPLAIN and bounded PROFILE as an *engineering smoke test*.
+
+The small fixture does not establish that the optimizer will choose the range
+index on representative data; `--require-range-seek` is an optional reviewer
+gate and deliberately not enforced in tiny CI. PROFILE executes a read and can
+be more expensive, therefore the script rejects PROFILE unless explicitly
+acknowledged within a disposable CI process. This is **not** production
+latency p95, throughput or a certified security/performance acceptance.

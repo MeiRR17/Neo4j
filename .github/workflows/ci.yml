@@ -76,6 +76,10 @@ jobs:
           python scripts/search_index_backfill.py dry-run --kind works
           python scripts/search_index_backfill.py apply --kind works --ack-metadata-only
           python scripts/search_index_backfill.py check --kind works
+      - name: Record bounded index EXPLAIN and fixture-only PROFILE evidence
+        run: |
+          python scripts/search_index_plan.py --kind works --prefix synthetic
+          python scripts/search_index_plan.py --kind works --prefix synthetic --profile --ack-disposable-fixture
       - name: Signed DvirOS service identity and live Neo4j bridge
         run: |
           python scripts/api_signature_bootstrap.py
