@@ -1,0 +1,18 @@
+{
+  "schema_version": "0.8.8",
+  "dataset_kind": "synthetic",
+  "questions": [
+    {
+      "id": "q-he-001",
+      "kind": "works",
+      "query": "ספר סינתטי",
+      "language": "he"
+    },
+    {
+      "id": "q-en-001",
+      "kind": "works",
+      "query": "synthetic title",
+      "language": "en"
+    }
+  ]
+}

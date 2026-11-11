@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1030" height="440" viewBox="0 0 1030 440" role="img" aria-label="Neo4j v0.8.8 code derived dual reviewer workflow">
+<rect width="1030" height="440" rx="24" fill="#0c1423"/>
+<text x="34" y="51" font-family="Arial,sans-serif" font-size="26" font-weight="bold" fill="#f8fafc">Neo4j v0.8.8 · Dual reviewer research workflow</text>
+<text x="34" y="77" font-family="Arial,sans-serif" font-size="14" fill="#94a3b8">Implementation diagram, not a production screenshot · synthetic tests only</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="28" y="126" width="196" height="124" rx="14" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+<text x="126" y="163" fill="#fff" font-size="19" font-weight="bold">Frozen capture</text>
+<text x="126" y="189" fill="#cbd5e1" font-size="13">Metadata + exact IDs</text>
+<text x="126" y="213" fill="#cbd5e1" font-size="13">Completeness validation</text>
+<rect x="266" y="126" width="195" height="124" rx="14" fill="#1e293b" stroke="#a78bfa" stroke-width="2"/>
+<text x="363" y="163" fill="#fff" font-size="19" font-weight="bold">Private packet</text>
+<text x="363" y="189" fill="#cbd5e1" font-size="13">Top 5 · title + anchor</text>
+<text x="363" y="213" fill="#cbd5e1" font-size="13">SHA256 bound forms</text>
+<rect x="502" y="126" width="232" height="124" rx="14" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
+<text x="618" y="163" fill="#fff" font-size="19" font-weight="bold">Two reviewers</text>
+<text x="618" y="189" fill="#cbd5e1" font-size="13">Independent 0/1 labels</text>
+<text x="618" y="213" fill="#cbd5e1" font-size="13">Third resolves conflicts</text>
+<rect x="775" y="126" width="229" height="124" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="2"/>
+<text x="889" y="163" fill="#fff" font-size="19" font-weight="bold">Frozen judgments</text>
+<text x="889" y="189" fill="#cbd5e1" font-size="13">Precision@5 evaluator</text>
+<text x="889" y="213" fill="#cbd5e1" font-size="13">Audit + HOLD status</text>
+</g>
+<path d="M224 188h37 M461 188h36 M734 188h35" stroke="#94a3b8" stroke-width="3"/>
+<g fill="#94a3b8"><path d="M261 188l-9 -6v12z"/><path d="M497 188l-9 -6v12z"/><path d="M769 188l-9 -6v12z"/></g>
+<rect x="28" y="287" width="976" height="104" rx="13" fill="#17283c" stroke="#334155"/>
+<text x="49" y="321" font-family="Arial,sans-serif" font-size="18" fill="#fff" font-weight="bold">Release remains HOLD</text>
+<text x="49" y="351" font-family="Arial,sans-serif" font-size="15" fill="#cbd5e1">No auto-approval, no unreviewed text, no reviewer-identity verification, no production writes</text>
+<text x="49" y="373" font-family="Arial,sans-serif" font-size="14" fill="#fca5a5">50 independently reviewed research questions and source-rights checks remain outstanding.</text>
+</svg>
