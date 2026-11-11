@@ -490,3 +490,31 @@ RETURN r.id AS edge_id, a.work_id AS source_work_id,
 ORDER BY edge_id
 LIMIT $fetch_limit
 """.strip()
+
+
+# v0.9.9: keyset page of directed source links, only after a canonical edge
+# ID. Exactly one Work-side index anchor, then directional expansion and
+# Evidence-node verification. Stable edge ordering is not a graph snapshot.
+READ_OPERATIONS["analysis_work_cross_link_page"] = """
+MATCH (a:Passage {work_id:$source_work_id})
+USING INDEX a:Passage(work_id)
+WITH a
+MATCH (a)-[r:SOURCE_LINK]->(b:Passage)
+WHERE coalesce(b.work_id, '') = $target_work_id
+  AND r.id > $after_edge_id
+MATCH (ev:Evidence {id:r.evidence_id})
+WHERE r.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND r.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND ev.review_status IN ['unreviewed','approved','rejected','disputed']
+RETURN r.id AS edge_id, a.work_id AS source_work_id,
+       b.work_id AS target_work_id, a.id AS source_passage_id,
+       b.id AS target_passage_id, ev.id AS evidence_id,
+       r.review_status AS edge_review_status,
+       ev.review_status AS evidence_review_status,
+       a.source_ref AS source_ref, b.source_ref AS target_ref,
+       ev.source_ref AS evidence_source_ref,
+       ev.version_id AS version_id, ev.rights_tag AS rights_tag
+ORDER BY edge_id
+LIMIT $fetch_limit
+""".strip()
