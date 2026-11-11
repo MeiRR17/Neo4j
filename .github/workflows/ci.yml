@@ -20,7 +20,7 @@ jobs:
       - name: Install pinned Research API dependencies
         run: python -m pip install -r requirements/research-api-test.txt
       - name: Unit, API and security contract tests
-        run: python -m unittest discover -s tests -v
+        run: PYTHONPATH=scripts python -m unittest discover -s tests -v
       - name: Offline frozen search-quality fixture and anti-inflation gate
         run: |
           python scripts/search_quality_eval.py \
