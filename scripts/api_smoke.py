@@ -41,13 +41,14 @@ def main() -> int:
     passage2 = passage_id(edition, "Synthetic Multiword Work, Part 1:2")
     passage3 = passage_id(edition, "Synthetic Multiword Work, Part 1:3")
     source = stable_id("source", "research-api-ci-fixture", "snapshot")
+    author = stable_id("person", "research-api-ci-fixture", "synthetic-author")
     evidence = evidence_id(source, "Synthetic Multiword Work, Part 1:1",
                            "synthetic-link", passage1, passage2)
     edge = stable_id("edge", "SOURCE_LINK", passage1, passage2, evidence)
     evidence2 = evidence_id(source, "Synthetic Multiword Work, Part 1:2",
                             "synthetic-link", passage2, passage3)
     edge2 = stable_id("edge", "SOURCE_LINK", passage2, passage3, evidence2)
-    ids = [work, edition, passage1, passage2, passage3, source, evidence, evidence2]
+    ids = [work, edition, passage1, passage2, passage3, source, evidence, evidence2, author]
     try:
         seed = """
 MERGE (w:Work {id:$work})
@@ -66,6 +67,10 @@ MERGE (b:Passage {id:$p2})
 MERGE (c:Passage {id:$p3})
   ON CREATE SET c.source_ref='Synthetic Multiword Work, Part 1:3',
     c.work_id=$work, c.edition_id=$edition
+MERGE (author:Person {id:$author})
+  ON CREATE SET author.display_name='Synthetic Fixture Author',
+    author.date_from_year=1100, author.date_to_year=1160
+MERGE (author)-[:AUTHORED {id:$author_edge}]->(w)
 MERGE (src:SourceRecord {id:$source})
   ON CREATE SET src.provider='fixture', src.version_id='test-only',
     src.rights_tag='TEST_FIXTURE', src.source_uri='https://example.invalid/test'
@@ -90,11 +95,13 @@ MERGE (b)-[r2:SOURCE_LINK {id:$edge2}]->(c)
 RETURN w.id AS id
 """
         edition_edge = stable_id("edge", "HAS_EDITION", work, edition, evidence)
+        author_edge = stable_id("edge", "AUTHORED", author, work, evidence)
         admin.query(seed, {
             "work": work, "edition": edition, "edition_edge": edition_edge,
             "p1": passage1, "p2": passage2, "p3": passage3,
             "source": source, "evidence": evidence, "edge": edge,
             "evidence2": evidence2, "edge2": edge2,
+            "author": author, "author_edge": author_edge,
         })
         with TestClient(create_app()) as http:
             no_auth = http.get("/v1/works")
@@ -166,12 +173,37 @@ RETURN w.id AS id
             verify(reverse, 200)
             if reverse.json()["paths"] or reverse.json()["observed_shortest_hops"] is not None:
                 raise RuntimeError("Directed path incorrectly traversed backwards.")
+            # v0.9.2: fixed bounded frequency and recorded-author metadata
+            # checks against the same isolated synthetic Neo4j fixtures.
+            frequency = http.get("/v1/analysis/metrics/link-frequency", params={
+                "passage_id": passage2,
+            }, headers=headers)
+            verify(frequency, 200)
+            counts = frequency.json()
+            if (counts["observed_link_denominator"] != 2 or
+                    counts["incoming_observed_links"] != 1 or
+                    counts["outgoing_observed_links"] != 1 or
+                    counts["pending_status_links"] != 2 or
+                    counts["joint_approved_status_fraction"] != 0.0 or
+                    counts["whole_graph_centrality_verified"] is not False):
+                raise RuntimeError("Synthetic link-frequency denominator mismatch.")
+            years = http.get(
+                "/v1/analysis/chronology/author-lifetimes", params={
+                    "source_id": passage1, "target_id": passage2,
+                }, headers=headers)
+            verify(years, 200)
+            chronology = years.json()
+            if (chronology["metadata_status"] != "same_work" or
+                    chronology["author_lifetime_relation"] != "unknown" or
+                    [a["id"] for a in chronology["source_authors"]] != [author] or
+                    chronology["historical_influence_proven"] is not False):
+                raise RuntimeError("Synthetic author chronology metadata invalid.")
             status = http.get("/v1/data/status", headers=headers)
             verify(status, 200)
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, 1/2-hop evidence paths, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop evidence paths, frequency/chronology, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0
