@@ -119,6 +119,15 @@ def _pages(client, name: str, list_key: str, *,
         if len(output) > limit:
             raise AccessAuditError("AWS inventory exceeded safety cap.")
         nxt = response.get(token_key)
+        # IAM uses IsTruncated + Marker; a truncated page without Marker
+        # must never be mistaken for a complete role-policy inventory.
+        truncated = response.get("IsTruncated")
+        if truncated is not None and type(truncated) is not bool:
+            raise AccessAuditError("AWS truncated-page flag malformed.")
+        if truncated is True and not nxt:
+            raise AccessAuditError("AWS inventory is truncated without cursor.")
+        if truncated is False and nxt:
+            raise AccessAuditError("AWS inventory cursor conflicts with completion.")
         if nxt is None or nxt == "":
             return output
         if (not isinstance(nxt, str) or not SAFE_MARKER.fullmatch(nxt) or
@@ -220,8 +229,9 @@ def _role(iam, sts, *, account: str) -> tuple[str, bool, int, int, str]:
     for p in attached:
         if (not isinstance(p, dict) or
             not isinstance(p.get("PolicyArn"), str) or
-            not p["PolicyArn"].startswith("arn:aws:iam::") and
-            not p["PolicyArn"].startswith("arn:aws:iam::aws:policy/")):
+            not (p["PolicyArn"].startswith(
+                "arn:aws:iam::" + account + ":policy/") or
+                p["PolicyArn"].startswith("arn:aws:iam::aws:policy/"))):
             raise AccessAuditError("IAM attached policy reference invalid.")
         managed_ids.append(p["PolicyArn"])
     for p in inline:
@@ -236,7 +246,8 @@ def _role(iam, sts, *, account: str) -> tuple[str, bool, int, int, str]:
         "attached_policy_arns": sorted(managed_ids),
         "inline_policy_names": sorted(inline_ids),
     }))
-    return digest(arn.encode()), boundary is not None, len(attached), len(inline), fingerprint
+    return (digest(arn.encode()), digest(role_arn.encode()),
+            boundary is not None, len(attached), len(inline), fingerprint)
 
 
 def _scp(org, *, account: str) -> tuple[int, int, str]:
@@ -304,7 +315,7 @@ def observe_access_surface(
         prior = observe_governance(s3, sts, **common, observed_at=observed_at)
         count, points_sha = _access_points(
             s3control, account=account, bucket=report["bucket"])
-        arn_sha, boundary, attached, inline, role_sha = _role(
+        arn_sha, role_arn_sha, boundary, attached, inline, role_sha = _role(
             iam, sts, account=account)
         targets, policies, scp_sha = _scp(org, account=account)
     except (ValueError, TypeError, KeyError, OSError):
@@ -319,7 +330,7 @@ def observe_access_surface(
         "account_public_access_block_confirmed": True,
         "bucket_access_point_count": count,
         "bucket_access_point_projection_sha256": points_sha,
-        "caller_role_arn_sha256": arn_sha,
+        "caller_role_arn_sha256": role_arn_sha,
         "caller_permissions_boundary_present": boundary,
         "caller_role_attachment_count": attached,
         "caller_role_inline_count": inline,
