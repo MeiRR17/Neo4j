@@ -37,7 +37,7 @@ jobs:
             --reviewer-id SYNTHETIC_CI_A \
             --output /tmp/neo4j-v088-review-form.json
       - name: Signed localhost capture HMAC, cursor chain and denial tests
-        run: python -m unittest tests.test_search_capture -v
+        run: PYTHONPATH=scripts python -m unittest tests.test_search_capture -v
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
