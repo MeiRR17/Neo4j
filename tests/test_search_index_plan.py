@@ -116,7 +116,6 @@ class SearchPlanTests(TestCase):
             {"data": {"fields": [], "values": [[1]]}},
             {"queryPlan": {**tree(), "children": "not-a-list"}},
             {"queryPlan": {**tree(), "operatorType": "DROP DATABASE"}},
-            {"queryPlan": {**tree(), "children": [dict(tree()["children"][0], dbHits=-1)]}},
         ]
         for change in changes:
             with self.subTest(change=change):
@@ -128,6 +127,10 @@ class SearchPlanTests(TestCase):
             inspect_plan_response(reply(profile=True), kind="works", profile=False)
         with self.assertRaises(PlanEvidenceError):
             inspect_plan_response(reply(profile=False), kind="works", profile=True)
+        invalid_profile = reply(profile=True)
+        invalid_profile["profiledQueryPlan"]["children"][0]["dbHits"] = -1
+        with self.assertRaises(PlanEvidenceError):
+            inspect_plan_response(invalid_profile, kind="works", profile=True)
 
     def test_wire_request_is_fixed_and_read_mode(self):
         cli = object.__new__(LocalPlanClient)
