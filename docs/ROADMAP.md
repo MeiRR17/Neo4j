@@ -87,6 +87,10 @@ The existing main branch contains README.md, docker-compose.yml, one Sefaria Pyt
 **Implemented foundation:** offline import of frozen complete metadata-only search captures into reviewer packets; independently completed judgment templates, packet-SHA provenance, explicit dispute adjudication and generation of the v0.8.7 evaluator input plus HOLD audit. Outputs are private 0600, synthetic fixtures remain clearly labelled.
 **Remaining:** implement authorized audited capture on the approved research host; real independent reviewer identification, question selection, edition rights clearance, evidence adjudication and 50-question release evidence. No auto approval or production switch.
 
+### v0.8.9 — Signed private search capture (DRAFT)
+**Implemented foundation:** local bearer/HMAC GET collection of bounded scan or indexed prefix results; stable per-page request and cursor fingerprints; private frozen snapshots and HMAC manifests verified offline; synthetic unit and CI checks.
+**Remaining:** authorized deployment with DvirOS SSO/RBAC and enforcement of signed-call policy; corpus/index revision pinning, independent provenance and rights controls, 50 genuine reviewed research questions and external approval. No production rollout.
+
 ### v0.9.0 — Research-grade graph analytics [P1; 2 cycles]
 **Changes:** five original questions rewritten as versioned, parameterized API analyses; shortest path with edge provenance; centrality as frequency measure not authority; co-citation as hypothesis; chronology constraints; author/work/period comparisons; analysis results include definition and limitations.  
 **Acceptance:** 100+ gold-set links and at least 20 manually checked analytical examples; no assertion of influence without supported temporal/primary evidence; performance tests with published fixture sizes. **Depends:** v0.8.0.

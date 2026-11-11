@@ -84,3 +84,10 @@ separate governed human/rights release review is complete.
 - Still required: 50 real frozen reviewed questions, controlled Sefaria or
   licensed-source rights, reviewer conflict governance, DvirOS SSO/RBAC,
   authenticated capture acquisition, independent signoff and production plan.
+
+## v0.8.9 — Optional controlled acquisition
+
+The new local-only signed capture script creates the frozen response envelope
+accepted by the v0.8.8 packet preparer. It is intentionally a separate,
+operator-acknowledged step; see SEARCH-CAPTURE-v0.8.9.md. It never performs
+judgments, bypasses review or verifies scholarly source rights.
