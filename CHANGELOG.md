@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.8.6] — 2026-11-11 (DRAFT — bounded index query-plan evidence)
+
+- Added a local-loopback-only `EXPLAIN`/opt-in `PROFILE` CLI for the exact
+  shipped read-only indexed metadata queries, never arbitrary user Cypher.
+- EXPLAIN summarizes a bounded Neo4j Query API `queryPlan` and detects
+  actual planned `search_key_v1` range seek vs label scan, without
+  presenting planned index availability as demonstrated performance.
+- PROFILE is restricted to `CI=true` plus `--ack-disposable-fixture`,
+  runs only a fixed 6-row read operation under a 5-second query timeout,
+  and emits only aggregate DB hits / safe timing counters, never titles.
+- Added plan-response negative/limits tests and a disposable Neo4j CI
+  EXPLAIN/PROFILE step. Small synthetic fixture plans are **informational**;
+  representative workload, p95, index-use threshold and source licensing
+  remain outstanding release gates.
+- No API, schema migration or production graph write is performed.
+
+
 ## [0.8.5] — 2026-11-11 (DRAFT — typed signed indexed-search capability)
 
 - Introduced private typed `GET /v1/search/metadata/indexed/capability`,
