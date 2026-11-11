@@ -37,7 +37,21 @@ The new fixed read-only template explicitly:
 
 There are no new schema migrations, destructive changes, writes, client
 Cypher fragments, historical inference or rights approvals in the API.
-An index hint is not proof of lower cost; the new plan must be measured.
+The first index-hinted trial produced NO improvement at the same fixture
+sizes. Only the refined target condition, which prevents the planner
+from independently seeding the target Work side, yielded lower measured
+database hits. The result was verified using run 43102371908 (exact
+commit fb4240e649ea750a8617a8bc60350824c6f32f6d) and delta
+artifact 13892712664:
+
+| Graph links | Baseline dbHits per direction | Refined dbHits | Reduction |
+| --- | ---: | ---: | ---: |
+| 32 | 4,366 | 334 | 92.35% |
+| 128 | 66,382 | 1,102 | 98.34% |
+
+For 4x growth in the number of synthetic links, dbHits grew only 3.299x
+rather than 15.204x. Descriptor (12) and incident frequency (15) costs
+remained unchanged. No real-corpus speedup is inferred.
 
 ## Pinned before/after evidence in CI
 
@@ -53,9 +67,16 @@ details, source rows, credentials, source text or names.
 
 CI runs the normal isolated Neo4j functional tests, profiles the current
 32/128 synthetic fixtures and retains a seven-day analytics-delta-v096-synthetic
-artifact. The comparator marks regression_gate_enforced=false: the current
-result must first be measured, validated and reviewed before a defendable
-production-grade gate or cost SLO can be published.
+artifact. After the measured improvement, CI additionally calls
+--require-synthetic-cost-gate. This fail-closed mode requires no more than
+600 dbHits per direction at 32 links and 2,400 at 128 links, with a
+growth factor no higher than 6.0. Work-descriptor and incident-frequency
+caps are 30 and 40 dbHits, respectively, at either size.
+These fixture-specific ceilings allow headroom above the observed 334/
+1,102 hits, while preventing a return to the old quadratic join in CI.
+The final sanitized report includes regression_gate_enforced=true and
+synthetic_regression_gate_passed=true only after the gate passes.
+This is NOT a production performance SLO or proof of real-world scale.
 
 ## Research and deployment limitations
 

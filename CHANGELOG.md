@@ -10,10 +10,15 @@
   filtering target Work and verifying exact Evidence IDs/review states.
 - Added sanitized pinned historical median-dbHits comparisons, change and
   scaling indicators. CI stores a seven-day delta artifact.
-- Nine synthetic test cases cover safe deltas, malformed inputs, leakage
-  denial, baseline identity and the index-anchored read-only query.
-- No speedup claim until current HEAD's live synthetic CI metrics pass;
-  this does not establish real-corpus performance or a release. HOLD.
+- The first index-hinted revision had NO cost improvement. A second
+  revision uses a non-indexable target Work filter to prevent the
+  unintended two-sided index-join plan while preserving results.
+- Exact-head isolated CI #43102371908 measured 334 dbHits at 32 links
+  (92.35% below baseline) and 1,102 at 128 (98.34% below baseline)
+  in both directions; growth fell from 15.204x to 3.299x.
+- Twelve synthetic security/regression tests and a fixture-only CI gate
+  now guard conservative dbHits and scaling ceilings. These do not
+  certify performance on real corpora. Research release HOLD.
 
 
 ## [0.9.5] — 2026-11-11 (DRAFT — deterministic synthetic graph cost fixtures)

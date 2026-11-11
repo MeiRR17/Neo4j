@@ -27,8 +27,8 @@
 <path d="M639 368 L647 382 L655 368" stroke="#9cbbea" stroke-width="4" fill="none"/>
 <rect x="260" y="388" width="775" height="135" rx="16" fill="#4d3b2d" stroke="#d3ab79" stroke-width="2"/>
 <text x="286" y="427" fill="#fff7e9" font-family="Arial,sans-serif" font-size="21" font-weight="700">Measured delta / CI</text>
-<text x="286" y="460" fill="#fae1c2" font-family="Arial,sans-serif" font-size="17">32/128 synthetic links × 4 fixed PROFILE queries</text>
-<text x="286" y="493" fill="#fae1c2" font-family="Arial,sans-serif" font-size="17">Pinned old dbHits vs new cost · sanitized 7-day artifact</text>
+<text x="286" y="460" fill="#fae1c2" font-family="Arial,sans-serif" font-size="17">32 links: 4,366 → 334 dbHits (−92.35%)  |  128: 66,382 → 1,102 (−98.34%)</text>
+<text x="286" y="493" fill="#fae1c2" font-family="Arial,sans-serif" font-size="17">Synthetic cost gate + pinned 7-day evidence artifact · research HOLD</text>
 <rect x="44" y="559" width="1112" height="48" rx="13" fill="#2c374a" stroke="#8297b5" stroke-width="2"/>
-<text x="64" y="591" fill="#f8e0bc" font-family="Arial,sans-serif" font-size="18" font-weight="700">New speedup is a hypothesis until exact-head CI evidence confirms it. Release HOLD.</text>
+<text x="64" y="591" fill="#f8e0bc" font-family="Arial,sans-serif" font-size="18" font-weight="700">Measured synthetic dbHits are lower; production speed and research approval remain unverified.</text>
 </svg>
