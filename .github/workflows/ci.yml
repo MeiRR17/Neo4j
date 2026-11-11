@@ -40,6 +40,8 @@ jobs:
         run: PYTHONPATH=scripts python -m unittest tests.test_search_capture -v
       - name: Bounded observed revision pin and drift rejection unit smoke
         run: PYTHONPATH=scripts python -m unittest tests.test_search_revision -v
+      - name: Source, edition and evidence provenance contract tests
+        run: PYTHONPATH=scripts python -m unittest tests.test_source_provenance -v
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py

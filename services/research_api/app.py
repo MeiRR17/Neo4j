@@ -24,13 +24,14 @@ from services.research_api.db import DatabaseUnavailable, ReadOnlyQueryClient
 from services.research_api.models import (
     Concept, ErrorResponse, EvidenceLink, Neighborhood, Page, Passage, Person, Readiness,
     SourceRecord, Work, MetadataSearchPage, IndexedMetadataSearchPage,
-    IndexedSearchCapability,
+    IndexedSearchCapability, ProvenanceMetadataPage,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
 )
 from services.research_api.metadata_search import search_metadata, validate_search
 from services.research_api.search_index import search_indexed_metadata, indexed_capability
+from services.research_api.provenance import provenance_page, KINDS as PROVENANCE_KINDS
 
 
 security = HTTPBearer(auto_error=False)
@@ -313,6 +314,23 @@ def create_app(*, backend=None, token_path: Path | None = None,
         if keys != ["kind"] or kind not in ("works", "persons", "passages", "concepts"):
             raise_http(422)
         return indexed_capability(store, kind=kind)
+
+    @app.get("/v1/provenance/metadata", response_model=ProvenanceMetadataPage,
+             tags=["Research"], dependencies=[Depends(require_service_token)])
+    def provenance_metadata(request: Request, kind: str = Query(...),
+                            cursor: str | None = None,
+                            limit: int = Query(default=20, ge=1, le=20)):
+        # Explicit service allowlist; unknown/duplicate query filters are not
+        # silently ignored or interpreted as scholarly source-rights claims.
+        names = [key for key, _ in request.query_params.multi_items()]
+        if (not names or len(names) != len(set(names)) or
+                set(names) - {"kind", "cursor", "limit"} or
+                kind not in PROVENANCE_KINDS):
+            raise_http(422)
+        try:
+            return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
+        except (ValueError, TypeError):
+            raise_http(422)
 
     @app.get("/v1/links", response_model=Page[EvidenceLink], tags=["Research"],
              dependencies=[Depends(require_service_token)])

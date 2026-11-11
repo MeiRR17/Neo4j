@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="468" viewBox="0 0 1080 468" role="img" aria-label="Code-derived Neo4j v0.8.11 provenance control flow">
+<rect width="1080" height="468" rx="20" fill="#0c1526"/>
+<text x="38" y="48" font-family="Arial,sans-serif" font-size="28" font-weight="bold" fill="#f8fafc">Neo4j v0.8.11 · Provenance metadata guard</text>
+<text x="38" y="76" font-family="Arial,sans-serif" font-size="15" fill="#a5b4c9">Code-derived implementation diagram — not a production screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="26" y="125" width="239" height="144" rx="14" fill="#192a42" stroke="#60a5fa" stroke-width="2"/>
+<text x="145" y="159" fill="#fff" font-size="19" font-weight="bold">Private API</text>
+<text x="145" y="186" fill="#cbd5e1" font-size="14">Bearer + signed HMAC</text>
+<text x="145" y="212" fill="#cbd5e1" font-size="14">Fixed Cypher · bounded</text>
+<text x="145" y="237" fill="#cbd5e1" font-size="14">No source text</text>
+<rect x="299" y="125" width="233" height="144" rx="14" fill="#192a42" stroke="#a78bfa" stroke-width="2"/>
+<text x="415" y="159" fill="#fff" font-size="19" font-weight="bold">Three entity kinds</text>
+<text x="415" y="186" fill="#cbd5e1" font-size="14">SourceRecord</text>
+<text x="415" y="212" fill="#cbd5e1" font-size="14">Edition</text>
+<text x="415" y="237" fill="#cbd5e1" font-size="14">Evidence</text>
+<rect x="566" y="125" width="230" height="144" rx="14" fill="#192a42" stroke="#fbbf24" stroke-width="2"/>
+<text x="681" y="159" fill="#fff" font-size="19" font-weight="bold">Before / after</text>
+<text x="681" y="186" fill="#cbd5e1" font-size="14">Complete cursor chains</text>
+<text x="681" y="212" fill="#cbd5e1" font-size="14">Hash metadata fields</text>
+<text x="681" y="237" fill="#cbd5e1" font-size="14">Reject observed drift</text>
+<rect x="830" y="125" width="225" height="144" rx="14" fill="#192a42" stroke="#34d399" stroke-width="2"/>
+<text x="942" y="159" fill="#fff" font-size="19" font-weight="bold">v0.8.11 manifest</text>
+<text x="942" y="186" fill="#cbd5e1" font-size="14">Snapshot + HMAC proof</text>
+<text x="942" y="212" fill="#cbd5e1" font-size="14">Offline validation</text>
+<text x="942" y="237" fill="#cbd5e1" font-size="14">Release HOLD</text>
+</g>
+<g stroke="#94a3b8" stroke-width="3"><path d="M265 197h29"/><path d="M532 197h29"/><path d="M796 197h29"/></g>
+<g fill="#94a3b8"><path d="M294 197l-9 -6v12z"/><path d="M561 197l-9 -6v12z"/><path d="M825 197l-9 -6v12z"/></g>
+<rect x="26" y="306" width="1029" height="127" rx="13" fill="#1c2e49" stroke="#3b5072"/>
+<text x="48" y="340" fill="#f8fafc" font-size="20" font-family="Arial,sans-serif" font-weight="bold">Research release: HOLD</text>
+<text x="48" y="371" fill="#cbd5e1" font-size="15" font-family="Arial,sans-serif">Provider checksums and license metadata are observed claims, not independently validated source bytes.</text>
+<text x="48" y="399" fill="#fca5a5" font-size="14" font-family="Arial,sans-serif">No shared graph snapshot · unexposed edges/aliases remain uncovered · human review still required</text>
+</svg>

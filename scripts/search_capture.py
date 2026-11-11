@@ -187,10 +187,29 @@ class SignedLoopbackClient:
             "/v1/search/metadata/indexed/capability?kind=" + kind
             for kind in ALLOWED_KINDS
         }
+        provenance_allowed = False
+        if isinstance(target, str) and target.startswith(
+            "/v1/provenance/metadata?"
+        ):
+            from scripts.search_provenance import target as provenance_target
+            from services.research_api.provenance import KINDS as provenance_kinds
+            try:
+                parsed = parse.urlsplit(target)
+                args = parse.parse_qsl(parsed.query, keep_blank_values=True,
+                                      strict_parsing=True)
+                if (parsed.path == "/v1/provenance/metadata" and
+                    [k for k, _ in args] in (
+                        ["kind", "limit"], ["kind", "limit", "cursor"])):
+                    kind = args[0][1]
+                    if kind in provenance_kinds and args[1][1] == "20":
+                        cursor = args[2][1] if len(args) == 3 else ""
+                        provenance_allowed = target == provenance_target(kind, cursor)
+            except (ValueError, TypeError):
+                provenance_allowed = False
         if not isinstance(target, str) or not (
             target.startswith("/v1/search/metadata?") or
             target.startswith("/v1/search/metadata/indexed?") or
-            target in capabilities
+            target in capabilities or provenance_allowed
         ):
             raise CaptureError("Unapproved signed request target.")
         now = int(time.time())
@@ -282,16 +301,24 @@ def manifest_mac(unsigned: dict, key: str) -> str:
 
 
 def collect(catalog: dict, fetch, *, mode: str, catalog_sha: str,
-            key: str, revision_probe=None) -> tuple[dict, dict]:
+            key: str, revision_probe=None,
+            provenance_probe=None) -> tuple[dict, dict]:
     _, cases = _query_catalog(catalog)
     if mode not in ("scan", "indexed"):
         raise CaptureError("Invalid capture mode.")
+    if provenance_probe is not None and revision_probe is None:
+        raise CaptureError("Provenance observation requires search revision pin.")
     kinds = {case["kind"] for case in cases}
     revision_before = None
     if revision_probe is not None:
         from scripts.search_revision import validate_observation
         revision_before = revision_probe()
         validate_observation(revision_before, kinds, mode=mode)
+    provenance_before = None
+    if provenance_probe is not None:
+        from scripts.search_provenance import validate_provenance_observation
+        provenance_before = provenance_probe()
+        validate_provenance_observation(provenance_before)
     responses = []
     calls = 0
     for case in cases:
@@ -325,8 +352,14 @@ def collect(catalog: dict, fetch, *, mode: str, catalog_sha: str,
         validate_observation(revision_after, kinds, mode=mode)
         if revision_before != revision_after:
             raise CaptureError("Observed metadata/index revision drifted during capture.")
+    if provenance_probe is not None:
+        provenance_after = provenance_probe()
+        validate_provenance_observation(provenance_after)
+        if provenance_before != provenance_after:
+            raise CaptureError("Source/edition/evidence metadata changed during capture.")
     unsigned = {
-        "schema_version": "0.8.10" if revision_probe is not None else SCHEMA,
+        "schema_version": ("0.8.11" if provenance_probe is not None else
+                           "0.8.10" if revision_probe is not None else SCHEMA),
         "mode": mode,
         "catalog_sha256": catalog_sha,
         "snapshot_sha256": digest(encode(snapshot)),
@@ -341,6 +374,10 @@ def collect(catalog: dict, fetch, *, mode: str, catalog_sha: str,
         # HMAC-bound observed projection only, never a full immutable
         # corpus or database transaction revision.
         unsigned["revision_observation"] = revision_before
+    if provenance_before is not None:
+        # Only fixed source/edition/evidence metadata, not original source
+        # bytes, licenses, edges, or a transactionally pinned graph.
+        unsigned["provenance_observation"] = provenance_before
     return snapshot, {**unsigned, "manifest_hmac": manifest_mac(unsigned, key)}
 
 
@@ -354,17 +391,22 @@ def verify(catalog: dict, snapshot: dict, manifest: dict, *, catalog_sha: str,
     if not isinstance(manifest, dict):
         raise CaptureError("Manifest envelope invalid.")
     schema = manifest.get("schema_version")
-    if schema == "0.8.10":
+    if schema in ("0.8.10", "0.8.11"):
         required.add("revision_observation")
+    if schema == "0.8.11":
+        required.add("provenance_observation")
     if set(manifest) != required:
         raise CaptureError("Manifest envelope invalid.")
-    if schema == "0.8.10":
+    if schema in ("0.8.10", "0.8.11"):
         from scripts.search_revision import validate_observation
         _, cases = _query_catalog(catalog)
         validate_observation(
             manifest["revision_observation"],
             {c["kind"] for c in cases}, mode=manifest["mode"])
-    if (schema not in (SCHEMA, "0.8.10") or
+    if schema == "0.8.11":
+        from scripts.search_provenance import validate_provenance_observation
+        validate_provenance_observation(manifest["provenance_observation"])
+    if (schema not in (SCHEMA, "0.8.10", "0.8.11") or
         manifest["mode"] not in ("scan", "indexed") or
         manifest["catalog_sha256"] != catalog_sha or
         manifest["snapshot_sha256"] != snapshot_sha or
@@ -418,15 +460,23 @@ def main(argv: list[str] | None = None) -> int:
     capture.add_argument("--ack-authorized-metadata-only", action="store_true")
     capture.add_argument("--pin-observed-projection", action="store_true",
                          help="Before/after full bounded visible-metadata and index checks.")
+    capture.add_argument("--pin-source-provenance", action="store_true",
+                         help="Also hash bounded SourceRecord/Edition/Evidence metadata.")
     check = sub.add_parser("verify")
     check.add_argument("--questions", type=Path, required=True)
     check.add_argument("--responses", type=Path, required=True)
     check.add_argument("--manifest", type=Path, required=True)
     check.add_argument("--key-file", type=Path)
     check.add_argument("--require-observed-projection", action="store_true")
+    check.add_argument("--require-source-provenance", action="store_true")
     args = parser.parse_args(argv)
     if args.mode == "capture" and not args.ack_authorized_metadata_only:
         print("[BLOCKED] Authorized private metadata capture acknowledgement required.")
+        return 2
+    if args.mode == "capture" and args.pin_source_provenance and (
+        not args.pin_observed_projection
+    ):
+        print("[BLOCKED] Provenance requires full observed search revision pin.")
         return 2
     try:
         catalog, catalog_sha = read_evidence(args.questions)
@@ -438,19 +488,28 @@ def main(argv: list[str] | None = None) -> int:
                 from scripts.search_revision import observe_projection
                 revision_probe = lambda: observe_projection(
                     catalog, client.fetch, mode=args.search)
+            provenance_probe = None
+            if args.pin_source_provenance:
+                from scripts.search_provenance import observe_provenance
+                provenance_probe = lambda: observe_provenance(client.fetch)
             snapshot, manifest = collect(
                 catalog, client.fetch, mode=args.search,
                 catalog_sha=catalog_sha, key=client.key,
-                revision_probe=revision_probe)
+                revision_probe=revision_probe,
+                provenance_probe=provenance_probe)
             save_private_pair(args.output, args.manifest, snapshot, manifest)
             count = manifest["request_count"]
         else:
             snapshot, snapshot_sha = read_evidence(args.responses)
             manifest, _ = read_evidence(args.manifest)
             if args.require_observed_projection and (
-                manifest.get("schema_version") != "0.8.10"
+                manifest.get("schema_version") not in ("0.8.10", "0.8.11")
             ):
                 raise CaptureError("Capture lacks bounded revision observation.")
+            if args.require_source_provenance and (
+                manifest.get("schema_version") != "0.8.11"
+            ):
+                raise CaptureError("Capture lacks source provenance observation.")
             key = load_token(args.key_file or signature_key_path())
             count = verify(
                 catalog, snapshot, manifest, catalog_sha=catalog_sha,
