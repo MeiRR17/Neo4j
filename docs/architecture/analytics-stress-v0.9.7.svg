@@ -24,13 +24,13 @@
 <text x="979" y="224" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">4 operations</text>
 <text x="979" y="263" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">3 repeats each</text>
 <text x="979" y="302" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">48 profile calls</text>
-<text x="979" y="341" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">Strict row budgets</text>
+<text x="979" y="341" fill="#fce2c4" font-family="Arial,sans-serif" font-size="17">Strict cost budgets</text>
 <path d="M1081 395 V447 H726 V481" stroke="#91c3f9" stroke-width="4" fill="none"/>
 <path d="M718 469 L726 483 L734 469" stroke="#91c3f9" stroke-width="4" fill="none"/>
 <rect x="355" y="484" width="839" height="130" rx="16" fill="#274156" stroke="#8aa7c2" stroke-width="2"/>
 <text x="382" y="527" fill="#fff" font-family="Arial,sans-serif" font-weight="700" font-size="22">Sanitized evidence + exact cleanup</text>
-<text x="382" y="568" fill="#dfeaf9" font-family="Arial,sans-serif" font-size="17">dbHits, operator flags, p50/p95, topology growth · 7-day artifact</text>
-<text x="382" y="596" fill="#dfeaf9" font-family="Arial,sans-serif" font-size="16">No rows, source texts, credentials or graph snapshot claim</text>
+<text x="382" y="568" fill="#dfeaf9" font-family="Arial,sans-serif" font-size="17">Observed Work-link dbHits: 2,126 / 4,174 disjoint; 1,873 / 3,665 hub</text>
+<text x="382" y="596" fill="#dfeaf9" font-family="Arial,sans-serif" font-size="16">Synthetic cost gate + 7-day evidence; no text, secrets or release claim</text>
 <rect x="43" y="627" width="1150" height="49" rx="12" fill="#343e53" stroke="#8798b4" stroke-width="2"/>
-<text x="65" y="659" fill="#fce3bc" font-family="Arial,sans-serif" font-weight="700" font-size="19">Existing v0.9.6 cost gate preserved · no production SLO or scholarly release · HOLD</text>
+<text x="65" y="659" fill="#fce3bc" font-family="Arial,sans-serif" font-weight="700" font-size="19">32/128 AND 256/512 synthetic cost guards · no production SLO · HOLD</text>
 </svg>

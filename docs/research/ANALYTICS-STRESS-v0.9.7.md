@@ -55,10 +55,39 @@ cleanup and therefore never authorizes running this script in production.
 
 ## CI evidence and remaining qualification
 
-The existing v0.9.6 synthetic 32/128-link cost regression gate is retained
-without relaxation. v0.9.7 runs a separate 256/512 distribution-sensitive
-stress matrix and archives a seven-day analytics-stress-v097-synthetic
-artifact. No new production SLO is inferred from this small experiment.
+The first v0.9.7 four-case CI report was measured successfully in GitHub
+Actions run #43105105335, commit 194caddf0232c515254f72b8e6ed97c4c55fc1b7:
+
+| Fixture | Work descriptor dbHits | Work links L→R / R→L | Incident frequency |
+| --- | ---: | ---: | ---: |
+| disjoint-256 | 12 | 2,126 / 2,126 | 15 |
+| hub-256 | 12 | 1,873 / 2,126 | 1,386 |
+| disjoint-512 | 12 | 4,174 / 4,174 | 15 |
+| hub-512 | 12 | 3,665 / 4,174 | 2,666 |
+
+The highest observed 256→512 growth was 1.963x for cross-Work links
+and 1.924x for hub frequency. The v0.9.6 synthetic 32/128 regression
+gate remains unchanged. Based on these results, a SECOND CI-only guard
+now fails on excessive fixed-fixture dbHits, potentially expensive join
+operators or full/label scans, or cost growth beyond 2.8x for a twofold
+fixture increase. Its ceiling matrix is conservative relative to observed
+synthetic costs:
+
+| Fixture | Work descriptor max | L→R max | R→L max | Frequency max |
+| --- | ---: | ---: | ---: | ---: |
+| disjoint-256 | 30 | 3,000 | 3,000 | 40 |
+| hub-256 | 30 | 2,700 | 3,000 | 2,000 |
+| disjoint-512 | 30 | 6,000 | 6,000 | 40 |
+| hub-512 | 30 | 5,300 | 6,000 | 3,800 |
+
+The guard verifies deterministic fixture SHA-256 and exact identities,
+input cardinalities and review-nonclaim flags, and outputs only validated
+allowlisted counters. It is executable in CI via
+scripts/analytics_stress_gate_v097.py; its sanitized result is archived
+alongside the original stress report in the seven-day
+analytics-stress-v097-synthetic artifact.
+
+No production performance SLO is inferred from this small experiment.
 
 Pending acceptance includes representative corpora and dates, source and
 edition permissions, at least 100 genuinely human-reviewed source links,

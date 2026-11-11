@@ -12,8 +12,14 @@
 - Added sanitized topology-aware database-hit, p50/p95 and operator
   observations plus 256→512 cost growth; no raw query values, private
   source content, credentials or plans are emitted.
-- Added 12 focused synthetic contract/denial/cleanup tests and CI artifact
-  retention for seven days. v0.9.6 fixed-small-fixture cost gate remains.
+- First successful CI run #43105105335 observed disjoint cross-Work
+  costs of 2,126/4,174 dbHits at 256/512 links, hub forward-link
+  costs of 1,873/3,665, and hub incident-frequency costs of 1,386/2,666.
+- Added a fail-closed, topology-specific synthetic cost regression gate:
+  bounded per-case dbHits maxima, scan/join denial and 2.8x maximum
+  cost growth for twofold edge growth. No production SLO is inferred.
+- Added 20 focused synthetic contract/security/cleanup/gate tests and CI
+  artifact retention for seven days. The v0.9.6 32/128 cost gate remains.
 - This is neither a production workload nor a source-rights, graph
   snapshot, authorship or scholarly-quality attestation. HOLD.
 
