@@ -397,3 +397,48 @@ RETURN [s.id, m.id, t.id] AS passage_ids,
          rights_tag:eb.rights_tag}] AS edges, 2 AS hop_count
 LIMIT $fetch_limit
 """.strip()
+
+
+# v0.9.2: a fixed 50+1 incident source-link metadata sample, ordered by
+# canonical edge ID. This is NOT whole-graph centrality or an inferred citation.
+READ_OPERATIONS["analysis_frequency_window"] = """
+MATCH (p:Passage {id:$passage_id})-[r:SOURCE_LINK]-(q:Passage)
+MATCH (ev:Evidence {id:r.evidence_id})
+WHERE r.id IS NOT NULL
+  AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND r.review_status IN ['unreviewed','approved','rejected','disputed']
+  AND ev.review_status IN ['unreviewed','approved','rejected','disputed']
+RETURN r.id AS edge_id, startNode(r).id AS source_passage_id,
+       endNode(r).id AS target_passage_id,
+       ev.id AS evidence_id, r.review_status AS edge_review_status,
+       ev.review_status AS evidence_review_status
+ORDER BY edge_id
+LIMIT $fetch_limit
+""".strip()
+
+# v0.9.2: only a direct evidenced SOURCE_LINK (never arbitrary pairings) can
+# carry a tentative author-lifetime comparison. Author lists are capped at 2
+# to detect missing/ambiguous authorships without fabricating a date.
+READ_OPERATIONS["analysis_author_lifetimes"] = """
+MATCH (s:Passage {id:$source_id})-[r:SOURCE_LINK]->(t:Passage {id:$target_id})
+MATCH (ev:Evidence {id:r.evidence_id})
+WHERE r.id IS NOT NULL
+  AND r.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
+  AND r.review_status IN ['unreviewed','approved']
+  AND ev.review_status IN ['unreviewed','approved']
+WITH s,t,r,ev ORDER BY r.id LIMIT 1
+MATCH (sw:Work {id:s.work_id})
+MATCH (tw:Work {id:t.work_id})
+RETURN r.id AS edge_id, ev.id AS evidence_id,
+       s.id AS source_passage_id, t.id AS target_passage_id,
+       sw.id AS source_work_id, tw.id AS target_work_id,
+       [(sw)<-[:AUTHORED]-(sa:Person) |
+         {id:sa.id, date_from_year:sa.date_from_year,
+          date_to_year:sa.date_to_year}][..2] AS source_authors,
+       [(tw)<-[:AUTHORED]-(ta:Person) |
+         {id:ta.id, date_from_year:ta.date_from_year,
+          date_to_year:ta.date_to_year}][..2] AS target_authors
+LIMIT 1
+""".strip()
