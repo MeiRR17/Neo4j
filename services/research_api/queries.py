@@ -467,7 +467,8 @@ WHERE r.id IS NOT NULL
   AND ev.claim_kind = 'OBSERVED_SOURCE_LINK'
   AND r.review_status IN ['unreviewed','approved','rejected','disputed']
   AND ev.review_status IN ['unreviewed','approved','rejected','disputed']
-RETURN r.id AS edge_id, a.id AS source_passage_id,
+RETURN r.id AS edge_id, a.work_id AS source_work_id,
+       b.work_id AS target_work_id, a.id AS source_passage_id,
        b.id AS target_passage_id, ev.id AS evidence_id,
        r.review_status AS edge_review_status,
        ev.review_status AS evidence_review_status,

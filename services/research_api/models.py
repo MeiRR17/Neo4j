@@ -387,6 +387,8 @@ class WorkComparisonDescriptor(StrictModel):
 
 class WorkCrossLink(StrictModel):
     edge_id: str
+    source_work_id: str
+    target_work_id: str
     source_passage_id: str
     target_passage_id: str
     evidence_id: str

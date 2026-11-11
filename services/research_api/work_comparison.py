@@ -13,7 +13,8 @@ MAX_LINKS = 10
 WORK_FIELDS = frozenset({"id", "title", "provider_ref", "author_sample"})
 AUTHOR_FIELDS = frozenset({"id", "date_from_year", "date_to_year"})
 LINK_FIELDS = frozenset({
-    "edge_id", "source_passage_id", "target_passage_id", "evidence_id",
+    "edge_id", "source_work_id", "target_work_id",
+    "source_passage_id", "target_passage_id", "evidence_id",
     "edge_review_status", "evidence_review_status", "source_ref",
     "target_ref", "evidence_source_ref", "version_id", "rights_tag",
 })
@@ -102,6 +103,9 @@ def _direction(store, source_work: str, target_work: str, limit: int) -> dict:
     for row in rows:
         if not isinstance(row, dict) or set(row) != LINK_FIELDS:
             raise DatabaseUnavailable("Unexpected cross-work link projection.")
+        if (_id(row["source_work_id"], "work") != source_work or
+                _id(row["target_work_id"], "work") != target_work):
+            raise DatabaseUnavailable("Cross-work result escaped requested scope.")
         edge_id = _id(row["edge_id"], "edge")
         evidence_id = _id(row["evidence_id"], "evidence")
         source_id = _id(row["source_passage_id"], "passage")
@@ -112,7 +116,7 @@ def _direction(store, source_work: str, target_work: str, limit: int) -> dict:
         seen_edges.add(edge_id)
         seen_evidence.add(evidence_id)
         for status in ("edge_review_status", "evidence_review_status"):
-            if row[status] not in REVIEW_STATUSES:
+            if not isinstance(row[status], str) or row[status] not in REVIEW_STATUSES:
                 raise DatabaseUnavailable("Unsupported research review state.")
         for field, size, required in (
             ("source_ref", 512, True), ("target_ref", 512, True),
