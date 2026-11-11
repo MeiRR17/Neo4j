@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1130" height="482" viewBox="0 0 1130 482" role="img" aria-label="v0.8.17 AWS access-surface audit implementation">
+<rect width="1130" height="482" rx="20" fill="#101827"/>
+<text x="34" y="50" font-family="Arial,sans-serif" font-size="28" font-weight="bold" fill="#f8fafc">Neo4j v0.8.17 — AWS access-surface census</text>
+<text x="34" y="78" font-family="Arial,sans-serif" font-size="15" fill="#aebcd0">Code-derived workflow; not a live AWS console screenshot</text>
+<g font-family="Arial,sans-serif" text-anchor="middle">
+<rect x="28" y="133" width="246" height="157" rx="14" fill="#1c2c47" stroke="#60a5fa" stroke-width="2"/>
+<text x="151" y="169" font-size="19" font-weight="bold" fill="#fff">Existing trust chain</text>
+<text x="151" y="203" font-size="14" fill="#cbd5e1">v0.8.11–16 receipts</text>
+<text x="151" y="230" font-size="14" fill="#cbd5e1">Signed S3/STS metadata</text>
+<text x="151" y="257" font-size="14" fill="#cbd5e1">Fail closed on errors</text>
+<rect x="312" y="133" width="250" height="157" rx="14" fill="#1c2c47" stroke="#a78bfa" stroke-width="2"/>
+<text x="437" y="169" font-size="19" font-weight="bold" fill="#fff">S3 Access Points</text>
+<text x="437" y="203" font-size="14" fill="#cbd5e1">Account public block</text>
+<text x="437" y="230" font-size="14" fill="#cbd5e1">Bucket-scoped census</text>
+<text x="437" y="257" font-size="14" fill="#cbd5e1">VPC-only / nonpublic</text>
+<rect x="600" y="133" width="240" height="157" rx="14" fill="#1c2c47" stroke="#fbbf24" stroke-width="2"/>
+<text x="720" y="169" font-size="19" font-weight="bold" fill="#fff">IAM + SCP links</text>
+<text x="720" y="203" font-size="14" fill="#cbd5e1">Caller role + boundary</text>
+<text x="720" y="230" font-size="14" fill="#cbd5e1">Policy attachments</text>
+<text x="720" y="257" font-size="14" fill="#cbd5e1">Account → OU → Root</text>
+<rect x="876" y="133" width="228" height="157" rx="14" fill="#1c2c47" stroke="#34d399" stroke-width="2"/>
+<text x="990" y="169" font-size="19" font-weight="bold" fill="#fff">Private report</text>
+<text x="990" y="203" font-size="14" fill="#cbd5e1">HMAC + SHA256</text>
+<text x="990" y="230" font-size="14" fill="#cbd5e1">Offline reverify</text>
+<text x="990" y="257" font-size="14" fill="#cbd5e1">Research HOLD</text>
+</g>
+<g stroke="#9ca3af" stroke-width="3"><path d="M274 210h32"/><path d="M562 210h32"/><path d="M840 210h30"/></g>
+<g fill="#9ca3af"><path d="M306 210l-10 -6v12z"/><path d="M594 210l-10 -6v12z"/><path d="M870 210l-10 -6v12z"/></g>
+<rect x="28" y="325" width="1076" height="119" rx="12" fill="#243347" stroke="#46566d"/>
+<text x="51" y="355" font-family="Arial,sans-serif" font-size="19" font-weight="bold" fill="#fff">Observed inventory, NOT an effective-permissions proof</text>
+<text x="51" y="385" font-family="Arial,sans-serif" font-size="15" fill="#cbd5e1">IAM/SCP policy semantics, cross-account access and other S3 routes remain unverified.</text>
+<text x="51" y="413" font-family="Arial,sans-serif" font-size="14" fill="#fda4af">Only synthetic AWS tests; source rights, real audits and scholarly approval still pending.</text>
+</svg>

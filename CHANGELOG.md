@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.8.17] — 2026-11-11 (DRAFT — bounded IAM/SCP/S3 Access Point inventory)
+
+- Added opt-in read-only AWS access-surface census layered on the signed
+  0.8.11–0.8.16 local source, Ed25519 and S3 governance chain.
+- S3 Control account-level Block Public Access check plus bounded list of
+  bucket Access Points; each requires VPC-only network, exact bucket,
+  policy-status nonpublic, and all four individual public-block flags.
+- IAM role metadata inspection for the authenticated same-account assumed
+  role, including permissions-boundary presence and bounded managed/inline
+  policy attachment inventory. **Does not parse/evaluate policy contents.**
+- AWS Organizations read-only enumeration of SCP attachments at the account,
+  each ancestor OU and the root (up to six hierarchy steps); refuses
+  truncated/overlarge/ambiguous ancestry and access-denied partial scans.
+- HMAC-protected mode-0600 digest-only audit; no source text, AWS role names,
+  Access Point names, policy contents, credentials or account ID in output.
+  Offline verification checks the full v0.8.16 signed governance chain.
+- Crucial exclusions remain explicit: actual effective IAM/SCP permissions,
+  cross-account grants, policy conditions, all S3 access routes, outside
+  storage immutability, source licensing and production signoff. HOLD.
+- Mock AWS Organizations/IAM/S3Control negative tests and isolated Neo4j
+  signed source-chain integration. No live AWS access in CI.
+
+
 ## [0.8.16] — 2026-11-11 (DRAFT — read-only bucket governance and repeat observations)
 
 - Added a private operator-acknowledged AWS account/bucket governance audit,
