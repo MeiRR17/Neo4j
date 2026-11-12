@@ -55,7 +55,7 @@ jobs:
       - name: Signed audit anchor exact-version S3 metadata check (mocked AWS only)
         run: |
           mkdir -p local_staging
-          python - <<'PY' > local_staging/anchor-s3-v0914-synthetic.json
+          PYTHONPATH=scripts python - <<'PY' > local_staging/anchor-s3-v0914-synthetic.json
           import json
           from tests.test_anchor_s3_v0914 import SignedAnchorS3Tests
           case = SignedAnchorS3Tests(
