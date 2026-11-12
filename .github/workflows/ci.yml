@@ -52,6 +52,46 @@ jobs:
         run: PYTHONPATH=scripts python -m unittest tests.test_live_s3_version_verify -v
       - name: AWS STS identity, bucket controls and spaced retention samples (mocked)
         run: PYTHONPATH=scripts python -m unittest tests.test_s3_governance -v
+      - name: Signed audit anchor exact-version S3 metadata check (mocked AWS only)
+        run: |
+          mkdir -p local_staging
+          python - <<'PY' > local_staging/anchor-s3-v0914-synthetic.json
+          import json
+          from tests.test_anchor_s3_v0914 import SignedAnchorS3Tests
+          case = SignedAnchorS3Tests(
+              "test_exact_version_two_read_only_calls_and_full_sha")
+          case.setUp()
+          report = case.inspect()
+          offline = case.verify(report)
+          assert [name for name, _ in case.s3.calls] == [
+              "head_object", "get_object_retention"]
+          assert report["aws_full_object_sha256_matched"] is True
+          assert report["aws_compliance_retention_observed"] is True
+          assert offline["offline_local_observation_hmac_verified"] is True
+          assert offline["aws_current_state_rechecked"] is False
+          assert report["external_archive_continuously_immutable_verified"] is False
+          assert report["research_release_status"] == "HOLD"
+          print(json.dumps({
+              "schema_version": "0.9.14",
+              "synthetic_fixture_only": True,
+              "aws_sdk_responses_mocked": True,
+              "real_aws_account_contacted": False,
+              "fixed_exact_version_read_calls": 2,
+              "ed25519_pinned_anchor_signature_verified": True,
+              "full_object_checksum_and_retention_checked": True,
+              "offline_observation_hmac_verified": True,
+              "s3_object_lock_provider_independently_observed": False,
+              "external_archive_continuously_immutable_verified": False,
+              "research_release_status": "HOLD",
+          }, sort_keys=True))
+          PY
+      - name: Retain sanitized synthetic S3 anchor-verification contract
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-anchor-s3-v0914-mocked
+          path: local_staging/anchor-s3-v0914-synthetic.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
