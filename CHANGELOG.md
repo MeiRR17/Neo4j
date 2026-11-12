@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.9.14] — 2026-11-12 (DRAFT — exact S3 version of signed audit anchor)
+
+- Added pinned Ed25519-anchor-byte binding to explicit AWS S3
+  bucket/key/non-null version, region, expected owner, SHA-256,
+  full-object length and required future retention.
+- Added two strict read-only S3 operations: HeadObject with
+  FULL_OBJECT checksum, followed by GetObjectRetention, both with
+  explicit VersionId and ExpectedBucketOwner.
+- Enforced COMPLIANCE Object Lock and equal retention dates in both
+  responses; refused mismatched SHA, length, version, unsafe bytes,
+  trust-policy substitutions and expired pinned retention.
+- Added explicit operator opt-in CLI for live AWS inspection and
+  separate offline HMAC validation of the saved sanitized observation.
+- Added 13 security/functional tests and mock-only CI evidence
+  with a seven-day artifact. No AWS connection is made by CI.
+- No source rights, persistent provider WORM assurance or research
+  release is certified. Existing Neo4j and performance tests retained.
+
+
 ## [0.9.13] — 2026-11-12 (DRAFT — pinned revision-chain anchors)
 
 - Added metadata-only, bounded v0.9.12 ledger checkpoint capture
