@@ -92,6 +92,51 @@ jobs:
           path: local_staging/anchor-s3-v0914-synthetic.json
           if-no-files-found: error
           retention-days: 7
+      - name: Mock-only signed-anchor STS and bucket governance audit
+        run: |
+          mkdir -p local_staging
+          python - <<'PY' > local_staging/anchor-s3-governance-v0915-mocked.json
+          import json
+          from tests.test_anchor_governance_v0915 import (
+              AnchorGovernanceTests,
+          )
+          t = AnchorGovernanceTests(
+              "test_seven_explicit_read_only_calls_and_offline_hmac")
+          t.setUp()
+          report = t.observe()
+          offline = t.verify(report)
+          assert t.sts.calls == 1
+          assert len(t.s3.calls) == 6
+          assert report["read_only_bucket_controls_checked"] is True
+          assert report["aws_sts_caller_account_matches_expected_owner"] is True
+          assert offline["offline_version_and_bucket_governance_hmac_verified"] is True
+          assert offline["live_aws_state_rechecked"] is False
+          assert report["external_archive_continuously_immutable_verified"] is False
+          assert report["research_release_status"] == "HOLD"
+          print(json.dumps({
+              "schema_version": "0.9.15",
+              "synthetic_fixture_only": True,
+              "aws_sdk_responses_mocked": True,
+              "real_aws_account_contacted": False,
+              "pinned_exact_version_s3_reads": 2,
+              "read_only_sts_identity_reads": 1,
+              "read_only_bucket_governance_reads": 4,
+              "full_object_and_retention_observation_checked": True,
+              "expected_owner_account_matched": True,
+              "bucket_versioning_and_access_controls_checked": True,
+              "offline_governance_hmac_verified": True,
+              "full_iam_scp_access_points_policy_verified": False,
+              "continuous_archive_immutability_verified": False,
+              "research_release_status": "HOLD",
+          }, sort_keys=True))
+          PY
+      - name: Archive sanitized mock-only anchor S3 governance evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-anchor-governance-v0915-mocked
+          path: local_staging/anchor-s3-governance-v0915-mocked.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
