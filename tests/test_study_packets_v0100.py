@@ -226,8 +226,12 @@ class StudyPacketTests(unittest.TestCase):
         with self.assertRaises(StudyPacketError):
             verify_study_packet(broken, secret=self.secret)
         broken = deepcopy(original)
-        broken["audit_export"]["manifest"]["ordered_links"][0][
-            "evidence_review_status"] = "approved"
+        selected = broken["audit_export"]["manifest"]["ordered_links"][0]
+        previous = selected["evidence_review_status"]
+        selected["evidence_review_status"] = (
+            "rejected" if previous != "rejected" else "approved"
+        )
+        self.assertNotEqual(selected["evidence_review_status"], previous)
         with self.assertRaises(StudyPacketError):
             verify_study_packet(broken, secret=self.secret)
 
