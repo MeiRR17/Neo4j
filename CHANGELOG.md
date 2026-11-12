@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.9.16] — 2026-11-12 (DRAFT — 24h signed-anchor governance recheck)
+
+- Compare two separately collected v0.9.15 HMAC-protected S3/STS
+  bucket-governance receipts, including nested v0.9.14 exact-version
+  signed-anchor checksum and COMPLIANCE retention observations.
+- Require identical pinned Ed25519 anchor, Work scope, S3 object
+  version, account/region and full-object hash; 24-hour locally
+  recorded gap; all 14 provider request ID digests distinct.
+- Reject shortened retention, early/reused requests, altered
+  bucket security checks or tampered nested/outer HMAC; allow
+  documented COMPLIANCE retention extensions.
+- Added domain-separated comparison HMAC and deterministic offline
+  verifier plus CLI compare/verify-comparison with no network.
+- Added 15 focused tests and a sanitized seven-day mock-only CI
+  observation pair. No true AWS calls, trusted time attestation
+  or continuous immutable storage claim. Research HOLD.
+
+
 ## [0.9.15] — 2026-11-12 (DRAFT — signed-anchor S3 governance)
 
 - Composed the existing exact-version Ed25519/S3-retention checker
