@@ -95,7 +95,7 @@ jobs:
       - name: Mock-only signed-anchor STS and bucket governance audit
         run: |
           mkdir -p local_staging
-          python - <<'PY' > local_staging/anchor-s3-governance-v0915-mocked.json
+          PYTHONPATH=scripts python - <<'PY' > local_staging/anchor-s3-governance-v0915-mocked.json
           import json
           from tests.test_anchor_governance_v0915 import (
               AnchorGovernanceTests,
