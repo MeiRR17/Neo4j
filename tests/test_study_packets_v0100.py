@@ -194,7 +194,7 @@ class StudyPacketTests(unittest.TestCase):
     def test_tamper_evidence_review_and_license_flags_fail(self):
         original = self.get().json()
         for update in (
-            ("citations", "edge_review_status", "approved"),
+            ("citations", "edge_review_status", "rejected"),
             ("citations", "rights_tag", "LICENSED"),
             ("citations", "interpretation_human_approved", True),
             ("packet", "dviros_postgres_record_created", True),
