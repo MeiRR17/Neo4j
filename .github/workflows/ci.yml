@@ -227,6 +227,48 @@ jobs:
           path: local_staging/pinned-time-v0917-synthetic.json
           if-no-files-found: error
           retention-days: 7
+      - name: Synthetic evidence-to-study-packet transfer contract (no writes)
+        run: |
+          mkdir -p local_staging
+          PYTHONPATH=scripts python - <<'PY' > local_staging/study-packet-v0100-synthetic.json
+          import json
+          from tests.test_study_packets_v0100 import StudyPacketTests
+          from services.research_api.study_packets_v0100 import (
+              verify_study_packet,
+          )
+          case = StudyPacketTests(
+              "test_two_citations_and_exact_audit_provenance")
+          case.setUp()
+          bundle = case.get().json()
+          packet = bundle["packet"]
+          report = verify_study_packet(bundle, secret=case.secret)
+          assert report["citation_count"] == 2
+          assert report["all_citations_present_in_signed_audit"] is True
+          assert report["service_hmac_verified"] is True
+          assert packet["annotation_write_status"] == "PREVIEW_ONLY_DVIROS_OWNED"
+          assert packet["dviros_postgres_record_created"] is False
+          assert packet["research_release_status"] == "HOLD"
+          print(json.dumps({
+              "schema_version": "0.10.0",
+              "synthetic_fixture_only": True,
+              "real_corpus_data_exported": False,
+              "selected_evidence_count": report["citation_count"],
+              "full_two_pass_audit_receipt_verified": True,
+              "local_study_packet_hmac_verified": True,
+              "dviros_postgres_notes_written": False,
+              "neo4j_graph_written": False,
+              "independent_source_rights_verified": False,
+              "human_review_completed": False,
+              "research_release_status": "HOLD",
+          }, sort_keys=True))
+          PY
+      - name: Retain sanitized synthetic research study transfer evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: research-study-packet-v0100-synthetic
+          path: local_staging/study-packet-v0100-synthetic.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
