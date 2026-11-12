@@ -25,13 +25,15 @@ from services.research_api.study_packets_v0100 import (
     CITATION_FIELDS, verify_study_packet, StudyPacketError,
 )
 
-MAX_FILE_BYTES = 300_000
+MAX_FILE_BYTES = 400_000
 MAX_CSV_BYTES = 32_768
 
 
 def _read(path: Path) -> dict:
     if path.is_symlink() or path.parent.is_symlink() or not path.is_file():
         raise StudyPacketError("Invalid private study packet path.")
+    if os.name != "nt" and (stat.S_IMODE(path.stat().st_mode) & 0o077):
+        raise StudyPacketError("Study packet must be readable only by owner.")
     if not 1 <= path.stat().st_size <= MAX_FILE_BYTES:
         raise StudyPacketError("Study packet file size invalid.")
     raw = path.read_bytes()
