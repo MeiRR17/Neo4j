@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 650" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.14 pinned signed-audit-anchor exact S3 version and retention verification</title>
+<desc id="desc">A pinned Ed25519 signature and exact signed JSON bytes are verified locally; two explicit S3 read-only calls check the version's full-object SHA256 and COMPLIANCE retention. A local HMAC report can be verified offline. CI uses mocked AWS only.</desc>
+<rect width="1200" height="650" rx="20" fill="#111c2d"/>
+<text x="44" y="55" fill="#f4f8ff" font-family="Arial,sans-serif" font-weight="700" font-size="29">Neo4j v0.9.14 — Read-only S3 anchor proof</text>
+<text x="44" y="88" fill="#bdd0df" font-family="Arial,sans-serif" font-size="17">Code-derived illustration · not a live AWS screenshot</text>
+<rect x="43" y="136" width="342" height="203" rx="16" fill="#244563" stroke="#8caed9" stroke-width="2"/>
+<text x="62" y="175" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">1. Offline signed file</text>
+<text x="62" y="217" fill="#e4f0fc" font-family="Arial,sans-serif" font-size="17">Ed25519 pinned public key</text>
+<text x="62" y="253" fill="#e4f0fc" font-family="Arial,sans-serif" font-size="17">Exact bytes + SHA-256</text>
+<text x="62" y="290" fill="#e4f0fc" font-family="Arial,sans-serif" font-size="17">Pinned version and account</text>
+<path d="M385 238 H427" stroke="#9ac8ed" stroke-width="4"/>
+<rect x="430" y="136" width="348" height="203" rx="16" fill="#175960" stroke="#79c7b9" stroke-width="2"/>
+<text x="449" y="175" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">2. Two AWS reads only</text>
+<text x="449" y="217" fill="#e4f6ee" font-family="Arial,sans-serif" font-size="17">HEAD + FULL_OBJECT SHA</text>
+<text x="449" y="253" fill="#e4f6ee" font-family="Arial,sans-serif" font-size="17">GET retention metadata</text>
+<text x="449" y="290" fill="#e4f6ee" font-family="Arial,sans-serif" font-size="17">Explicit exact VersionId</text>
+<path d="M778 238 H821" stroke="#9ac8ed" stroke-width="4"/>
+<rect x="824" y="136" width="332" height="203" rx="16" fill="#50435d" stroke="#b5a6d0" stroke-width="2"/>
+<text x="843" y="175" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">3. Check retention</text>
+<text x="843" y="217" fill="#f1e8fb" font-family="Arial,sans-serif" font-size="17">COMPLIANCE Object Lock</text>
+<text x="843" y="253" fill="#f1e8fb" font-family="Arial,sans-serif" font-size="17">Both dates match</text>
+<text x="843" y="290" fill="#f1e8fb" font-family="Arial,sans-serif" font-size="17">Minimum still in future</text>
+<path d="M990 339 V394 H605 V420" fill="none" stroke="#9ac8ed" stroke-width="4"/>
+<rect x="219" y="425" width="764" height="114" rx="16" fill="#2c4559" stroke="#91b8d4" stroke-width="2"/>
+<text x="241" y="469" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">4. Sanitized HMAC observation</text>
+<text x="241" y="508" fill="#e5eff9" font-family="Arial,sans-serif" font-size="17">Hashed IDs and request proofs · offline verification</text>
+<text x="46" y="598" fill="#f6dcae" font-family="Arial,sans-serif" font-size="17">CI uses MOCKED S3 only. No real AWS proof, permanent WORM guarantee or source-rights claim.</text>
+<text x="46" y="628" fill="#f6dcae" font-family="Arial,sans-serif" font-size="17">Research release: HOLD</text>
+</svg>
