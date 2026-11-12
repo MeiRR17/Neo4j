@@ -13,6 +13,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from hashlib import sha256
 import hmac
+import json
 import re
 
 from scripts.external_archive_attestation import (
@@ -110,6 +111,24 @@ def _local_chain(envelope: object, pin_policy: object,
             not 1 <= len(signed_bytes) <= MAX_ANCHOR_FILE_BYTES):
         raise AnchorArchiveError("Exact signed anchor bytes unavailable.")
     b = _binding(binding)
+    # The *same* signed anchor must be present in the exact local file.
+    # A valid unrelated envelope must not authorize a different S3 object.
+    try:
+        def unique_pairs(pairs):
+            result = {}
+            for key, val in pairs:
+                if key in result:
+                    raise ValueError
+                result[key] = val
+            return result
+        parsed = json.loads(
+            signed_bytes.decode("utf-8"), object_pairs_hook=unique_pairs)
+        if type(parsed) is not dict or parsed != envelope:
+            raise ValueError
+    except (ValueError, UnicodeError, TypeError):
+        raise AnchorArchiveError(
+            "Signed anchor file does not match verified envelope."
+        ) from None
     try:
         signature = verify_anchor(envelope, pin_policy)
     except (TypeError, ValueError, KeyError):
@@ -161,6 +180,8 @@ def observe_anchor_s3_version(
     except Exception:
         raise AnchorArchiveError("Read-only AWS exact-version check failed.") from None
     try:
+        if not isinstance(head, dict) or not isinstance(retention_response, dict):
+            raise AnchorArchiveError("Unexpected S3 response projection.")
         head_request = _request_id(head)
         retention_request = _request_id(retention_response)
         if (head.get("VersionId") != binding["version_id"] or
