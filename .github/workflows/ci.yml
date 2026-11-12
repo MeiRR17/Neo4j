@@ -137,6 +137,49 @@ jobs:
           path: local_staging/anchor-s3-governance-v0915-mocked.json
           if-no-files-found: error
           retention-days: 7
+      - name: Mock-only 25h paired audit-anchor governance comparison
+        run: |
+          mkdir -p local_staging
+          PYTHONPATH=scripts python - <<'PY' > local_staging/anchor-governance-recheck-v0916-mocked.json
+          import json
+          from tests.test_anchor_governance_recheck_v0916 import AnchorRecheckTests
+          t = AnchorRecheckTests(
+              "test_two_25h_observations_produce_hmac_and_no_aws_calls")
+          t.setUp()
+          pair = t.compare()
+          check = t.verify(pair)
+          assert pair["observed_interval_seconds"] == 90000
+          assert pair["minimum_interval_seconds"] == 86400
+          assert pair["distinct_provider_request_ids"] is True
+          assert pair["nondecreasing_retention_observed"] is True
+          assert check["two_local_observation_hmacs_verified"] is True
+          assert check["aws_current_state_rechecked"] is False
+          assert pair["aws_real_time_continuity_proven"] is False
+          assert pair["external_timestamp_verified"] is False
+          assert pair["research_release_status"] == "HOLD"
+          print(json.dumps({
+              "schema_version": "0.9.16",
+              "synthetic_fixture_only": True,
+              "aws_sdk_responses_mocked": True,
+              "real_aws_account_contacted": False,
+              "observed_interval_seconds": 90000,
+              "independent_24h_interval_condition_checked": True,
+              "two_receipt_hmacs_verified": True,
+              "two_exact_version_hashes_matched": True,
+              "distinct_seven_request_ids_per_observation": True,
+              "nondecreasing_compliance_retention_observed": True,
+              "continuous_archive_immutability_verified": False,
+              "external_timestamp_verified": False,
+              "research_release_status": "HOLD",
+          }, sort_keys=True))
+          PY
+      - name: Retain mock-only 25h signed-anchor comparison result
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-anchor-governance-v0916-mocked-pair
+          path: local_staging/anchor-governance-recheck-v0916-mocked.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py

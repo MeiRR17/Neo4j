@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 700" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.16 paired S3 anchor governance observations</title>
+<desc id="desc">Two independently verified signed S3 governance reports for the same exact Ed25519-pinned anchor are compared offline. Require a locally recorded 24-hour separation, distinct AWS request IDs and nondecreasing COMPLIANCE retention. No continuous storage or trusted external timestamps are proven. CI uses mocked AWS.</desc>
+<rect width="1260" height="700" rx="22" fill="#111a2c"/>
+<text x="45" y="60" fill="#f4f8ff" font-family="Arial,sans-serif" font-size="30" font-weight="700">Neo4j v0.9.16 — Paired governance receipts</text>
+<text x="45" y="95" fill="#b9c9db" font-family="Arial,sans-serif" font-size="17">Code-derived implementation diagram · not a live AWS screenshot</text>
+<rect x="45" y="136" width="533" height="198" rx="18" fill="#244260" stroke="#8bb4dc" stroke-width="2"/>
+<text x="67" y="183" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">1 · First S3/STS observation</text>
+<text x="67" y="229" fill="#e4f1fa" font-family="Arial,sans-serif" font-size="18">7 AWS read request IDs · local HMAC</text>
+<text x="67" y="270" fill="#e4f1fa" font-family="Arial,sans-serif" font-size="18">Exact anchor VersionId and retention</text>
+<rect x="679" y="136" width="533" height="198" rx="18" fill="#18595b" stroke="#79c7ae" stroke-width="2"/>
+<text x="702" y="183" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">2 · Later S3/STS observation</text>
+<text x="702" y="229" fill="#e5f5ef" font-family="Arial,sans-serif" font-size="18">Same exact object · new request IDs</text>
+<text x="702" y="270" fill="#e5f5ef" font-family="Arial,sans-serif" font-size="18">At least 24h reported time gap</text>
+<path d="M304 337 V375 H630 V405" fill="none" stroke="#94c5ec" stroke-width="4"/>
+<path d="M944 337 V375 H630" fill="none" stroke="#94c5ec" stroke-width="4"/>
+<rect x="230" y="410" width="800" height="135" rx="18" fill="#493f5c" stroke="#ae9dd1" stroke-width="2"/>
+<text x="254" y="457" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">3 · Offline verification and comparison</text>
+<text x="254" y="505" fill="#efe8f8" font-family="Arial,sans-serif" font-size="18">Match SHA/version · unique IDs · retention never decreases</text>
+<path d="M630 547 V576" stroke="#90cbb0" stroke-width="4"/>
+<rect x="279" y="582" width="700" height="72" rx="16" fill="#235449" stroke="#78cfb3" stroke-width="2"/>
+<text x="305" y="627" fill="#eafff2" font-family="Arial,sans-serif" font-size="21" font-weight="700">4 · Comparison HMAC and offline replay</text>
+<text x="44" y="681" fill="#f6d9af" font-family="Arial,sans-serif" font-size="16">Mocked AWS CI only · No trusted time oracle · No continuous WORM proof · Research HOLD</text>
+</svg>
