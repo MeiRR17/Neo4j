@@ -185,7 +185,7 @@ class SignedAnchorS3Tests(unittest.TestCase):
         self.assertEqual(self.s3.calls, [])
 
     def test_malformed_duplicate_json_rejected_before_aws(self):
-        raw = self.raw[:-2] + b',"schema_version":"0.9.14"}'
+        raw = self.raw[:-2] + b',"signer_id":"audit-archiver"}'
         self.args["signed_bytes"] = raw
         self.binding["content_sha256"] = sha256(raw).hexdigest()
         self.binding["content_length"] = len(raw)
@@ -196,7 +196,8 @@ class SignedAnchorS3Tests(unittest.TestCase):
     def test_wrong_version_or_owner_scope_refuses_remote(self):
         for key, bad in (
             ("expected_bucket_owner","999"),("aws_region","bad-region"),
-            ("version_id","../latest"),("bucket","UPPERCASE"),
+            ("version_id","../latest"),("version_id","null"),
+            ("bucket","UPPERCASE"),
             ("object_key","../secret"),("provider","other-provider"),
             ("evidence_origin","independently_verified"),
         ):

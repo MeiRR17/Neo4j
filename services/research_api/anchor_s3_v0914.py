@@ -86,6 +86,7 @@ def _binding(value: object) -> dict:
             ".." in value["object_key"] or
             type(value["version_id"]) is not str or
             not VERSION.fullmatch(value["version_id"]) or
+            value["version_id"].lower() == "null" or
             value["version_id"].startswith("/") or
             ".." in value["version_id"] or
             type(value["expected_bucket_owner"]) is not str or
