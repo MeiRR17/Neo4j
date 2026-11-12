@@ -518,3 +518,61 @@ class WorkAuditExportEnvelope(StrictModel):
     manifest: WorkAuditExportManifest
     manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     receipt_hmac_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+
+# v0.10.0 phase one: transferable, private DvirOS-owned *draft*
+# citations. Graph service NEVER stores researcher notes or review decisions.
+class StudyCitation(StrictModel):
+    edge_id: str
+    evidence_id: str
+    source_work_id: str
+    target_work_id: str
+    source_passage_id: str
+    target_passage_id: str
+    source_ref: str
+    target_ref: str
+    evidence_source_ref: str | None = None
+    version_id: str | None = None
+    rights_tag: str | None = None
+    edge_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    claim_kind: Literal["OBSERVED_SOURCE_LINK"]
+    citation_scope: Literal["metadata_reference_only"]
+    source_rights_verified: Literal[False]
+    interpretation_human_approved: Literal[False]
+
+
+class StudyAnnotationSlot(StrictModel):
+    evidence_id: str
+    draft_note: None = None
+    state: Literal["NOT_SAVED"]
+    reviewer_id: None = None
+
+
+class DraftStudyPacket(StrictModel):
+    schema_version: Literal["0.10.0"]
+    packet_id: str
+    source_work_id: str
+    target_work_id: str
+    selected_evidence_ids: list[str] = Field(min_length=1, max_length=12)
+    citations: list[StudyCitation] = Field(min_length=1, max_length=12)
+    citation_count: int = Field(ge=1, le=12)
+    audit_manifest_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    audit_query_template_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    audit_captured_at_unix: int = Field(ge=0, le=4102444800)
+    annotation_slots: list[StudyAnnotationSlot] = Field(min_length=1, max_length=12)
+    annotation_write_status: Literal["PREVIEW_ONLY_DVIROS_OWNED"]
+    review_decision_status: Literal["NO_DECISION_RECORDED"]
+    dviros_postgres_record_created: Literal[False]
+    graph_snapshot_verified: Literal[False]
+    licensed_source_rights_verified: Literal[False]
+    historical_influence_proven: Literal[False]
+    research_release_status: Literal["HOLD"]
+    note: str = Field(max_length=500)
+
+
+class StudyPacketEnvelope(StrictModel):
+    packet: DraftStudyPacket
+    packet_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    packet_hmac_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    audit_export: WorkAuditExportEnvelope
