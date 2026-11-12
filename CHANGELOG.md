@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.10.0] — 2026-11-12 (DRAFT — study packet phase 1)
+
+- Added private authenticated read-only study citation preview for
+  1–12 selected Evidence IDs from a complete two-pass, 100-link-max
+  Work-pair audit. Strictly refuse missing/mis-scoped evidence.
+- Created separately HMAC-sealed, offline-verifiable study packet
+  bound to original signed audit content, observed source and
+  target passage IDs, edition version, rights tags and review states.
+- Exposed typed OpenAPI schemas, blank annotation slots and explicit
+  DvirOS-owned Postgres and human review boundary. NO notes, graph
+  writes, license or approval claims.
+- Added local offline verification and formula-injection-safe private
+  metadata-only CSV export, 14 focused tests, live isolated Neo4j
+  smoke, seven-day synthetic CI artifact and DvirOS transfer contract.
+- Phase 2 DvirOS Postgres/BFF/UI, immutable human review and rights-aware
+  bibliography remain unimplemented. Research release HOLD.
+
+
 ## [0.9.17] — 2026-11-12 (DRAFT — pinned signed time attestations)
 
 - Verify two externally supplied Ed25519 timestamp statements

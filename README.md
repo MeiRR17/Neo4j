@@ -19,6 +19,7 @@ or a Learning_Modules feature.
 - [v0.3 pipeline diagram](docs/architecture/v0.3-pipeline.svg)
 - [Draft v0.8.3 indexed metadata search and operator backfill](docs/integrations/METADATA-INDEX-v0.8.3.md)
 - [v0.8.3 index architecture diagram](docs/architecture/metadata-index-v0.8.3.svg)
+- [v0.10.0 research citation packet phase 1](docs/research/STUDY-PACKET-v0.10.0.md)
 - [Changelog](CHANGELOG.md)
 
 ## Service baseline and draft research search milestones
