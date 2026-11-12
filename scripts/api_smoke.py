@@ -22,6 +22,7 @@ from scripts.migrate import LocalQueryClient
 from services.research_api.app import create_app
 from services.research_api.config import TOKEN_PATH, bootstrap_token, load_token
 from services.research_api.audit_export_v0911 import verify_audit_export
+from services.research_api.study_packets_v0100 import verify_study_packet
 
 
 def verify(response, expected):
@@ -469,12 +470,52 @@ RETURN ev.id AS id
             verify(http.get(
                 export_url, params={**export_params, "limit": 99},
                 headers=headers), 422)
+            # v0.10.0: private DvirOS-compatible study packet preview
+            # proves two synthetic Evidence IDs exist in a full two-pass
+            # Work audit; no note/review decision or graph write occurs.
+            packet_url = "/v1/research/study-packets/preview"
+            packet_params = {
+                "source_work_id": work,
+                "target_work_id": other_work,
+                "evidence_ids": ",".join(sorted(
+                    (cross_evidence, checkpoint_evidence))),
+            }
+            packet_response = http.get(
+                packet_url, params=packet_params, headers=headers)
+            verify(packet_response, 200)
+            bundle = packet_response.json()
+            draft = bundle["packet"]
+            if (draft["schema_version"] != "0.10.0" or
+                    draft["citation_count"] != 2 or
+                    draft["annotation_write_status"] !=
+                    "PREVIEW_ONLY_DVIROS_OWNED" or
+                    draft["dviros_postgres_record_created"] is not False or
+                    draft["review_decision_status"] !=
+                    "NO_DECISION_RECORDED" or
+                    draft["research_release_status"] != "HOLD" or
+                    {x["evidence_id"] for x in draft["citations"]} !=
+                    {cross_evidence, checkpoint_evidence}):
+                raise RuntimeError("Synthetic study citation preview invalid.")
+            checked_packet = verify_study_packet(
+                bundle, secret=load_token())
+            if (checked_packet["citation_count"] != 2 or
+                    checked_packet["service_hmac_verified"] is not True or
+                    checked_packet["study_persisted_to_postgres"] is not False):
+                raise RuntimeError("Offline signed study packet invalid.")
+            verify(http.get(
+                packet_url,
+                params={**packet_params, "evidence_ids":
+                        stable_id("evidence", "missing-in-graph")},
+                headers=headers), 404)
+            verify(http.get(
+                packet_url, params={**packet_params, "save": "true"},
+                headers=headers), 422)
             status = http.get("/v1/data/status", headers=headers)
             verify(status, 200)
             if status.json()["human_quality_release_approved"] is not False:
                 raise RuntimeError("Research corpus was falsely approved.")
         print("[OK] Authenticated FastAPI + real Neo4j: work, edition, "
-              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, two-pass HMAC-sealed Work audit export, signed prior-page drift audit, keyset link audit, receipt replay, status and negative access controls.")
+              "passage, evidence, neighborhood, 1/2-hop paths, frequency/chronology, Work comparisons, read-only signed study packet preview, two-pass HMAC-sealed Work audit export, signed prior-page drift audit, keyset link audit, receipt replay, status and negative access controls.")
     finally:
         admin.query("MATCH (n) WHERE n.id IN $ids DETACH DELETE n", {"ids": ids})
     return 0

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 680">
+<rect width="1240" height="680" rx="22" fill="#111b2b"/>
+<text x="43" y="59" font-family="Arial" font-size="30" font-weight="bold" fill="#f5f8ff">Neo4j v0.10.0 - Research study packet</text>
+<text x="43" y="95" font-family="Arial" font-size="18" fill="#b7c9dc">Code-derived phase one architecture - not a live DvirOS UI screenshot</text>
+<rect x="42" y="147" width="350" height="182" rx="18" fill="#254262" stroke="#8bb1d8" stroke-width="2"/>
+<text x="64" y="193" font-family="Arial" font-size="22" fill="white">1. Private DvirOS BFF</text>
+<text x="64" y="239" font-family="Arial" font-size="18" fill="#e2effd">Authenticated Work pair</text>
+<text x="64" y="280" font-family="Arial" font-size="18" fill="#e2effd">Select 1 - 12 Evidence IDs</text>
+<path d="M393 233 H439" stroke="#93c4ec" stroke-width="4"/>
+<rect x="444" y="147" width="350" height="182" rx="18" fill="#18595a" stroke="#79c8b5" stroke-width="2"/>
+<text x="466" y="193" font-family="Arial" font-size="22" fill="white">2. Bounded Neo4j read</text>
+<text x="466" y="239" font-family="Arial" font-size="18" fill="#e5f5f0">Two complete audit passes</text>
+<text x="466" y="280" font-family="Arial" font-size="18" fill="#e5f5f0">100 maximum metadata links</text>
+<path d="M794 233 H840" stroke="#93c4ec" stroke-width="4"/>
+<rect x="844" y="147" width="354" height="182" rx="18" fill="#4c405a" stroke="#b09dd0" stroke-width="2"/>
+<text x="863" y="193" font-family="Arial" font-size="22" fill="white">3. Citation packet preview</text>
+<text x="863" y="239" font-family="Arial" font-size="18" fill="#eee7f8">IDs, source refs, version tags</text>
+<text x="863" y="280" font-family="Arial" font-size="18" fill="#eee7f8">Review states, blank notes</text>
+<path d="M1025 331 V381 H620 V408" stroke="#93c4ec" stroke-width="4" fill="none"/>
+<rect x="249" y="414" width="743" height="120" rx="18" fill="#2b445b" stroke="#98b8d7" stroke-width="2"/>
+<text x="274" y="460" font-family="Arial" font-size="22" fill="white">4. Full original audit + packet HMAC</text>
+<text x="274" y="499" font-family="Arial" font-size="18" fill="#e7f0fc">Offline verifier and safe private CSV</text>
+<rect x="143" y="568" width="952" height="71" rx="17" fill="#634e32" stroke="#d9be88" stroke-width="2"/>
+<text x="166" y="612" font-family="Arial" font-size="19" fill="#ffedca">DvirOS Postgres note storage and human review = next phase</text>
+<text x="46" y="660" font-family="Arial" font-size="17" fill="#f6dcb0">No source rights approval / immutable graph / saved notes - HOLD</text>
+</svg>

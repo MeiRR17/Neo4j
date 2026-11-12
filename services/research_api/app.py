@@ -27,7 +27,7 @@ from services.research_api.models import (
     IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
     SourceLinkFrequency, SourceLinkAuthorChronology, WorkComparison,
     WorkComparisonReceipt, WorkLinkAuditPage, CheckedWorkLinkAuditPage,
-    WorkAuditExportEnvelope,
+    WorkAuditExportEnvelope, StudyPacketEnvelope,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -43,6 +43,9 @@ from services.research_api.comparison_receipts import comparison_receipt
 from services.research_api.work_link_audit import audit_work_link_page
 from services.research_api.audit_checkpoint import AuditWindowDrift, checked_audit_page
 from services.research_api.audit_export_v0911 import export_work_link_audit
+from services.research_api.study_packets_v0100 import (
+    StudyPacketError, preview_study_packet,
+)
 from services.research_api.config import load_token
 
 
@@ -343,6 +346,31 @@ def create_app(*, backend=None, token_path: Path | None = None,
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
         except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/research/study-packets/preview",
+             response_model=StudyPacketEnvelope, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def draft_study_packet(
+            request: Request,
+            source_work_id: str = Query(...),
+            target_work_id: str = Query(...),
+            evidence_ids: str = Query(..., min_length=1, max_length=1800)):
+        keys = [key for key, _ in request.query_params.multi_items()]
+        if (len(keys) != len(set(keys)) or set(keys) != {
+                "source_work_id", "target_work_id", "evidence_ids"}):
+            raise_http(422)
+        try:
+            return preview_study_packet(
+                store, source_work_id=source_work_id,
+                target_work_id=target_work_id, evidence_ids=evidence_ids,
+                secret=load_token(token_path),
+            )
+        except AuditWindowDrift:
+            raise_http(409)
+        except LookupError:
+            raise_http(404)
+        except StudyPacketError:
             raise_http(422)
 
     @app.get("/v1/analysis/works/links/audit/export",

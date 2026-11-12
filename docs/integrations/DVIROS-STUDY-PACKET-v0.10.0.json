@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.10.0",
+  "contract_kind": "dviros.research.study_packet_preview",
+  "producer": "MeiRR17/Neo4j",
+  "consumer": "DvirOS authenticated BFF and Postgres",
+  "method": "GET",
+  "path": "/v1/research/study-packets/preview",
+  "query_keys": [
+    "source_work_id",
+    "target_work_id",
+    "evidence_ids"
+  ],
+  "evidence_selector": {
+    "minimum": 1,
+    "maximum": 12,
+    "sorted": true,
+    "unique": true
+  },
+  "response_fields": [
+    "audit_export",
+    "packet",
+    "packet_sha256",
+    "packet_hmac_sha256"
+  ],
+  "consumer_must": [
+    "authenticate DvirOS user",
+    "authorize study ownership",
+    "verify complete local HMAC receipt and selected Evidence IDs",
+    "save only in DvirOS Postgres",
+    "never infer review or rights approval"
+  ],
+  "provider_writes_allowed": false,
+  "graph_snapshot_verified": false,
+  "note_storage_implemented": false,
+  "licensed_source_rights_verified": false,
+  "human_review_implemented": false,
+  "research_release_status": "HOLD",
+  "next_increment": "v0.10.1 DvirOS-owned persistence, BFF, human review and UI"
+}
