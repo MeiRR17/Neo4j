@@ -325,9 +325,18 @@ class PinnedTimeTests(unittest.TestCase):
 
     def test_cli_without_provisioned_timestamps_is_denied(self):
         with tempfile.TemporaryDirectory() as directory:
-            self.assertEqual(time_cli([
-                "compare", "--signed-anchor", str(Path(directory)/"missing"),
-            ]), 2 if False else 2)
+            absent = str(Path(directory) / "missing.json")
+            args = ["compare"]
+            for name in (
+                "signed-anchor", "trusted-policy", "archive-binding",
+                "local-key-file", "first-observation", "second-observation",
+                "paired-comparison", "first-timestamp", "second-timestamp",
+                "time-authority-policy",
+            ):
+                args.extend(["--" + name, absent])
+            args.extend(["--output", str(Path(directory) / "never.json")])
+            self.assertEqual(time_cli(args), 1)
+            self.assertFalse((Path(directory) / "never.json").exists())
 
 
 if __name__ == "__main__":
