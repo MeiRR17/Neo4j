@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.9.15] — 2026-11-12 (DRAFT — signed-anchor S3 governance)
+
+- Composed the existing exact-version Ed25519/S3-retention checker
+  with a separately checked AWS STS caller account and four scoped
+  S3 bucket-control reads, all read-only.
+- Require bucket versioning Enabled, all four public access blocks
+  True, reported bucket policy nonpublic, and bucket Object Lock
+  Enabled; refuse mismatched or malformed account/STS evidence.
+- HMAC-bind the nested exact-version result, hashed caller/request
+  identifiers and fixed control flags to a sanitized offline report.
+- Added opt-in inspect/verify local CLI, 16 focused tests and a
+  seven-day artifact explicitly labeled synthetic mocked AWS only.
+- No production AWS credentials, archive creation, continuous WORM
+  guarantee, full IAM/SCP policy audit, rights or research approval.
+  Legacy synthetic Neo4j performance gates unchanged. HOLD.
+
+
 ## [0.9.14] — 2026-11-12 (DRAFT — exact S3 version of signed audit anchor)
 
 - Added pinned Ed25519-anchor-byte binding to explicit AWS S3

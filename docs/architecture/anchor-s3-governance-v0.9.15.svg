@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 680" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.15 signed-anchor S3 plus STS governance observation</title>
+<desc id="desc">First verify the signed audit anchor and exact S3 version/retention, then read AWS STS identity and four bucket security controls. Produce a sanitized HMAC report, verifiable offline. CI uses mocked AWS only and does not establish continuous Object Lock immutability.</desc>
+<rect width="1240" height="680" rx="22" fill="#101b2c"/>
+<text x="44" y="56" fill="#f4f8ff" font-family="Arial,sans-serif" font-size="30" font-weight="700">Neo4j v0.9.15 — Archive governance checks</text>
+<text x="44" y="91" fill="#bacce1" font-family="Arial,sans-serif" font-size="17">Code-derived architecture · not a live AWS screenshot</text>
+<rect x="45" y="142" width="350" height="210" rx="18" fill="#254260" stroke="#84b5da" stroke-width="2"/>
+<text x="65" y="184" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">1. Signed anchor + exact version</text>
+<text x="65" y="224" fill="#e2edfc" font-family="Arial,sans-serif" font-size="17">Pinned Ed25519 / SHA-256</text>
+<text x="65" y="262" fill="#e2edfc" font-family="Arial,sans-serif" font-size="17">S3 HEAD + GetObjectRetention</text>
+<text x="65" y="300" fill="#e2edfc" font-family="Arial,sans-serif" font-size="17">VersionId / COMPLIANCE</text>
+<path d="M395 244 H443" fill="none" stroke="#9ec8ea" stroke-width="4"/>
+<rect x="446" y="142" width="350" height="210" rx="18" fill="#16565d" stroke="#74c7b2" stroke-width="2"/>
+<text x="465" y="184" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">2. AWS STS identity</text>
+<text x="465" y="224" fill="#e4f5ec" font-family="Arial,sans-serif" font-size="17">One GetCallerIdentity read</text>
+<text x="465" y="262" fill="#e4f5ec" font-family="Arial,sans-serif" font-size="17">Account = expected owner</text>
+<text x="465" y="300" fill="#e4f5ec" font-family="Arial,sans-serif" font-size="17">IAM user or assumed role</text>
+<path d="M796 244 H843" fill="none" stroke="#9ec8ea" stroke-width="4"/>
+<rect x="846" y="142" width="350" height="210" rx="18" fill="#4d405b" stroke="#baa4d2" stroke-width="2"/>
+<text x="866" y="184" fill="#fff" font-family="Arial,sans-serif" font-size="20" font-weight="700">3. Four bucket-control reads</text>
+<text x="866" y="224" fill="#f4ebfc" font-family="Arial,sans-serif" font-size="17">Versioning enabled</text>
+<text x="866" y="262" fill="#f4ebfc" font-family="Arial,sans-serif" font-size="17">Public access blocked</text>
+<text x="866" y="300" fill="#f4ebfc" font-family="Arial,sans-serif" font-size="17">Nonpublic policy / Object Lock</text>
+<path d="M1020 353 V400 H619 V423" fill="none" stroke="#9ec8ea" stroke-width="4"/>
+<rect x="261" y="428" width="719" height="116" rx="17" fill="#2c4359" stroke="#9bb9d2" stroke-width="2"/>
+<text x="284" y="473" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">4. Strict HMAC-bound observation</text>
+<text x="284" y="514" fill="#e3eef8" font-family="Arial,sans-serif" font-size="17">Hashed AWS identifiers · offline verifier · HOLD flags</text>
+<rect x="118" y="571" width="1004" height="61" rx="15" fill="#245345" stroke="#77cfa7" stroke-width="2"/>
+<text x="141" y="610" fill="#effff6" font-family="Arial,sans-serif" font-size="18" font-weight="700">7 read-only calls · no AWS writes · no object download</text>
+<text x="46" y="660" fill="#f8dbae" font-family="Arial,sans-serif" font-size="16">CI uses mocked AWS only · not permanent WORM or full IAM audit · research release HOLD</text>
+</svg>
