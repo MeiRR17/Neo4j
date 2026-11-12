@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.9.17] — 2026-11-12 (DRAFT — pinned signed time attestations)
+
+- Verify two externally supplied Ed25519 timestamp statements
+  using an operator-pinned *separate* public key (never the archive
+  signing key); cryptographically bind them to each complete v0.9.15
+  S3/STS governance receipt and the v0.9.16 authenticated pair.
+- Require one pinned time issuer, distinct 32-byte nonce digests,
+  strict UTC signatures issued within 15 minutes after each observed
+  time, and two signed issuance times 24h–31d apart.
+- Reject key substitution, changed receipt hash, tampered signature,
+  malformed or replayed nonce, unsupported release claims and
+  replayed/edited comparison. Domain-separated HMAC for report.
+- Add offline compare/verify CLI, 16 security tests and a seven-day
+  synthetic-only mock-S3/time-issuer CI artifact.
+- No real timestamp provider, qualified authority identity,
+  RFC3161 compliance, independently trusted clock or continuous S3
+  Object Lock assurance is asserted. Research HOLD.
+
+
 ## [0.9.16] — 2026-11-12 (DRAFT — 24h signed-anchor governance recheck)
 
 - Compare two separately collected v0.9.15 HMAC-protected S3/STS

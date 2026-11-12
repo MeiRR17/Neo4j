@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1260 680" role="img" aria-labelledby="title desc">
+<title id="title">Neo4j v0.9.17 separately pinned signed times over two S3 archive receipts</title>
+<desc id="desc">Two authenticated S3 governance observations and their HMAC pair are bound to two external-form Ed25519 time statements. A separately pinned public key verifies each statement, the times must closely follow the local observations and be at least 24h apart. Offline report HMAC preserves integrity; no real external timestamp service is contacted in CI and no RFC3161 or continuous S3 immutability claim is made.</desc>
+<rect width="1260" height="680" rx="21" fill="#101b2c"/>
+<text x="45" y="59" fill="#f5f8ff" font-family="Arial,sans-serif" font-size="30" font-weight="700">Neo4j v0.9.17 — Pinned signed time attestations</text>
+<text x="45" y="96" fill="#b9cade" font-family="Arial,sans-serif" font-size="17">Code-derived implementation diagram · no live AWS/TSA screenshot</text>
+<rect x="42" y="143" width="537" height="175" rx="17" fill="#234360" stroke="#8eafd7" stroke-width="2"/>
+<text x="66" y="182" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">1 · First governance receipt</text>
+<text x="66" y="225" fill="#e6f0fa" font-family="Arial,sans-serif" font-size="18">Exact S3 version + HMAC</text>
+<text x="66" y="271" fill="#e6f0fa" font-family="Arial,sans-serif" font-size="18">Timestamp token signs its SHA-256</text>
+<rect x="681" y="143" width="537" height="175" rx="17" fill="#175558" stroke="#73c7b3" stroke-width="2"/>
+<text x="704" y="182" fill="#fff" font-family="Arial,sans-serif" font-size="22" font-weight="700">2 · Second governance receipt</text>
+<text x="704" y="225" fill="#e8f5ec" font-family="Arial,sans-serif" font-size="18">Same Ed25519-pinned object</text>
+<text x="704" y="271" fill="#e8f5ec" font-family="Arial,sans-serif" font-size="18">Different signed nonce · 24h+ gap</text>
+<path d="M310 319 V360 H628 V388" stroke="#95c4ed" stroke-width="4" fill="none"/>
+<path d="M946 319 V360 H628" stroke="#95c4ed" stroke-width="4" fill="none"/>
+<rect x="233" y="395" width="796" height="132" rx="18" fill="#4a405d" stroke="#b4a0d1" stroke-width="2"/>
+<text x="254" y="439" fill="#fff" font-family="Arial,sans-serif" font-size="21" font-weight="700">3 · Offline signature + chronology verification</text>
+<text x="254" y="486" fill="#efe7f7" font-family="Arial,sans-serif" font-size="18">Distinct issuer key · bound SHA · ≤15m lag · 24h–31d</text>
+<path d="M628 528 V566" stroke="#91cbb0" stroke-width="4"/>
+<rect x="285" y="571" width="691" height="69" rx="16" fill="#225545" stroke="#73d1af" stroke-width="2"/>
+<text x="310" y="615" fill="#f0fff7" font-family="Arial,sans-serif" font-size="21" font-weight="700">4 · HMAC-sealed result + offline replay</text>
+<text x="45" y="666" fill="#f9d9ae" font-family="Arial,sans-serif" font-size="16">Mock issuer only · No RFC3161 or accredited time service · No continuous WORM · HOLD</text>
+</svg>
