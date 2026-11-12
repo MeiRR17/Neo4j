@@ -180,6 +180,53 @@ jobs:
           path: local_staging/anchor-governance-recheck-v0916-mocked.json
           if-no-files-found: error
           retention-days: 7
+      - name: Independently pinned timestamp pair contract (synthetic issuer only)
+        run: |
+          mkdir -p local_staging
+          PYTHONPATH=scripts python - <<'PY' > local_staging/pinned-time-v0917-synthetic.json
+          import json
+          from tests.test_pinned_time_attestations_v0917 import PinnedTimeTests
+          from services.research_api.pinned_time_attestations_v0917 import (
+              verify_pinned_time_comparison,
+          )
+          t = PinnedTimeTests(
+              "test_two_pinned_time_signatures_and_25h_interval")
+          t.setUp()
+          report = t.compare()
+          result = verify_pinned_time_comparison(
+              report, t.first, t.second, t.pair,
+              t.first_stamp, t.second_stamp, **t.common)
+          assert report["signed_interval_seconds"] == 90000
+          assert result["signed_time_interval_verified"] is True
+          assert report["pinned_ed25519_time_signatures_verified"] is True
+          assert report["two_governance_receipts_verified"] is True
+          assert report["authority_identity_independently_accredited"] is False
+          assert report["independent_timestamp_service_contacted"] is False
+          assert report["rfc3161_token_verified"] is False
+          assert report["continuous_object_lock_verified"] is False
+          assert report["research_release_status"] == "HOLD"
+          print(json.dumps({
+              "schema_version": "0.9.17",
+              "synthetic_fixture_only": True,
+              "aws_sdk_responses_mocked": True,
+              "real_aws_account_contacted": False,
+              "real_timestamp_authority_contacted": False,
+              "issuer_identity_independently_accredited": False,
+              "rfc3161_token_verified": False,
+              "synthetic_signed_gap_seconds": 90000,
+              "separate_pinned_time_public_key_used": True,
+              "two_receipt_signatures_and_hmacs_verified": True,
+              "continuous_archive_immutability_verified": False,
+              "research_release_status": "HOLD",
+          }, sort_keys=True))
+          PY
+      - name: Retain synthetic pinned-time authority contract
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-anchor-pinned-time-v0917-synthetic
+          path: local_staging/pinned-time-v0917-synthetic.json
+          if-no-files-found: error
+          retention-days: 7
       - name: Validate Docker Compose model (no image pull)
         run: |
           python scripts/bootstrap.py
