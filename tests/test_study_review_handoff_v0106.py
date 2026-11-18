@@ -76,6 +76,17 @@ class ReviewHandoffTests(unittest.TestCase):
             "changed-edition-synthetic",
         )
         self.assertTrue(item["source_metadata_is_current_observation"])
+        history = item["observation_history"]
+        self.assertEqual([x["capture_index"] for x in history], [0, 1])
+        self.assertEqual(
+            [x["packet_sha256"] for x in history],
+            [packet["packet_sha256"] for packet in previews],
+        )
+        self.assertTrue(all(x["observed_in_audit"] for x in history))
+        self.assertNotEqual(
+            history[0]["citation_metadata"]["version_id"],
+            history[1]["citation_metadata"]["version_id"],
+        )
         self.assertEqual(item["review_decision"], "NOT_RECORDED")
         self.assertIsNone(item["draft_reviewer_note"])
         self.assertFalse(item["human_approved"])
@@ -102,6 +113,11 @@ class ReviewHandoffTests(unittest.TestCase):
         self.assertEqual(item["last_observed_capture_index"], 0)
         self.assertFalse(item["source_metadata_is_current_observation"])
         self.assertEqual(
+            [x["observed_in_audit"] for x in item["observation_history"]],
+            [True, False],
+        )
+        self.assertIsNone(item["observation_history"][1]["citation_metadata"])
+        self.assertEqual(
             item["last_observed_citation_metadata"]["evidence_id"],
             removed["evidence_id"],
         )
@@ -119,6 +135,14 @@ class ReviewHandoffTests(unittest.TestCase):
         self.assertTrue(item["observed_in_latest_window"])
         self.assertFalse(item["selected_in_latest_capture"])
         self.assertTrue(item["source_metadata_is_current_observation"])
+        self.assertEqual(
+            [x["selected_in_study"] for x in item["observation_history"]],
+            [True, False],
+        )
+        self.assertEqual(
+            [x["observed_in_audit"] for x in item["observation_history"]],
+            [True, True],
+        )
 
     def test_page_scope_cannot_cross_cursor_filter_or_selection(self):
         self.fixture.store.forward = [
@@ -176,6 +200,15 @@ class ReviewHandoffTests(unittest.TestCase):
                     changed, page, queue, previews,
                     secret=self.secret, evidence_ids=item_id,
                 )
+        forged_history = deepcopy(receipt)
+        forged_history["handoff"]["items"][0]["observation_history"][0][
+            "citation_metadata"
+        ]["rights_tag"] = "verified"
+        with self.assertRaises(StudyPacketError):
+            verify_review_handoff(
+                forged_history, page, queue, previews,
+                secret=self.secret, evidence_ids=item_id,
+            )
         wrong = deepcopy(receipt)
         wrong["handoff_hmac_sha256"] = "f" * 64
         with self.assertRaises(StudyPacketError):
