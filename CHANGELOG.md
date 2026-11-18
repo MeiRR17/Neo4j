@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.12.2] — 2026-11-18 (DRAFT — signed offline research review inbox)
+
+- Added Neo-only offline aggregation of 2–6 independently authenticated
+  v0.12.1 research-tool runs into one deterministic, bounded Evidence review
+  inbox. Each source HMAC, v0.12.0 plan, typed operation result, card
+  projection and count is replay-verified; duplicate signed runs rejected.
+- Coalesce up to 72 signed observation cards by exact canonical Evidence ID,
+  retaining source run indices, receipt hashes, operation and bounded
+  source-reference/version/rights/review metadata from every observation.
+- Add triage flags for observed source-ref, edition/version, rights-tag,
+  review-label and Edge-anchor divergence, missing metadata and contested
+  labels, without inferring legal rights, graph edits or scholarly conflict.
+- Domain-separated HMAC-SHA256 of the canonical inbox; owner-only create-once
+  build/verify CLI with no Neo4j access. Input order does not affect output.
+- Five focused dedup/tamper/privacy/metadata-drift/CLI tests, integration
+  JSON schema and operator guide. No DvirOS user identity or review writes.
+- Source rights, immutable graph snapshots, security approval, prior Draft
+  PR stack and production release gates remain HOLD; no main merge.
+
+
 ## [0.12.1] — 2026-11-18 (DRAFT — local HMAC read-only tool execution receipts)
 
 - Added a private, default-OFF `GET /v1/research/agent-tools/execute/signed`
