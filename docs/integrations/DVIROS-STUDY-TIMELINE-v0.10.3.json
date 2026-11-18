@@ -1,0 +1,57 @@
+{
+  "schema_version": "0.10.3",
+  "contract_kind": "dviros.research.study_observation_timeline",
+  "producer": "MeiRR17/Neo4j (offline-only, read-only metadata)",
+  "intended_consumer": "DvirOS authenticated server-side study workspace (not implemented here)",
+  "entrypoint": "scripts/study_timeline_v0103.py",
+  "accepted_artifacts": "2–6 complete, independently HMAC-verifiable v0.10.0 study preview JSON envelopes",
+  "ordered_input": "--packet may be repeated 2 to 6 times; local captured_at_unix must strictly increase",
+  "scope": "one directed canonical Work ID pair; each v0.9.11 bounded two-pass audit <=100 links",
+  "timeline_fields": [
+    "capture_count",
+    "snapshots",
+    "transition_count",
+    "transitions",
+    "chain_root_sha256",
+    "chain_tip_sha256",
+    "total_window_change_events",
+    "unique_changed_evidence_ids",
+    "revisited_window_states",
+    "has_observed_intermediate_drift"
+  ],
+  "transition_evidence": [
+    "from_index",
+    "to_index",
+    "baseline_packet_sha256",
+    "current_packet_sha256",
+    "audit_window_diff_sha256",
+    "window_changes",
+    "unselected_window_change_count",
+    "selected_evidence_added",
+    "selected_evidence_removed",
+    "audit_receipt_changed",
+    "previous_chain_sha256",
+    "chain_sha256"
+  ],
+  "verification": "Re-verify every original sealed preview and recompute every v0.10.2 diff and SHA-256 chain link; verify v0.10.3 domain-separated HMAC",
+  "outputs": "one owner-only private create-only JSON receipt, max 250 KB, no writes to database or cloud",
+  "interpretation": [
+    "SHA-256 chain and HMAC demonstrate integrity against local token, not independent timestamp authority",
+    "A->B->A row-state revisits detect intermediate observed changes despite identical first/last row states",
+    "Only selected Work-pair audit windows are compared, not full graph revisions",
+    "No reviewer approval, rights clearance, licensed quotations or immutable snapshots are inferred"
+  ],
+  "consumer_responsibilities": [
+    "authorize user/workspace in DvirOS",
+    "retain original ordered source packets for replay",
+    "store human decisions separately in DvirOS Postgres",
+    "treat metadata drift as review-needed, never an automatic approval"
+  ],
+  "provider_writes_allowed": false,
+  "dviros_persistence_implemented": false,
+  "human_review_approved": false,
+  "source_rights_verified": false,
+  "trusted_time_verified": false,
+  "immutable_corpus_snapshot_verified": false,
+  "research_release_status": "HOLD"
+}
