@@ -30,6 +30,7 @@ from services.research_api.models import (
     WorkAuditExportEnvelope, StudyPacketEnvelope, GroundedContextPreview,
     GroundedCrossPassagePreview, GroundedEvidenceDossierEnvelope,
     ReadOnlyResearchToolCatalog, ResearchToolPlan, ResearchToolExecution,
+    SignedResearchToolRunEnvelope,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -44,6 +45,9 @@ from services.research_api.grounded_dossier_v0112 import build_grounded_evidence
 from services.research_api.research_tool_runner_v0120 import (
     read_only_tool_catalog, plan_read_only_research_tool,
     run_read_only_research_tool,
+)
+from services.research_api.research_tool_receipt_v0121 import (
+    build_signed_research_tool_run,
 )
 from services.research_api.evidence_paths import evidence_path_page
 from services.research_api.metric_chronology import link_frequency, author_chronology
@@ -502,6 +506,34 @@ def create_app(*, backend=None, token_path: Path | None = None,
             return run_read_only_research_tool(
                 store, operation=operation, passage_ids=passage_ids,
                 query=query, evidence_ids=evidence_ids, limit=limit,
+                read_budget=read_budget,
+                request_checkpoint_sha256=request_checkpoint_sha256,
+            )
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/research/agent-tools/execute/signed",
+             response_model=SignedResearchToolRunEnvelope, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def execute_signed_research_tool(
+            request: Request,
+            operation: str = Query(..., max_length=40),
+            passage_ids: str = Query(..., max_length=600),
+            query: str = Query(..., min_length=2, max_length=120),
+            request_checkpoint_sha256: str = Query(..., max_length=64),
+            evidence_ids: str | None = Query(default=None, max_length=1400),
+            limit: int = Query(default=8, ge=1, le=12),
+            read_budget: int = Query(default=3, ge=1, le=3)):
+        # The same private auth and two existing feature gates apply. HMAC
+        # signs only a single completed bounded observation, not a reviewer.
+        _require_readonly_tool_gate()
+        _strict_tool_query(request, execute=True)
+        secret = load_token(token_path)
+        try:
+            return build_signed_research_tool_run(
+                store, secret=secret, operation=operation,
+                passage_ids=passage_ids, query=query,
+                evidence_ids=evidence_ids, limit=limit,
                 read_budget=read_budget,
                 request_checkpoint_sha256=request_checkpoint_sha256,
             )

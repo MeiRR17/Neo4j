@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.12.1] — 2026-11-18 (DRAFT — local HMAC read-only tool execution receipts)
+
+- Added a private, default-OFF `GET /v1/research/agent-tools/execute/signed`
+  to HMAC-seal an exact registered read-only v0.12.0 tool run, its canonical
+  validated request plan and completed metadata-only Evidence cards.
+- Independently validate the strict nested operation-specific result,
+  Evidence-card projection, scope, read budget and request SHA256 checkpoint
+  before generating domain-separated HMAC-SHA256 under the local service
+  token. Offline verification needs no graph, provider or external calls.
+- Added owner-only offline CLI, bounded typed signed-run envelope and a
+  versioned JSON integration contract; five focused tamper, wrong-key,
+  feature-gate, privacy and no-read verification tests.
+- No independent reviewer authentication, graph snapshot, trusted timestamp,
+  source license, human approval, DvirOS task persistence or graph writes.
+  The HMAC certifies only a single service-key observed execution.
+- Upstream Draft PR chain, pinned v0.9.5 synthetic performance gate and
+  scholarly/security release approvals remain HOLD; no main merge.
+
+
 ## [0.12.0] — 2026-11-18 (DRAFT — registered read-only research tool preview)
 
 - Added Neo-side static registry of three approved metadata-only research

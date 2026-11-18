@@ -824,3 +824,37 @@ class ResearchToolExecution(StrictModel):
     human_approval_recorded: Literal[False] = False
     source_rights_verified: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
+
+
+# v0.12.1 local service-HMAC proof of one completed, bounded tool run.
+# The service bearer is not a reviewer identity or independent source authority.
+class SignedResearchToolReceiptPayload(StrictModel):
+    schema_version: Literal["0.12.1"] = "0.12.1"
+    contract_kind: Literal["dviros.neo.signed_read_only_tool_execution"]
+    tool_operation: Literal["source_context", "compare_contexts", "review_dossier"]
+    request_checkpoint_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    execution_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    scheduled_graph_reads: int = Field(ge=1, le=3)
+    returned_card_count: int = Field(ge=0, le=12)
+    ordered_evidence_ids: list[str] = Field(max_length=12)
+    execution_status: Literal["COMPLETED_REVIEW_PREVIEW"]
+    provenance_scope: Literal["single_bounded_read_only_observation"]
+    hmac_verified_by_local_service_secret: Literal[True] = True
+    reviewer_identity_verified: Literal[False] = False
+    durable_job_state_created: Literal[False] = False
+    immutable_graph_snapshot_verified: Literal[False] = False
+    independent_source_rights_verified: Literal[False] = False
+    human_research_approval_recorded: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+
+
+class SignedResearchToolReceipt(StrictModel):
+    receipt: SignedResearchToolReceiptPayload
+    receipt_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    receipt_hmac_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
+class SignedResearchToolRunEnvelope(StrictModel):
+    plan: ResearchToolPlan
+    execution: ResearchToolExecution
+    signed_receipt: SignedResearchToolReceipt
