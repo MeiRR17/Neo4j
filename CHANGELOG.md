@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.6] — 2026-11-18 (DRAFT — signed Evidence review handoff)
+
+- Added a private offline HMAC-sealed 1–12 Evidence handoff draft bound to
+  one authenticated v0.10.5 queue page and all 2–6 original study captures.
+- Reconstruct complete per-capture Evidence citation metadata and explicit
+  observed/selected flags. Removed links preserve last-observed history but
+  are never represented as current graph membership.
+- Added exact source replay verifier, private create-once CLI, focused tests,
+  an operator guide and a versioned DvirOS draft-transfer JSON schema.
+- No DvirOS saved review, user/workspace authorization, human decision, source
+  license approval, immutable graph revision or trusted timestamps. Release
+  and upstream stacked-PR chain remain HOLD.
+
+
 ## [0.10.5] — 2026-11-18 (DRAFT — signed private review pages)
 
 - Implemented bounded 1–20 item keyset pagination of independently
