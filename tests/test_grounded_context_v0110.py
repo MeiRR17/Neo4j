@@ -86,7 +86,7 @@ class GroundedContextPreviewTests(unittest.TestCase):
             f"?passage_id={FOCUS}&query=Synthetic&limit=11",
             f"?passage_id={FOCUS}&query=Synthetic&limit=0",
             f"?passage_id=not-canonical&query=Synthetic",
-            f"?passage_id={FOCUS}&query=%%0A",
+            f"?passage_id={FOCUS}&query=ab%0Acd",
         ):
             with self.subTest(suffix=suffix):
                 result = self.client.get(
