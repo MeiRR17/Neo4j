@@ -21,9 +21,6 @@ MIN_RUNS = 2
 MAX_RUNS = 6
 MAX_OBSERVATIONS = MAX_RUNS * 12
 MAX_INBOX_BYTES = 125_000
-RUN_SUMMARY_FIELDS = (
-    "tool_operation", "request_checkpoint_sha256", "execution_sha256",
-)
 CARD_METADATA_FIELDS = (
     "edge_id", "source_passage_id", "target_passage_id", "source_ref",
     "version_id", "rights_tag", "evidence_review_status",
@@ -131,16 +128,13 @@ def build_research_review_inbox(runs: object, *, secret: str) -> dict:
         plan = run["plan"]
         execution = run["execution"]
         original = run["signed_receipt"]["receipt"]
-        if any(
-            original[name] != (
-                execution["tool_operation"] if name == "tool_operation"
-                else execution["request_checkpoint_sha256"]
-                if name == "request_checkpoint_sha256"
-                else original["execution_sha256"]
-            )
-            for name in RUN_SUMMARY_FIELDS
+        if (
+            original["tool_operation"] != execution["tool_operation"]
+            or original["request_checkpoint_sha256"] !=
+            plan["request_checkpoint_sha256"]
+            or original["returned_card_count"] != len(execution["evidence_cards"])
         ):
-            raise ValueError("Inconsistent run receipt fields.")
+            raise ValueError("Inconsistent signed run receipt summary.")
         cards = execution["evidence_cards"]
         if len({card["evidence_id"] for card in cards}) != len(cards):
             raise ValueError("Duplicate Evidence in one signed tool output.")
