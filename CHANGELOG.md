@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.4] — 2026-11-18 (DRAFT — Neo-only evidence review queue)
+
+- Added offline per-Evidence triage queue derived from the entire signed
+  multi-capture study timeline (2–6 private previews, bounded Work-pair audits).
+- Grouped selection-only changes, unselected audit-window changes, exact
+  changed metadata fields, review-status drift, observed membership and
+  intermediate A→B→A returns into deterministic human-review candidates.
+- Added separately HMAC-sealed private create-only queue output and
+  independently recomputed offline verifier, seven focused tests, versioned
+  DvirOS integration contract and operator guide.
+- Does NOT create DvirOS user/annotation/reviewer records, verify source
+  rights, freeze the graph, trust capture time or approve any research claim.
+  Main/research release remain HOLD pending upstream review.
+
 ## [0.10.3] — 2026-11-18 (DRAFT — signed study observation timeline)
 
 - Added authenticated offline replay of 2–6 full v0.10.0 study packet
