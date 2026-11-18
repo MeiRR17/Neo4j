@@ -33,6 +33,7 @@ or a Learning_Modules feature.
 - [v0.12.2 signed multi-run research Evidence inbox (draft)](docs/operations/RESEARCH-REVIEW-INBOX-v0.12.2.md)
 - [v0.13.0 offline Neo4j dump integrity and restore prerequisites (draft)](docs/operations/OFFLINE-BACKUP-v0.13.0.md)
 - [v0.13.1 isolated offline Neo4j restore drill (draft)](docs/operations/ISOLATED-RESTORE-DRILL-v0.13.1.md)
+- [v0.13.2 isolated authenticated restored-service read smoke (draft)](docs/operations/RESTORED-SERVICE-SMOKE-v0.13.2.md)
 - [Changelog](CHANGELOG.md)
 
 ## Service baseline and draft research search milestones

@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.13.2] — 2026-11-18 (DRAFT — isolated authenticated restore read smoke)
+
+- Added opt-in, Docker-network-isolated authenticated Neo4j service smoke
+  immediately after the v0.13.1 existing-dump load and offline consistency
+  checks, using only an unused random volume and disposable container.
+- Fixed six read-only Cypher probes (ping, all nodes/relationships,
+  Passage, SourceRecord and constraint counts); strict numeric decoding,
+  operator-supplied bounded minimums and no dynamic user-supplied Cypher.
+- Ephemeral service password is generated per run, never embedded in
+  shell arguments or reported. Docker has no network/published ports or
+  live Compose/data volume mount. Containers and volumes are forcibly
+  cleaned up, with no success receipt when cleanup or read thresholds fail.
+- Added private create-once unsigned report, preflight plan, CLI and seven
+  focused synthetic/mock security and recovery control tests; versioned
+  JSON contract and operations documentation.
+- This is not an independently tested real restoration or verified
+  original corpus baseline, recovery point age, RPO/RTO or source-rights
+  approval; operator execution and release gates remain HOLD.
+
+
 ## [0.13.1] — 2026-11-18 (DRAFT — isolated offline restore drill)
 
 - Added operator-gated `isolated_restore_drill_v0131.py` plan/execute

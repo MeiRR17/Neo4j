@@ -1,0 +1,371 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.13.2 isolated restored-service authenticated read smoke",
+  "description": "Operator-only, no live volume/ports/network; reads are fixed and aggregated, reporting success only after resource cleanup. No independent RPO/RTO or corpus equivalence.",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "Docker-free preflight plan",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "database",
+        "neo4j_image",
+        "archive_sha256",
+        "archive_bytes",
+        "operator_minimum_counts",
+        "fixed_read_queries",
+        "archive_integrity_verified",
+        "docker_operations_performed",
+        "network_access_enabled",
+        "host_ports_published",
+        "live_compose_volume_mounted",
+        "restored_service_authenticated",
+        "restored_read_smoke_passed",
+        "verified_against_trusted_live_baseline",
+        "rpo_rto_demonstrated",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.13.2"
+        },
+        "contract_kind": {
+          "const": "dviros.neo.isolated_restored_service_smoke"
+        },
+        "database": {
+          "const": "neo4j"
+        },
+        "neo4j_image": {
+          "const": "neo4j:2026.10.1"
+        },
+        "archive_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "archive_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 549755813888
+        },
+        "operator_minimum_counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "nodes",
+            "relationships",
+            "passages",
+            "source_records",
+            "constraints"
+          ],
+          "properties": {
+            "nodes": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9223372036854776000
+            },
+            "relationships": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9223372036854776000
+            },
+            "passages": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9223372036854776000
+            },
+            "source_records": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9223372036854776000
+            },
+            "constraints": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9223372036854776000
+            }
+          }
+        },
+        "fixed_read_queries": {
+          "const": [
+            "ping",
+            "nodes",
+            "relationships",
+            "passages",
+            "source_records",
+            "constraints"
+          ]
+        },
+        "archive_integrity_verified": {
+          "const": true
+        },
+        "docker_operations_performed": {
+          "const": false
+        },
+        "network_access_enabled": {
+          "const": false
+        },
+        "host_ports_published": {
+          "const": false
+        },
+        "live_compose_volume_mounted": {
+          "const": false
+        },
+        "restored_service_authenticated": {
+          "const": false
+        },
+        "restored_read_smoke_passed": {
+          "const": false
+        },
+        "verified_against_trusted_live_baseline": {
+          "const": false
+        },
+        "rpo_rto_demonstrated": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        }
+      }
+    },
+    {
+      "title": "Private unsigned success report",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "report",
+        "report_sha256",
+        "report_digitally_signed"
+      ],
+      "properties": {
+        "report": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "contract_kind",
+            "database",
+            "neo4j_image",
+            "archive_sha256",
+            "archive_bytes",
+            "operator_minimum_counts",
+            "fixed_read_queries",
+            "archive_integrity_verified",
+            "docker_operations_performed",
+            "network_access_enabled",
+            "host_ports_published",
+            "live_compose_volume_mounted",
+            "restored_service_authenticated",
+            "restored_read_smoke_passed",
+            "verified_against_trusted_live_baseline",
+            "rpo_rto_demonstrated",
+            "research_release_status",
+            "observed_counts",
+            "operator_minimums_satisfied",
+            "offline_consistency_check_passed",
+            "isolated_container_removed",
+            "isolated_volume_removed",
+            "recovery_drill_elapsed_seconds"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "0.13.2"
+            },
+            "contract_kind": {
+              "const": "dviros.neo.isolated_restored_service_smoke"
+            },
+            "database": {
+              "const": "neo4j"
+            },
+            "neo4j_image": {
+              "const": "neo4j:2026.10.1"
+            },
+            "archive_sha256": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "archive_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 549755813888
+            },
+            "operator_minimum_counts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nodes",
+                "relationships",
+                "passages",
+                "source_records",
+                "constraints"
+              ],
+              "properties": {
+                "nodes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "relationships": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "passages": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "source_records": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "constraints": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                }
+              }
+            },
+            "fixed_read_queries": {
+              "const": [
+                "ping",
+                "nodes",
+                "relationships",
+                "passages",
+                "source_records",
+                "constraints"
+              ]
+            },
+            "archive_integrity_verified": {
+              "const": true
+            },
+            "docker_operations_performed": {
+              "const": true
+            },
+            "network_access_enabled": {
+              "const": false
+            },
+            "host_ports_published": {
+              "const": false
+            },
+            "live_compose_volume_mounted": {
+              "const": false
+            },
+            "restored_service_authenticated": {
+              "const": true
+            },
+            "restored_read_smoke_passed": {
+              "const": true
+            },
+            "verified_against_trusted_live_baseline": {
+              "const": false
+            },
+            "rpo_rto_demonstrated": {
+              "const": false
+            },
+            "research_release_status": {
+              "const": "HOLD"
+            },
+            "observed_counts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "nodes",
+                "relationships",
+                "passages",
+                "source_records",
+                "constraints"
+              ],
+              "properties": {
+                "nodes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "relationships": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "passages": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "source_records": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                },
+                "constraints": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9223372036854776000
+                }
+              }
+            },
+            "operator_minimums_satisfied": {
+              "const": true
+            },
+            "offline_consistency_check_passed": {
+              "const": true
+            },
+            "isolated_container_removed": {
+              "const": true
+            },
+            "isolated_volume_removed": {
+              "const": true
+            },
+            "recovery_drill_elapsed_seconds": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "report_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "report_digitally_signed": {
+          "const": false
+        }
+      }
+    }
+  ],
+  "x-execution": {
+    "flags": [
+      "--ack-private-restored-smoke",
+      "--output"
+    ],
+    "images": [
+      "neo4j:2026.10.1",
+      "neo4j/neo4j-admin:2026.10.1"
+    ],
+    "network": "none",
+    "publish_ports": false,
+    "database": "neo4j",
+    "auth": "random per-run NEO4J_AUTH (Docker client environment), temporary NEO4J_PASSWORD (docker exec environment)",
+    "cypher_access_mode": "read",
+    "queries": [
+      "RETURN 1 AS result",
+      "MATCH (n) RETURN count(n) AS result",
+      "MATCH ()-[r]->() RETURN count(r) AS result",
+      "MATCH (p:Passage) RETURN count(p) AS result",
+      "MATCH (s:SourceRecord) RETURN count(s) AS result",
+      "SHOW CONSTRAINTS YIELD name RETURN count(*) AS result"
+    ],
+    "graph_source": "new dedicated volume only",
+    "cleanup": "delete ephemeral DBMS and volume before writing a success report"
+  },
+  "x-nonclaims": [
+    "no real restored DB was tested by CI",
+    "operator-supplied threshold is not a trusted live baseline",
+    "time of execution is not proven RTO",
+    "no original backup timestamp or RPO proof",
+    "report SHA256 not digitally signed",
+    "research and operational release gates HOLD"
+  ]
+}
