@@ -89,6 +89,24 @@ class StudyTimelineTests(unittest.TestCase):
         )["requires_human_review"])
         self.assertEqual(data["research_release_status"], "HOLD")
 
+    def test_changed_selection_requires_review_even_when_window_same(self):
+        first = self.packet(100)
+        second = preview_study_packet(
+            self.fixture.store, source_work_id=LEFT,
+            target_work_id=RIGHT,
+            evidence_ids=self.fixture.ids.split(",")[0],
+            secret=self.secret, now=200,
+        )
+        result = build_study_timeline(
+            [first, second], secret=self.secret,
+        )
+        report = result["timeline"]
+        self.assertEqual(report["total_window_change_events"], 0)
+        self.assertEqual(report["total_selection_change_events"], 1)
+        self.assertTrue(verify_study_timeline(
+            result, [first, second], secret=self.secret,
+        )["requires_human_review"])
+
     def test_order_limits_scope_and_tampered_inputs_fail_closed(self):
         first, second = self.packet(100), self.packet(200)
         for packets in (
