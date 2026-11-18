@@ -129,7 +129,7 @@ def _validated_request(
 
 def plan_read_only_research_tool(
     *, operation: str, passage_ids: str, query: str,
-    evidence_ids: str | None = None, limit: int = 10,
+    evidence_ids: str | None = None, limit: int = 8,
     read_budget: int = 3,
 ) -> dict:
     """Prepare a deterministic stateless plan without querying the graph."""
@@ -183,7 +183,7 @@ def _review_cards(operation: str, result: dict) -> list[dict]:
 
 def run_read_only_research_tool(
     store, *, operation: str, passage_ids: str, query: str,
-    evidence_ids: str | None = None, limit: int = 10,
+    evidence_ids: str | None = None, limit: int = 8,
     read_budget: int = 3, request_checkpoint_sha256: str,
 ) -> dict:
     """Execute exactly one registered fixed read-only tool on a matched plan.
