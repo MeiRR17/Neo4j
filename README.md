@@ -26,6 +26,7 @@ or a Learning_Modules feature.
 - [v0.10.9 signed cross-page review bundle (draft)](docs/operations/STUDY-REVIEW-BUNDLE-v0.10.9.md)
 - [v0.11.0 default-off grounded-context preview (draft)](docs/operations/GROUNDED-CONTEXT-v0.11.0.md)
 - [v0.11.1 cross-Passage grounded comparison (draft)](docs/operations/GROUNDED-COMPARE-v0.11.1.md)
+- [v0.11.2 grounded Evidence review dossier (draft)](docs/operations/GROUNDED-DOSSIER-v0.11.2.md)
 - [Changelog](CHANGELOG.md)
 
 ## Service baseline and draft research search milestones

@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.11.2] — 2026-11-18 (DRAFT — bounded grounded Evidence dossier)
+
+- Added default-OFF authenticated /v1/research/grounded-context/dossier
+  for an explicitly selected 1–8 sorted canonical Evidence IDs grounded
+  in a 2–3 Passage v0.11.1 observed metadata comparison.
+- Exact Edge/Evidence/Passage/source/version/rights/review-status anchors,
+  per-source uncertainty codes, observed focus membership and selection
+  limits; out-of-window IDs fail closed instead of fabricating citations.
+- Added canonical SHA256 metadata dossier and independent live bounded
+  replay; hash is **not a digital signature** or corpus snapshot guarantee.
+  Query text is represented only by its digest in the dossier.
+- Added typed response DTO, focused synthetic refusal/replay tests,
+  versioned integration JSON schema and operator guide. No new graph writes.
+- No LLM, licensed text, reviewer identity, human approval, DvirOS workspace
+  RBAC or scholarly rights verification; release/stacked PR gates HOLD.
+
+
 ## [0.11.1] — 2026-11-18 (DRAFT — cross-Passage grounded metadata comparison)
 
 - Added default-OFF, private GET /v1/research/grounded-context/compare
