@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.10.5",
+  "contract_kind": "dviros.research.review_candidate_page",
+  "producer": "MeiRR17/Neo4j offline-only private metadata helper",
+  "intended_consumer": "DvirOS authenticated study BFF; workspace authorization is NOT implemented in Neo",
+  "entrypoint": "scripts/study_review_pages_v0105.py",
+  "input_artifacts": [
+    "signed v0.10.4 Evidence review queue",
+    "2–6 ordered and private signed v0.10.0 study previews",
+    "protected service verification token"
+  ],
+  "actions": [
+    "page",
+    "verify"
+  ],
+  "filters": [
+    "all",
+    "source_or_review",
+    "membership",
+    "selection",
+    "other_metadata",
+    "returned_state"
+  ],
+  "default_limit": 10,
+  "maximum_limit": 20,
+  "pagination": "HMAC-authenticated keyset cursor bound to exact parent queue SHA256, filter and limit; operational reason family then canonical Evidence ID",
+  "response_envelope": [
+    "page",
+    "page_sha256",
+    "page_hmac_sha256"
+  ],
+  "page_fields": [
+    "parent_queue_sha256",
+    "reason_filter",
+    "requested_limit",
+    "after_cursor",
+    "total_queue_candidate_count",
+    "filtered_candidate_count",
+    "page_candidate_count",
+    "items",
+    "has_more",
+    "next_cursor",
+    "display_order"
+  ],
+  "integrity": "Every page independently rebuilds original v0.10.4 queue from all signed packets; receipt SHA256 and domain-separated HMAC verified offline",
+  "output": "private owner-readable, create-once metadata JSON; no user identity or original text",
+  "note": "Reason grouping is display-only, not severity, source authenticity, scholarly influence, licensing or a review decision.",
+  "provider_writes_allowed": false,
+  "human_decisions_implemented": false,
+  "user_workspace_authorization_implemented": false,
+  "immutable_graph_snapshot_verified": false,
+  "source_rights_verified": false,
+  "research_release_status": "HOLD"
+}

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.5] — 2026-11-18 (DRAFT — signed private review pages)
+
+- Implemented bounded 1–20 item keyset pagination of independently
+  verified v0.10.4 Evidence triage candidates, with stable operational
+  reason-family order and six filters for source/review, membership,
+  selection, other metadata or returned states.
+- Added queue/filter/limit-bound opaque HMAC cursor and separately
+  SHA256/HMAC-sealed, replayable metadata-only page receipts.
+- Added offline private owner-only create-once page/verify CLI,
+  six focused pagination/denial tests, DvirOS contract and operator guide.
+- No DvirOS user/workspace authorization, saved study, human reviewer
+  decision, rights grant, graph modification or immutable corpus claim.
+  Research release HOLD; draft stacked PRs block main.
+
 ## [0.10.4] — 2026-11-18 (DRAFT — Neo-only evidence review queue)
 
 - Added offline per-Evidence triage queue derived from the entire signed
