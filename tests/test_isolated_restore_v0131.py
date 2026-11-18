@@ -76,7 +76,7 @@ class IsolatedRestoreDrillTests(unittest.TestCase):
         def invoke(args, **kwargs):
             calls.append(list(args))
             if args[:2] == ["volume", "inspect"]:
-                return subprocess.CompletedProcess(args, 1, stdout="")
+                return subprocess.CompletedProcess(args, 1, stdout="", stderr="Error: no such volume")
             if args[:2] == ["volume", "create"]:
                 return subprocess.CompletedProcess(
                     args, 0, stdout=args[-1] + "\n",
@@ -150,6 +150,26 @@ class IsolatedRestoreDrillTests(unittest.TestCase):
                     acknowledged=True,
                 )
         docker.assert_not_called()
+        self.assertFalse(self.output.exists())
+
+    def test_ambiguous_docker_inspection_does_not_reuse_a_volume(self):
+        calls = []
+        def unavailable(args, **kwargs):
+            calls.append(args)
+            return subprocess.CompletedProcess(
+                args, 1, stdout="", stderr="permission denied",
+            )
+        with patch(
+            "services.research_api.isolated_restore_v0131._run_docker",
+            side_effect=unavailable,
+        ):
+            with self.assertRaises(RuntimeError):
+                execute_isolated_restore_drill(
+                    self.archive, self.manifest, self.output,
+                    acknowledged=True,
+                )
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(calls[0][:2], ["volume", "inspect"])
         self.assertFalse(self.output.exists())
 
     def test_plan_cli_and_disabled_execute_cli(self):
