@@ -679,3 +679,56 @@ class GroundedCrossPassagePreview(StrictModel):
     whole_corpus_retrieval_verified: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.11.2 draft Evidence handoff from observed cross-Passage metadata.
+# The SHA256 is a non-secret change detector, NOT a signature or corpus proof.
+class GroundedDossierItem(StrictModel):
+    evidence_id: str
+    edge_id: str
+    source_passage_id: str
+    target_passage_id: str
+    observed_in_passage_ids: list[str] = Field(min_length=1, max_length=3)
+    source_ref: str
+    version_id: str | None
+    rights_tag: str | None
+    edge_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    match_basis: Literal["SOURCE_REF_EXACT_SUBSTRING", "SOURCE_REF_ALL_TERMS"]
+    triage_flags: list[Literal[
+        "OBSERVED_VERSION_ID_DIVERGENCE", "OBSERVED_RIGHTS_TAG_DIVERGENCE",
+        "OBSERVED_REVIEW_STATUS_DIVERGENCE", "CONTESTED_REVIEW_STATUS_OBSERVED",
+        "MISSING_VERSION_METADATA", "MISSING_RIGHTS_METADATA",
+    ]] = Field(max_length=6)
+    source_metadata_complete: bool
+    human_review_approved: Literal[False] = False
+    source_rights_independently_verified: Literal[False] = False
+    quote_verified_against_edition: Literal[False] = False
+
+
+class GroundedDossierPayload(StrictModel):
+    schema_version: Literal["0.11.2"] = "0.11.2"
+    contract_kind: Literal["dviros.research.grounded_evidence_dossier_draft"]
+    passage_ids: list[str] = Field(min_length=2, max_length=3)
+    query_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    selection_count: int = Field(ge=1, le=8)
+    selected_evidence_ids: list[str] = Field(min_length=1, max_length=8)
+    selected_items: list[GroundedDossierItem] = Field(min_length=1, max_length=8)
+    observed_windows: list[GroundedPassageWindow] = Field(min_length=2, max_length=3)
+    additional_matches_may_exist: bool
+    selection_scope: Literal["bounded_returned_source_reference_metadata"]
+    generated_claim: None = None
+    human_review_required: Literal[True] = True
+    human_approval_recorded: Literal[False] = False
+    source_text_available: Literal[False] = False
+    source_rights_independently_verified: Literal[False] = False
+    graph_snapshot_verified: Literal[False] = False
+    corpus_completeness_verified: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
+
+
+class GroundedEvidenceDossierEnvelope(StrictModel):
+    dossier: GroundedDossierPayload
+    dossier_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    dossier_digitally_signed: Literal[False] = False
