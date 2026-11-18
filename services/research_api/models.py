@@ -617,3 +617,65 @@ class GroundedContextPreview(StrictModel):
     historical_influence_proven: Literal[False] = False
     research_release_status: Literal["HOLD"] = "HOLD"
     note: str
+
+
+# v0.11.1 compare *observed* graph metadata across 2–3 Passage scopes.
+# Divergent versions/rights/status labels are triage flags, not scholarship.
+class GroundedCrossPassageCandidate(GroundedContextCandidate):
+    observed_in_passage_ids: list[str] = Field(min_length=1, max_length=3)
+
+
+class GroundedPassageWindow(StrictModel):
+    passage_id: str
+    observed_window_limit: Literal[20] = 20
+    matched_in_observed_window: int = Field(ge=0, le=20)
+    observed_window_truncated: bool
+    additional_matches_may_exist: bool
+
+
+class GroundedReferenceGroup(StrictModel):
+    source_ref: str
+    evidence_ids: list[str] = Field(min_length=1, max_length=12)
+    observed_passage_ids: list[str] = Field(min_length=1, max_length=3)
+    version_id_variants: list[str] = Field(max_length=12)
+    rights_tag_variants: list[str] = Field(max_length=12)
+    review_status_variants: list[Literal[
+        "unreviewed", "approved", "rejected", "disputed"
+    ]] = Field(max_length=4)
+    uncertainty_codes: list[Literal[
+        "OBSERVED_VERSION_ID_DIVERGENCE",
+        "OBSERVED_RIGHTS_TAG_DIVERGENCE",
+        "OBSERVED_REVIEW_STATUS_DIVERGENCE",
+        "CONTESTED_REVIEW_STATUS_OBSERVED",
+        "MISSING_VERSION_METADATA",
+        "MISSING_RIGHTS_METADATA",
+    ]] = Field(max_length=6)
+    disagreement_is_scholarly_conflict: Literal[False] = False
+    source_text_verified: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+
+
+class GroundedCrossPassagePreview(StrictModel):
+    schema_version: Literal["0.11.1"] = "0.11.1"
+    feature: Literal["GRAPH_RAG_CROSS_PASSAGE_METADATA_COMPARE"]
+    passage_ids: list[str] = Field(min_length=2, max_length=3)
+    retrieval_status: Literal[
+        "CONTEXTS_FOUND", "INCOMPLETE_NO_MATCH", "NO_METADATA_MATCH"
+    ]
+    passage_windows: list[GroundedPassageWindow] = Field(min_length=2, max_length=3)
+    contexts: list[GroundedCrossPassageCandidate] = Field(max_length=12)
+    reference_groups: list[GroundedReferenceGroup] = Field(max_length=12)
+    matched_observations_in_sampled_windows: int = Field(ge=0, le=60)
+    distinct_evidence_in_bounded_results: int = Field(ge=0, le=30)
+    returned_context_count: int = Field(ge=0, le=12)
+    returned_contexts_truncated: bool
+    additional_matches_may_exist: bool
+    generated_answer: None = None
+    human_review_required: Literal[True] = True
+    scholarly_conflict_verified: Literal[False] = False
+    source_text_available: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    graph_snapshot_verified: Literal[False] = False
+    whole_corpus_retrieval_verified: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
