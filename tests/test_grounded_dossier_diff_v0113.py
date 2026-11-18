@@ -41,6 +41,7 @@ class GroundedDossierDiffTests(unittest.TestCase):
             **source,
             "evidence_id": second,
             "id": edge,
+            "source_ref": "Synthetic Multiword Work 2:2",
             "version_id": "second-edition",
             "rights_tag": "NEEDS_REVIEW",
             "review_status": "disputed",
