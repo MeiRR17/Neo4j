@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.13.0] — 2026-11-18 (DRAFT — offline Neo4j dump integrity phase 1)
+
+- Added an operator-only offline Community dump integrity workflow for the
+  pinned Neo4j 2026.10.1 image and default neo4j database. Hashes existing
+  private .dump bytes in bounded chunks and creates a canonical SHA256
+  manifest without requiring credentials, DB access or Docker commands.
+- Strictly reject symlinks, hardlinks, nonregular/truncated/mutable backups,
+  broad POSIX permissions, changed archive identity, unsupported filename or
+  Neo4j image, duplicate/noncanonical JSON and output-file overwrite.
+- Added create-once owner-only build/verify CLI and targeted synthetic tests,
+  machine-readable JSON contract, local operating guide and ignore rules.
+- **This verifies file integrity only:** offline stop is operator-attested,
+  dump format unverified, no isolated restore drill or RPO/RTO demonstrated,
+  no corpus/rights/snapshot certification. Operational release remains HOLD.
+- Real isolated load, retention/off-host recovery and measured RPO/RTO belong
+  to later v0.13.x cycles; do not merge stacked Draft PRs to main.
+
+
 ## [0.12.2] — 2026-11-18 (DRAFT — signed offline research review inbox)
 
 - Added Neo-only offline aggregation of 2–6 independently authenticated
