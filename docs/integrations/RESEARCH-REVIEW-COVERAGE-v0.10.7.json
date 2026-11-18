@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/MeiRR17/Neo4j/blob/main/docs/integrations/RESEARCH-REVIEW-COVERAGE-v0.10.7.json",
+  "title": "Neo v0.10.7 private signed complete review inbox metadata receipt",
+  "description": "Offline HMAC-authenticated *filtered-view* completeness; no approval, rights clearance or corpus snapshot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest",
+    "manifest_sha256",
+    "manifest_hmac_sha256"
+  ],
+  "properties": {
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "manifest_hmac_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "manifest": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "source_work_id",
+        "target_work_id",
+        "parent_queue_sha256",
+        "source_packet_sha256s",
+        "reason_filter",
+        "page_limit",
+        "queue_candidate_count",
+        "filtered_candidate_count",
+        "covered_candidate_count",
+        "page_count",
+        "pages",
+        "ordered_evidence_ids",
+        "first_cursor",
+        "terminal_cursor",
+        "keyset_walk_complete",
+        "human_decisions_recorded",
+        "licensed_source_rights_verified",
+        "immutable_graph_snapshot_verified",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.10.7"
+        },
+        "contract_kind": {
+          "const": "dviros.research.review_inbox_coverage"
+        },
+        "source_work_id": {
+          "type": "string"
+        },
+        "target_work_id": {
+          "type": "string"
+        },
+        "parent_queue_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_packet_sha256s": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "reason_filter": {
+          "enum": [
+            "all",
+            "source_or_review",
+            "membership",
+            "selection",
+            "other_metadata",
+            "returned_state"
+          ]
+        },
+        "page_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "queue_candidate_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "filtered_candidate_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "covered_candidate_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 600
+        },
+        "page_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600
+        },
+        "pages": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 600,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "page_index",
+              "page_sha256",
+              "candidate_count",
+              "evidence_ids"
+            ],
+            "properties": {
+              "page_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 599
+              },
+              "page_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "candidate_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 20
+              },
+              "evidence_ids": {
+                "type": "array",
+                "maxItems": 20,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "ordered_evidence_ids": {
+          "type": "array",
+          "maxItems": 600,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "first_cursor": {
+          "type": "null"
+        },
+        "terminal_cursor": {
+          "type": "null"
+        },
+        "keyset_walk_complete": {
+          "const": true
+        },
+        "dviros_workspace_authorization_verified": {
+          "const": false
+        },
+        "human_decisions_recorded": {
+          "const": false
+        },
+        "licensed_source_rights_verified": {
+          "const": false
+        },
+        "immutable_graph_snapshot_verified": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "x-verified-conditions": [
+    "source-study-packets-replayed",
+    "parent-queue-replayed",
+    "all-pages-replayed-in-keyset-order",
+    "complete-filtered-coverage",
+    "hmac-sealed-private-draft"
+  ],
+  "x-nonclaims": [
+    "does-not-authorize-reviewer",
+    "does-not-record-human-review",
+    "does-not-clear-licenses",
+    "does-not-prove-immutable-graph-revision"
+  ]
+}

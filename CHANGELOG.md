@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.7] — 2026-11-18 (DRAFT — signed full review inbox coverage)
+
+- Added complete offline replay of a v0.10.5 filtered inbox keyset walk,
+  including 1–600 authenticated pages across all eligible Evidence candidates.
+- Detects missing, reordered, duplicated or appended pages; rejects wrong
+  cursor, queue, filter, limit, forged approval fields and truncated traversals.
+- SHA256/HMAC-seals page hashes, exact ordered Evidence IDs, bounded count
+  summaries, 2–6 source packet hashes and explicit zero-match terminal views.
+- Added private create-only build/verify CLI, five focused tests, versioned
+  DvirOS metadata-transfer schema and operator guide.
+- No live Neo4j/DvirOS writes, reviewer decisions, licensing, graph snapshots,
+  user authorization or public research release. Stacked PR/HOLD.
+
+
 ## [0.10.6] — 2026-11-18 (DRAFT — signed Evidence review handoff)
 
 - Added a private offline HMAC-sealed 1–12 Evidence handoff draft bound to
