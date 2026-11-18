@@ -1,0 +1,366 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.11.1 Cross-Passage evidence-grounding metadata comparison",
+  "description": "Private, default-off, read-only bounded source-ref comparison; metadata conflicts are human-triage signals, not scholarly contradictions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "feature",
+    "passage_ids",
+    "retrieval_status",
+    "passage_windows",
+    "contexts",
+    "reference_groups",
+    "matched_observations_in_sampled_windows",
+    "distinct_evidence_in_bounded_results",
+    "returned_context_count",
+    "returned_contexts_truncated",
+    "additional_matches_may_exist",
+    "generated_answer",
+    "human_review_required",
+    "scholarly_conflict_verified",
+    "source_text_available",
+    "source_rights_verified",
+    "graph_snapshot_verified",
+    "whole_corpus_retrieval_verified",
+    "research_release_status",
+    "note"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.11.1"
+    },
+    "feature": {
+      "const": "GRAPH_RAG_CROSS_PASSAGE_METADATA_COMPARE"
+    },
+    "passage_ids": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^passage:"
+      }
+    },
+    "retrieval_status": {
+      "enum": [
+        "CONTEXTS_FOUND",
+        "INCOMPLETE_NO_MATCH",
+        "NO_METADATA_MATCH"
+      ]
+    },
+    "passage_windows": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "passage_id",
+          "observed_window_limit",
+          "matched_in_observed_window",
+          "observed_window_truncated",
+          "additional_matches_may_exist"
+        ],
+        "properties": {
+          "passage_id": {
+            "type": "string",
+            "pattern": "^passage:"
+          },
+          "observed_window_limit": {
+            "const": 20
+          },
+          "matched_in_observed_window": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "observed_window_truncated": {
+            "type": "boolean"
+          },
+          "additional_matches_may_exist": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "contexts": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "edge_id",
+          "evidence_id",
+          "source_passage_id",
+          "target_passage_id",
+          "source_ref",
+          "version_id",
+          "rights_tag",
+          "edge_review_status",
+          "evidence_review_status",
+          "match_basis",
+          "observed_source_link_only",
+          "source_text_available",
+          "human_claim_approved",
+          "source_rights_verified",
+          "observed_in_passage_ids"
+        ],
+        "properties": {
+          "edge_id": {
+            "type": "string",
+            "pattern": "^edge:"
+          },
+          "evidence_id": {
+            "type": "string",
+            "pattern": "^evidence:"
+          },
+          "source_passage_id": {
+            "type": "string",
+            "pattern": "^passage:"
+          },
+          "target_passage_id": {
+            "type": "string",
+            "pattern": "^passage:"
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "version_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "rights_tag": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "edge_review_status": {
+            "enum": [
+              "unreviewed",
+              "approved",
+              "rejected",
+              "disputed"
+            ]
+          },
+          "evidence_review_status": {
+            "enum": [
+              "unreviewed",
+              "approved",
+              "rejected",
+              "disputed"
+            ]
+          },
+          "match_basis": {
+            "enum": [
+              "SOURCE_REF_EXACT_SUBSTRING",
+              "SOURCE_REF_ALL_TERMS"
+            ]
+          },
+          "observed_source_link_only": {
+            "const": true
+          },
+          "source_text_available": {
+            "const": false
+          },
+          "human_claim_approved": {
+            "const": false
+          },
+          "source_rights_verified": {
+            "const": false
+          },
+          "observed_in_passage_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^passage:"
+            }
+          }
+        }
+      }
+    },
+    "reference_groups": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_ref",
+          "evidence_ids",
+          "observed_passage_ids",
+          "version_id_variants",
+          "rights_tag_variants",
+          "review_status_variants",
+          "uncertainty_codes",
+          "disagreement_is_scholarly_conflict",
+          "source_text_verified",
+          "source_rights_verified"
+        ],
+        "properties": {
+          "source_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "evidence_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^evidence:"
+            }
+          },
+          "observed_passage_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^passage:"
+            }
+          },
+          "version_id_variants": {
+            "type": "array",
+            "maxItems": 12,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "maxLength": 256
+            }
+          },
+          "rights_tag_variants": {
+            "type": "array",
+            "maxItems": 12,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "review_status_variants": {
+            "type": "array",
+            "maxItems": 4,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "unreviewed",
+                "approved",
+                "rejected",
+                "disputed"
+              ]
+            }
+          },
+          "uncertainty_codes": {
+            "type": "array",
+            "maxItems": 6,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "OBSERVED_VERSION_ID_DIVERGENCE",
+                "OBSERVED_RIGHTS_TAG_DIVERGENCE",
+                "OBSERVED_REVIEW_STATUS_DIVERGENCE",
+                "CONTESTED_REVIEW_STATUS_OBSERVED",
+                "MISSING_VERSION_METADATA",
+                "MISSING_RIGHTS_METADATA"
+              ]
+            }
+          },
+          "disagreement_is_scholarly_conflict": {
+            "const": false
+          },
+          "source_text_verified": {
+            "const": false
+          },
+          "source_rights_verified": {
+            "const": false
+          }
+        }
+      }
+    },
+    "matched_observations_in_sampled_windows": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 60
+    },
+    "distinct_evidence_in_bounded_results": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 30
+    },
+    "returned_context_count": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 12
+    },
+    "returned_contexts_truncated": {
+      "type": "boolean"
+    },
+    "additional_matches_may_exist": {
+      "type": "boolean"
+    },
+    "generated_answer": {
+      "type": "null"
+    },
+    "human_review_required": {
+      "const": true
+    },
+    "scholarly_conflict_verified": {
+      "const": false
+    },
+    "source_text_available": {
+      "const": false
+    },
+    "source_rights_verified": {
+      "const": false
+    },
+    "graph_snapshot_verified": {
+      "const": false
+    },
+    "whole_corpus_retrieval_verified": {
+      "const": false
+    },
+    "research_release_status": {
+      "const": "HOLD"
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "x-request": {
+    "path": "/v1/research/grounded-context/compare",
+    "method": "GET",
+    "authentication": "existing private bearer token and optional signed-call enforcement",
+    "default_off_feature_flag": "DVIROS_ENABLE_GROUNDED_CONTEXT",
+    "query_fields": [
+      "passage_ids",
+      "query",
+      "limit"
+    ]
+  },
+  "x-trust-boundary": [
+    "max 3 fixed read-only graph operations per call",
+    "no provider, LLM, source text, quote or model-generated answer",
+    "no whole corpus or graph snapshot guarantee",
+    "metadata review statuses and rights tags not independently verified",
+    "no DvirOS person/workspace permission or saved review decision",
+    "review status divergence does not prove scholarly contradiction"
+  ]
+}
