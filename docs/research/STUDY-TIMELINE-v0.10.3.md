@@ -31,7 +31,7 @@ python scripts/study_timeline_v0103.py verify \
   --report /private/study-timeline.json
 ```
 
-The packet order is significant. Out-of-order or duplicate local timestamps,
+A change to selected Evidence IDs alone also sets the verifier's\n\`requires_human_review=true\`, even when no signed audit-window metadata\nrow changed.\n\nThe packet order is significant. Out-of-order or duplicate local timestamps,
 changed directed Work scope, invalid HMAC, forged report flags and attempts
 to overwrite existing output are refused. The saved file is owner-only,
 create-only and limited to 250 KB.
