@@ -207,6 +207,10 @@ The existing main branch contains README.md, docker-compose.yml, one Sefaria Pyt
 
 
 
+### v0.10.1 — Signed study replay metadata comparison (NEO-ONLY PARTIAL; DRAFT)
+**Implemented in Neo4j:** offline compare and verification of two complete, separately signed v0.10.0 private study preview envelopes for the same directed Work pair. Bounded exact Evidence ID addition/removal and reference, edition and review-field changes; deterministic domain-separated HMAC report; private create-only CLI and 5 focused tests. No Neo4j query, Postgres record, user authorization, reviewer decision, source-rights grant, trusted clock or immutable graph snapshot. Metadata equality is limited to the selected citations, not an entire corpus revision. Research release HOLD.
+**Still to implement in DvirOS (outside this repository):** authenticated BFF/SSO/RBAC, owner-scoped saved study/annotation CRUD and Postgres revision history, immutable human reviewer decision log, UI and real cross-repo acceptance. Do not merge this stacked draft chain to main before release gates are met.
+
 ### v0.11.0 — Evidence-constrained GraphRAG [P2; 2–3 cycles; feature flagged]
 **Changes:** graph-neighborhood+passage retrieval, optional local lexical/embedding hybrid, refusal/uncertainty paths, cited answer builder, prompt-injection boundary, provider abstraction; no paid APIs without explicit approval. AI outputs create proposals, never verified graph edges.  
 **Acceptance:** each asserted quotation resolves to extant passage/version; blind evaluation covers missing sources, hostile documents, Hebrew/English and conflicts; hallucination rate metric documented and release gate chosen before enabling. **Depends:** v0.10.0. **May ship disabled** in v1.0.
