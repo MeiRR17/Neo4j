@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.12.2 signed multi-run Evidence review inbox",
+  "description": "Local offline grouping of 2-6 independently HMAC-verified v0.12.1 source runs. Metadata-only; no historical/rights/reviewer authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inbox",
+    "inbox_sha256",
+    "inbox_hmac_sha256"
+  ],
+  "properties": {
+    "inbox_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "inbox_hmac_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "inbox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "run_count",
+        "run_summaries",
+        "observed_card_count",
+        "distinct_evidence_count",
+        "repeated_evidence_count",
+        "metadata_warning_evidence_count",
+        "evidence",
+        "source_run_receipts_hmac_verified",
+        "inbox_hmac_verified_by_local_service_secret",
+        "reviewer_identity_verified",
+        "historical_graph_changes_proven",
+        "immutable_graph_snapshot_verified",
+        "source_rights_verified",
+        "human_review_decisions_recorded",
+        "dviros_workspace_authorization_verified",
+        "source_text_exported",
+        "graph_reads_during_inbox_assembly",
+        "research_release_status",
+        "note"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.12.2"
+        },
+        "contract_kind": {
+          "const": "dviros.neo.signed_research_tool_review_inbox"
+        },
+        "run_count": {
+          "type": "integer",
+          "minimum": 2,
+          "maximum": 6
+        },
+        "run_summaries": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "run_index",
+              "signed_receipt_sha256",
+              "tool_operation",
+              "request_checkpoint_sha256",
+              "execution_sha256",
+              "passage_ids",
+              "query_sha256",
+              "scheduled_graph_reads",
+              "observed_evidence_card_count"
+            ],
+            "properties": {
+              "run_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 5
+              },
+              "signed_receipt_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "tool_operation": {
+                "enum": [
+                  "source_context",
+                  "compare_contexts",
+                  "review_dossier"
+                ]
+              },
+              "request_checkpoint_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "execution_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "passage_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 3,
+                "items": {
+                  "type": "string",
+                  "pattern": "^passage:"
+                }
+              },
+              "query_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "scheduled_graph_reads": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 3
+              },
+              "observed_evidence_card_count": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 12
+              }
+            }
+          }
+        },
+        "observed_card_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 72
+        },
+        "distinct_evidence_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 72
+        },
+        "repeated_evidence_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 72
+        },
+        "metadata_warning_evidence_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 72
+        },
+        "evidence": {
+          "type": "array",
+          "maxItems": 72,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidence_id",
+              "observation_count",
+              "observed_in_run_indices",
+              "observations",
+              "source_ref_variants",
+              "version_id_variants",
+              "rights_tag_variants",
+              "review_status_variants",
+              "triage_warnings",
+              "has_metadata_warnings",
+              "human_review_required",
+              "human_approval_recorded",
+              "licensed_source_rights_verified",
+              "scholarly_conflict_verified"
+            ],
+            "properties": {
+              "evidence_id": {
+                "type": "string",
+                "pattern": "^evidence:"
+              },
+              "observation_count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 6
+              },
+              "observed_in_run_indices": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 5
+                }
+              },
+              "observations": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 6,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "run_index",
+                    "signed_receipt_sha256",
+                    "tool_operation",
+                    "edge_id",
+                    "source_passage_id",
+                    "target_passage_id",
+                    "source_ref",
+                    "version_id",
+                    "rights_tag",
+                    "evidence_review_status"
+                  ],
+                  "properties": {
+                    "run_index": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 5
+                    },
+                    "signed_receipt_sha256": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{64}$"
+                    },
+                    "tool_operation": {
+                      "enum": [
+                        "source_context",
+                        "compare_contexts",
+                        "review_dossier"
+                      ]
+                    },
+                    "edge_id": {
+                      "type": "string",
+                      "pattern": "^edge:"
+                    },
+                    "source_passage_id": {
+                      "type": "string",
+                      "pattern": "^passage:"
+                    },
+                    "target_passage_id": {
+                      "type": "string",
+                      "pattern": "^passage:"
+                    },
+                    "source_ref": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 512
+                    },
+                    "version_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "rights_tag": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "evidence_review_status": {
+                      "enum": [
+                        "unreviewed",
+                        "approved",
+                        "rejected",
+                        "disputed"
+                      ]
+                    }
+                  }
+                }
+              },
+              "source_ref_variants": {
+                "type": "array",
+                "maxItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "version_id_variants": {
+                "type": "array",
+                "maxItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rights_tag_variants": {
+                "type": "array",
+                "maxItems": 6,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "review_status_variants": {
+                "type": "array",
+                "maxItems": 4,
+                "uniqueItems": true,
+                "items": {
+                  "enum": [
+                    "unreviewed",
+                    "approved",
+                    "rejected",
+                    "disputed"
+                  ]
+                }
+              },
+              "triage_warnings": {
+                "type": "array",
+                "maxItems": 8,
+                "uniqueItems": true,
+                "items": {
+                  "enum": [
+                    "SOURCE_REFERENCE_DIVERGENCE",
+                    "VERSION_ID_DIVERGENCE",
+                    "RIGHTS_TAG_DIVERGENCE",
+                    "OBSERVED_REVIEW_STATUS_DIVERGENCE",
+                    "EDGE_ANCHOR_DIVERGENCE",
+                    "MISSING_VERSION_ID",
+                    "MISSING_RIGHTS_TAG",
+                    "CONTESTED_REVIEW_LABEL_OBSERVED"
+                  ]
+                }
+              },
+              "has_metadata_warnings": {
+                "type": "boolean"
+              },
+              "human_review_required": {
+                "const": true
+              },
+              "human_approval_recorded": {
+                "const": false
+              },
+              "licensed_source_rights_verified": {
+                "const": false
+              },
+              "scholarly_conflict_verified": {
+                "const": false
+              }
+            }
+          }
+        },
+        "source_run_receipts_hmac_verified": {
+          "const": true
+        },
+        "inbox_hmac_verified_by_local_service_secret": {
+          "const": true
+        },
+        "reviewer_identity_verified": {
+          "const": false
+        },
+        "historical_graph_changes_proven": {
+          "const": false
+        },
+        "immutable_graph_snapshot_verified": {
+          "const": false
+        },
+        "source_rights_verified": {
+          "const": false
+        },
+        "human_review_decisions_recorded": {
+          "const": false
+        },
+        "dviros_workspace_authorization_verified": {
+          "const": false
+        },
+        "source_text_exported": {
+          "const": false
+        },
+        "graph_reads_during_inbox_assembly": {
+          "const": 0
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "x-input": "2–6 complete signed v0.12.1 research tool run envelopes (private JSON files)",
+  "x-signature": {
+    "algorithm": "HMAC-SHA256",
+    "secret": "local research API bearer token",
+    "domain_separator": "dviros/neo/research-tool-review-inbox/v0.12.2\\n",
+    "input_order": "sorted by verified source receipt SHA256, duplicates rejected",
+    "max_inbox_canonical_bytes": 125000
+  },
+  "x-cli": {
+    "build": "python scripts/research_review_inbox_v0122.py build --run file1.json --run file2.json --token-path token --output inbox.json",
+    "verify": "python scripts/research_review_inbox_v0122.py verify --run file1.json --run file2.json --token-path token --report inbox.json",
+    "no_graph_calls": true,
+    "owner_only_file_permissions": true
+  },
+  "x-nonclaims": [
+    "not a saved DvirOS review decision",
+    "not researcher identity or workspace authorization",
+    "not immutable Neo4j graph history or source snapshot",
+    "no licensed source text or independently verified source rights",
+    "no independent scholarly support from repeated observations"
+  ]
+}
