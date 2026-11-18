@@ -29,6 +29,7 @@ from services.research_api.models import (
     WorkComparisonReceipt, WorkLinkAuditPage, CheckedWorkLinkAuditPage,
     WorkAuditExportEnvelope, StudyPacketEnvelope, GroundedContextPreview,
     GroundedCrossPassagePreview, GroundedEvidenceDossierEnvelope,
+    ReadOnlyResearchToolCatalog, ResearchToolPlan, ResearchToolExecution,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -40,6 +41,10 @@ from services.research_api.analytics import analysis_page
 from services.research_api.grounded_context_v0110 import grounded_context_preview
 from services.research_api.grounded_compare_v0111 import compare_grounded_passage_contexts
 from services.research_api.grounded_dossier_v0112 import build_grounded_evidence_dossier
+from services.research_api.research_tool_runner_v0120 import (
+    read_only_tool_catalog, plan_read_only_research_tool,
+    run_read_only_research_tool,
+)
 from services.research_api.evidence_paths import evidence_path_page
 from services.research_api.metric_chronology import link_frequency, author_chronology
 from services.research_api.work_comparison import compare_works
@@ -425,6 +430,80 @@ def create_app(*, backend=None, token_path: Path | None = None,
             return build_grounded_evidence_dossier(
                 store, passage_ids=passage_ids, query=query,
                 evidence_ids=evidence_ids,
+            )
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    def _require_readonly_tool_gate():
+        # Both explicit flags are required; preserve the existing v0.11
+        # disabled-by-default boundary for every underlying graph helper.
+        flag = os.getenv("DVIROS_ENABLE_RESEARCH_TOOL_RUNNER", "0")
+        grounded_flag = os.getenv("DVIROS_ENABLE_GROUNDED_CONTEXT", "0")
+        if flag not in ("0", "1") or grounded_flag not in ("0", "1"):
+            raise_http(503)
+        if flag != "1" or grounded_flag != "1":
+            raise_http(404)
+
+    def _strict_tool_query(request: Request, *, execute: bool):
+        names = [name for name, _ in request.query_params.multi_items()]
+        required = {"operation", "passage_ids", "query"}
+        allowed = required | {"evidence_ids", "limit", "read_budget"}
+        if execute:
+            required.add("request_checkpoint_sha256")
+            allowed.add("request_checkpoint_sha256")
+        if (len(names) != len(set(names)) or set(names) - allowed
+                or not required.issubset(names)):
+            raise_http(422)
+
+    @app.get("/v1/research/agent-tools/catalog",
+             response_model=ReadOnlyResearchToolCatalog, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def read_only_agent_tool_catalog():
+        _require_readonly_tool_gate()
+        return read_only_tool_catalog()
+
+    @app.get("/v1/research/agent-tools/plan",
+             response_model=ResearchToolPlan, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def plan_research_tool(
+            request: Request,
+            operation: str = Query(..., max_length=40),
+            passage_ids: str = Query(..., max_length=600),
+            query: str = Query(..., min_length=2, max_length=120),
+            evidence_ids: str | None = Query(default=None, max_length=1400),
+            limit: int = Query(default=8, ge=1, le=12),
+            read_budget: int = Query(default=3, ge=1, le=3)):
+        _require_readonly_tool_gate()
+        _strict_tool_query(request, execute=False)
+        try:
+            return plan_read_only_research_tool(
+                operation=operation, passage_ids=passage_ids, query=query,
+                evidence_ids=evidence_ids, limit=limit,
+                read_budget=read_budget,
+            )
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/research/agent-tools/execute",
+             response_model=ResearchToolExecution, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def execute_research_tool(
+            request: Request,
+            operation: str = Query(..., max_length=40),
+            passage_ids: str = Query(..., max_length=600),
+            query: str = Query(..., min_length=2, max_length=120),
+            request_checkpoint_sha256: str = Query(..., max_length=64),
+            evidence_ids: str | None = Query(default=None, max_length=1400),
+            limit: int = Query(default=8, ge=1, le=12),
+            read_budget: int = Query(default=3, ge=1, le=3)):
+        _require_readonly_tool_gate()
+        _strict_tool_query(request, execute=True)
+        try:
+            return run_read_only_research_tool(
+                store, operation=operation, passage_ids=passage_ids,
+                query=query, evidence_ids=evidence_ids, limit=limit,
+                read_budget=read_budget,
+                request_checkpoint_sha256=request_checkpoint_sha256,
             )
         except (ValueError, TypeError):
             raise_http(422)
