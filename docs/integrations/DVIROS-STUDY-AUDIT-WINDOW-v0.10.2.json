@@ -1,0 +1,65 @@
+{
+  "schema_version": "0.10.2",
+  "contract_kind": "dviros.research.study_audit_window_diff",
+  "producer": "Neo4j private offline comparison, no network reads",
+  "workflow": "Compare two independently verified v0.10.0 signed study packet previews for the same ordered Work pair.",
+  "entrypoint": "scripts/compare_study_audit_window_v0102.py",
+  "input_artifacts": [
+    "baseline signed v0.10.0 envelope",
+    "current signed v0.10.0 envelope",
+    "protected local Neo service verification token"
+  ],
+  "bounded_work_pair_link_rows": 100,
+  "selected_evidence_ids_per_packet_max": 12,
+  "report_fields": [
+    "source_work_id",
+    "target_work_id",
+    "baseline_packet_sha256",
+    "current_packet_sha256",
+    "baseline_audit_manifest_sha256",
+    "current_audit_manifest_sha256",
+    "window_changes",
+    "window_change_count",
+    "unselected_window_change_count",
+    "selected_evidence_added",
+    "selected_evidence_removed",
+    "window_metadata_changed",
+    "selected_citation_metadata_changed",
+    "audit_receipt_changed"
+  ],
+  "change_fields": [
+    "evidence_id",
+    "kind",
+    "changed_fields",
+    "selected_in_baseline",
+    "selected_in_current"
+  ],
+  "change_kinds": [
+    "ADDED",
+    "REMOVED",
+    "MODIFIED"
+  ],
+  "integrity": [
+    "verify both entire original v0.10.0 envelopes and their embedded v0.9.11 two-pass audits",
+    "HMAC-SHA256 with v0.10.2 domain separation",
+    "recompute expected comparison during offline verify"
+  ],
+  "private_output": "create-only owner-readable file, no overwrite, no source text or personal notes",
+  "interpretation_caveats": [
+    "complete only within each bounded two-pass directed Work-pair audit, not an entire graph",
+    "different capture-time hashes are not necessarily link-metadata drift",
+    "unselected changes are review prompts, not deleted corpus facts",
+    "no trusted timestamp, source-rights clearance, scholarly approval or immutable snapshot"
+  ],
+  "required_consumer_controls": [
+    "authenticate and authorize DvirOS workspace user externally",
+    "retain both complete signed input envelopes for audit replay",
+    "require human assessment of metadata change before accepting research interpretation"
+  ],
+  "provider_writes_allowed": false,
+  "dviros_postgres_persistence_implemented": false,
+  "graph_snapshot_verified": false,
+  "source_licenses_verified": false,
+  "human_review_approved": false,
+  "research_release_status": "HOLD"
+}
