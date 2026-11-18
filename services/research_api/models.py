@@ -576,3 +576,44 @@ class StudyPacketEnvelope(StrictModel):
     packet_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     packet_hmac_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     audit_export: WorkAuditExportEnvelope
+
+
+# v0.11.0 opt-in GraphRAG foundation: metadata anchors only, no model claims.
+class GroundedContextCandidate(StrictModel):
+    edge_id: str
+    evidence_id: str
+    source_passage_id: str
+    target_passage_id: str
+    source_ref: str
+    version_id: str | None
+    rights_tag: str | None
+    edge_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    match_basis: Literal["SOURCE_REF_EXACT_SUBSTRING", "SOURCE_REF_ALL_TERMS"]
+    observed_source_link_only: Literal[True] = True
+    source_text_available: Literal[False] = False
+    human_claim_approved: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+
+
+class GroundedContextPreview(StrictModel):
+    schema_version: Literal["0.11.0"] = "0.11.0"
+    feature: Literal["GRAPH_RAG_METADATA_CONTEXT_PREVIEW"]
+    passage_id: str
+    retrieval_status: Literal[
+        "CANDIDATES_FOUND", "NO_METADATA_MATCH", "WINDOW_TRUNCATED_NO_MATCH"
+    ]
+    contexts: list[GroundedContextCandidate] = Field(max_length=10)
+    matched_in_observed_window: int = Field(ge=0, le=20)
+    candidate_limit: int = Field(ge=1, le=10)
+    observed_window_limit: Literal[20] = 20
+    observed_window_truncated: bool
+    additional_matches_may_exist: bool
+    generated_answer: None = None
+    claim_approved: Literal[False] = False
+    licensed_source_text_available: Literal[False] = False
+    independent_source_rights_verified: Literal[False] = False
+    graph_snapshot_verified: Literal[False] = False
+    historical_influence_proven: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+    note: str
