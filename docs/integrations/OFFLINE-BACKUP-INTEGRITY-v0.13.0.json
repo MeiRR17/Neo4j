@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.13.0 operator-supplied offline database dump integrity manifest",
+  "description": "SHA256 of local offline .dump bytes, strictly not a recoverability, Neo4j-format or independent database-stop attestation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest",
+    "manifest_sha256"
+  ],
+  "properties": {
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "database",
+        "archive_filename",
+        "archive_bytes",
+        "archive_sha256",
+        "neo4j_image",
+        "archive_source_kind",
+        "offline_stop_operator_attested",
+        "database_stop_independently_verified",
+        "dump_format_verified",
+        "isolated_restore_drill_passed",
+        "rpo_rto_demonstrated",
+        "immutable_graph_snapshot_verified",
+        "source_rights_verified",
+        "research_release_status",
+        "note"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.13.0"
+        },
+        "contract_kind": {
+          "const": "dviros.neo.offline_dump_integrity"
+        },
+        "database": {
+          "const": "neo4j"
+        },
+        "archive_filename": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,119}\\\\.dump$"
+        },
+        "archive_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 549755813888
+        },
+        "archive_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "neo4j_image": {
+          "const": "neo4j:2026.10.1"
+        },
+        "archive_source_kind": {
+          "const": "operator_supplied_offline_dump"
+        },
+        "offline_stop_operator_attested": {
+          "const": true
+        },
+        "database_stop_independently_verified": {
+          "const": false
+        },
+        "dump_format_verified": {
+          "const": false
+        },
+        "isolated_restore_drill_passed": {
+          "const": false
+        },
+        "rpo_rto_demonstrated": {
+          "const": false
+        },
+        "immutable_graph_snapshot_verified": {
+          "const": false
+        },
+        "source_rights_verified": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        },
+        "note": {
+          "type": "string",
+          "maxLength": 600
+        }
+      }
+    }
+  },
+  "x-cli": {
+    "build": "python scripts/offline_backup_v0130.py manifest --archive private.dump --output manifest.json --operator-stopped-db",
+    "verify": "python scripts/offline_backup_v0130.py verify --archive private.dump --manifest manifest.json --expected-image neo4j:2026.10.1"
+  },
+  "x-security": {
+    "private_directory_mode": "0700",
+    "private_file_mode": "0600",
+    "no_symlinks_or_hardlinks": true,
+    "exclusive_output_creation": true,
+    "archive_sha256_streaming_chunk_bytes": 1048576,
+    "archive_size_max_bytes": 549755813888,
+    "no_database_calls": true,
+    "no_external_credential_exposure": true
+  },
+  "x-nonclaims": [
+    "no automatic dump or database stop",
+    "not a Neo4j archive format validator",
+    "no isolated load/restore proof",
+    "no RPO or RTO measurement",
+    "no source rights, corpus contents or external timestamp attestation",
+    "no cryptographic HMAC or digital signature",
+    "not production-ready backup"
+  ]
+}
