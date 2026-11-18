@@ -31,6 +31,7 @@ or a Learning_Modules feature.
 - [v0.12.0 registered read-only research tool runner (draft)](docs/operations/RESEARCH-TOOL-RUNNER-v0.12.0.md)
 - [v0.12.1 signed read-only research tool run receipt (draft)](docs/operations/RESEARCH-TOOL-RECEIPT-v0.12.1.md)
 - [v0.12.2 signed multi-run research Evidence inbox (draft)](docs/operations/RESEARCH-REVIEW-INBOX-v0.12.2.md)
+- [v0.13.0 offline Neo4j dump integrity and restore prerequisites (draft)](docs/operations/OFFLINE-BACKUP-v0.13.0.md)
 - [Changelog](CHANGELOG.md)
 
 ## Service baseline and draft research search milestones
