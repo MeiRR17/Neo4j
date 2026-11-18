@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.2] — 2026-11-18 (DRAFT — signed full audit-window drift)
+
+- Verify both original v0.10.0 HMAC-sealed study previews and their embedded
+  complete bounded v0.9.11 Work-pair audit before comparing metadata.
+- Detect changes to all observed Evidence rows (up to 100), including
+  unselected Evidence previously invisible to the v0.10.1 citation diff.
+- Emit exact canonical Evidence IDs and changed field names, selected-scope
+  flags, drift counts and separate time/receipt-versus-row distinction.
+- Add v0.10.2 HMAC/SHA256-sealed offline replay, private create-only CLI,
+  six focused tests, machine contract and research operator instructions.
+- DvirOS persistence, reviewer identity, rights, immutable corpus and
+  publication approval remain unimplemented; research release HOLD.
+
 ## [0.10.1] — 2026-11-18 (DRAFT — Neo-only replay comparison)
 
 - Added offline, fail-closed comparison of two authenticated v0.10.0
