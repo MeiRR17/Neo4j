@@ -19,7 +19,7 @@ per focus Passage. All IDs are source metadata, not confirmed citations.
 ## Private API (feature OFF by default)
 
 ```http
-GET /v1/research/grounded-context/dossier?passage_ids=passage:ID1,passage:ID2&query=reference& evidence_ids=evidence:ID1
+GET /v1/research/grounded-context/dossier?passage_ids=passage:ID1,passage:ID2&query=reference&evidence_ids=evidence:ID1
 Authorization: Bearer <private-service-token>
 ```
 
