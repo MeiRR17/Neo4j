@@ -105,10 +105,19 @@ class GroundedDossierDiffTests(unittest.TestCase):
     def test_different_query_or_passage_scope_refused(self):
         before = self.dossier()
         different_query = self.dossier(query="Synthetic")
+        # The graph fixture intentionally rejects queries outside its two
+        # source scopes. Construct a *self-consistent* alternative unsigned
+        # dossier to test the offline cross-scope guard without graph reads.
         other_passage = stable_id("passage", "v0113", "extra")
-        different_scope = self.dossier(
-            scopes=",".join(sorted((FOCUS, other_passage))),
-        )
+        new_scopes = sorted((FOCUS, other_passage))
+        different_scope = deepcopy(before)
+        payload = different_scope["dossier"]
+        payload["passage_ids"] = new_scopes
+        for window, scope in zip(payload["observed_windows"], new_scopes):
+            window["passage_id"] = scope
+        for item in payload["selected_items"]:
+            item["observed_in_passage_ids"] = new_scopes
+        different_scope["dossier_sha256"] = dossier_digest(payload)
         for other in (different_query, different_scope):
             with self.assertRaises(ValueError):
                 build_grounded_dossier_diff(before, other)
