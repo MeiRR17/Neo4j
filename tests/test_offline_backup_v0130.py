@@ -135,12 +135,15 @@ class OfflineDumpIntegrityTests(unittest.TestCase):
         with self.assertRaises(FileExistsError):
             create_private_manifest_file(path, value)
         tampered = self.root / "tampered.json"
-        tampered.write_text(
-            json.dumps({"manifest": value["manifest"],
-                        "manifest_sha256": value["manifest_sha256"],
-                        "manifest_sha256": "0" * 64}),
-            encoding="utf-8",
+        # Use raw JSON to test *actual* duplicate object keys. A Python
+        # dict literal cannot preserve duplicate keys.
+        raw = json.dumps(value, sort_keys=True)
+        duplicate = raw.replace(
+            '"manifest_sha256":',
+            '"manifest_sha256": "0", "manifest_sha256":',
+            1,
         )
+        tampered.write_text(duplicate, encoding="utf-8")
         if os.name != "nt":
             tampered.chmod(0o600)
         with self.assertRaises(ValueError):
