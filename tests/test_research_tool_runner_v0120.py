@@ -59,7 +59,7 @@ class ReadOnlyResearchToolRunnerTests(unittest.TestCase):
             headers=self.auth,
         )
 
-    def run(self, operation="compare_contexts", **overrides):
+    def execute_operation(self, operation="compare_contexts", **overrides):
         args = self.parameters(operation, **overrides)
         planned = self.client.get(
             "/v1/research/agent-tools/plan",
@@ -99,7 +99,7 @@ class ReadOnlyResearchToolRunnerTests(unittest.TestCase):
         self.assertEqual(self.store.calls, [])
 
     def test_readonly_compare_and_review_cards(self):
-        response, plan = self.run()
+        response, plan = self.execute_operation()
         self.assertEqual(response.status_code, 200, response.text)
         value = response.json()
         self.assertEqual(value["tool_operation"], "compare_contexts")
@@ -129,7 +129,7 @@ class ReadOnlyResearchToolRunnerTests(unittest.TestCase):
 
     def test_context_and_dossier_dispatch_only_fixed_reads(self):
         self.store.calls.clear()
-        response, _ = self.run("source_context", read_budget=1)
+        response, _ = self.execute_operation("source_context", read_budget=1)
         self.assertEqual(response.status_code, 200, response.text)
         self.assertEqual(response.json()["scheduled_graph_reads"], 1)
         self.assertEqual(response.json()["returned_card_count"], 1)
@@ -137,7 +137,7 @@ class ReadOnlyResearchToolRunnerTests(unittest.TestCase):
             ("analysis_source_links", {"id": FOCUS, "fetch_limit": 21}),
         ])
         self.store.calls.clear()
-        response, _ = self.run("review_dossier", limit=8, read_budget=2)
+        response, _ = self.execute_operation("review_dossier", limit=8, read_budget=2)
         self.assertEqual(response.status_code, 200, response.text)
         payload = response.json()
         self.assertEqual(payload["returned_card_count"], 1)
@@ -224,7 +224,7 @@ class ReadOnlyResearchToolRunnerTests(unittest.TestCase):
         self.store.data["analysis_source_links"][0]["source_text"] = (
             "PRIVATE_UNLICENSED_TEXT"
         )
-        response, _ = self.run()
+        response, _ = self.execute_operation()
         self.assertEqual(response.status_code, 503)
         self.assertNotIn("PRIVATE_UNLICENSED_TEXT", response.text)
         with self.assertRaises(DatabaseUnavailable):
