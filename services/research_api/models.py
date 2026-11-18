@@ -732,3 +732,95 @@ class GroundedEvidenceDossierEnvelope(StrictModel):
     dossier: GroundedDossierPayload
     dossier_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
     dossier_digitally_signed: Literal[False] = False
+
+
+# v0.12.0 Neo-only registered read-only research tool contract.
+class ReadOnlyResearchToolDescriptor(StrictModel):
+    operation: Literal["source_context", "compare_contexts", "review_dossier"]
+    description: str
+    min_scopes: int = Field(ge=1, le=3)
+    max_scopes: int = Field(ge=1, le=3)
+    max_candidates: int = Field(ge=1, le=12)
+    source_code_version: str
+    read_only: Literal[True] = True
+    provider_or_llm_calls: Literal[False] = False
+    writes_allowed: Literal[False] = False
+    human_approval_implied: Literal[False] = False
+
+
+class ReadOnlyResearchToolCatalog(StrictModel):
+    schema_version: Literal["0.12.0"] = "0.12.0"
+    registry: list[ReadOnlyResearchToolDescriptor] = Field(min_length=3, max_length=3)
+    max_graph_reads_per_execution: Literal[3] = 3
+    graph_writes_allowed: Literal[False] = False
+    dynamic_query_execution_allowed: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+
+
+class ResearchToolPlanParameters(StrictModel):
+    operation: Literal["source_context", "compare_contexts", "review_dossier"]
+    passage_ids: list[str] = Field(min_length=1, max_length=3)
+    query_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    selected_evidence_ids: list[str] = Field(max_length=8)
+    candidate_limit: int = Field(ge=1, le=12)
+    read_budget: int = Field(ge=1, le=3)
+    scheduled_graph_reads: int = Field(ge=1, le=3)
+    max_links_per_graph_read: Literal[20] = 20
+    total_links_observation_bound: int = Field(ge=20, le=60)
+
+
+class ResearchToolPlan(StrictModel):
+    schema_version: Literal["0.12.0"] = "0.12.0"
+    plan_status: Literal["READY_TO_EXECUTE"]
+    operation: Literal["source_context", "compare_contexts", "review_dossier"]
+    parameters: ResearchToolPlanParameters
+    request_checkpoint_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    checkpoint_authenticates_reviewer: Literal[False] = False
+    checkpoint_persists_execution_state: Literal[False] = False
+    graph_read_only: Literal[True] = True
+    graph_reads_executed: Literal[0] = 0
+    provider_or_llm_calls: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"
+
+
+class ResearchToolPhase(StrictModel):
+    phase: Literal[
+        "INPUTS_CHECKED", "FIXED_READ_ONLY_RETRIEVAL",
+        "EVIDENCE_CARDS_PROJECTED",
+    ]
+    status: Literal["COMPLETED"]
+
+
+class ResearchToolReviewCard(StrictModel):
+    evidence_id: str
+    edge_id: str
+    source_passage_id: str
+    target_passage_id: str
+    source_ref: str
+    version_id: str | None
+    rights_tag: str | None
+    evidence_review_status: Literal["unreviewed", "approved", "rejected", "disputed"]
+    human_approved: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    source_text_available: Literal[False] = False
+
+
+class ResearchToolExecution(StrictModel):
+    schema_version: Literal["0.12.0"] = "0.12.0"
+    tool_operation: Literal["source_context", "compare_contexts", "review_dossier"]
+    request_checkpoint_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    execution_status: Literal["COMPLETED_REVIEW_PREVIEW"]
+    phase_log: list[ResearchToolPhase] = Field(min_length=3, max_length=3)
+    scheduled_graph_reads: int = Field(ge=1, le=3)
+    max_source_links_per_read: Literal[20] = 20
+    returned_card_count: int = Field(ge=0, le=12)
+    evidence_cards: list[ResearchToolReviewCard] = Field(max_length=12)
+    tool_result: dict[str, object]
+    stateless_replay_only: Literal[True] = True
+    execution_state_persisted: Literal[False] = False
+    human_review_required: Literal[True] = True
+    graph_writes_performed: Literal[False] = False
+    provider_or_llm_calls: Literal[False] = False
+    human_approval_recorded: Literal[False] = False
+    source_rights_verified: Literal[False] = False
+    research_release_status: Literal["HOLD"] = "HOLD"

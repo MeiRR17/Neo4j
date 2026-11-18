@@ -1,0 +1,404 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.12.0 registered read-only research agent tool adapter",
+  "description": "Static private operator-only registered tool workflow; no agent orchestration, provider, durable task or graph writes.",
+  "x-transport": {
+    "catalog": {
+      "method": "GET",
+      "path": "/v1/research/agent-tools/catalog"
+    },
+    "plan": {
+      "method": "GET",
+      "path": "/v1/research/agent-tools/plan"
+    },
+    "execute": {
+      "method": "GET",
+      "path": "/v1/research/agent-tools/execute"
+    },
+    "authentication": "private bearer; signed-call policy when configured",
+    "flags": [
+      "DVIROS_ENABLE_GROUNDED_CONTEXT=1",
+      "DVIROS_ENABLE_RESEARCH_TOOL_RUNNER=1"
+    ],
+    "default_enabled": false
+  },
+  "x-request": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "operation",
+      "passage_ids",
+      "query"
+    ],
+    "properties": {
+      "operation": {
+        "enum": [
+          "source_context",
+          "compare_contexts",
+          "review_dossier"
+        ]
+      },
+      "passage_ids": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 600
+      },
+      "query": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 120
+      },
+      "evidence_ids": {
+        "type": "string",
+        "maxLength": 1400
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 12,
+        "default": 8
+      },
+      "read_budget": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 3,
+        "default": 3
+      },
+      "request_checkpoint_sha256": {
+        "type": "string",
+        "pattern": "^[a-f0-9]{64}$"
+      }
+    },
+    "x-notes": [
+      "execute requires checkpoint_sha256; plan forbids it",
+      "review_dossier requires evidence_ids",
+      "other operations forbid evidence_ids",
+      "no dynamic read-only or write tool registration"
+    ]
+  },
+  "$defs": {
+    "planParameters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "passage_ids",
+        "query_sha256",
+        "selected_evidence_ids",
+        "candidate_limit",
+        "read_budget",
+        "scheduled_graph_reads",
+        "max_links_per_graph_read",
+        "total_links_observation_bound"
+      ],
+      "properties": {
+        "operation": {
+          "enum": [
+            "source_context",
+            "compare_contexts",
+            "review_dossier"
+          ]
+        },
+        "passage_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "string",
+            "pattern": "^passage:"
+          }
+        },
+        "query_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "selected_evidence_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^evidence:"
+          }
+        },
+        "candidate_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "read_budget": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "scheduled_graph_reads": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "max_links_per_graph_read": {
+          "const": 20
+        },
+        "total_links_observation_bound": {
+          "enum": [
+            20,
+            40,
+            60
+          ]
+        }
+      }
+    },
+    "evidenceCard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "edge_id",
+        "source_passage_id",
+        "target_passage_id",
+        "source_ref",
+        "version_id",
+        "rights_tag",
+        "evidence_review_status",
+        "human_approved",
+        "source_rights_verified",
+        "source_text_available"
+      ],
+      "properties": {
+        "evidence_id": {
+          "type": "string",
+          "pattern": "^evidence:"
+        },
+        "edge_id": {
+          "type": "string",
+          "pattern": "^edge:"
+        },
+        "source_passage_id": {
+          "type": "string",
+          "pattern": "^passage:"
+        },
+        "target_passage_id": {
+          "type": "string",
+          "pattern": "^passage:"
+        },
+        "source_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "version_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rights_tag": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_review_status": {
+          "enum": [
+            "unreviewed",
+            "approved",
+            "rejected",
+            "disputed"
+          ]
+        },
+        "human_approved": {
+          "const": false
+        },
+        "source_rights_verified": {
+          "const": false
+        },
+        "source_text_available": {
+          "const": false
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "title": "Plan response",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "plan_status",
+        "operation",
+        "parameters",
+        "request_checkpoint_sha256",
+        "checkpoint_authenticates_reviewer",
+        "checkpoint_persists_execution_state",
+        "graph_read_only",
+        "graph_reads_executed",
+        "provider_or_llm_calls",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.12.0"
+        },
+        "plan_status": {
+          "const": "READY_TO_EXECUTE"
+        },
+        "operation": {
+          "enum": [
+            "source_context",
+            "compare_contexts",
+            "review_dossier"
+          ]
+        },
+        "parameters": {
+          "$ref": "#/$defs/planParameters"
+        },
+        "request_checkpoint_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "checkpoint_authenticates_reviewer": {
+          "const": false
+        },
+        "checkpoint_persists_execution_state": {
+          "const": false
+        },
+        "graph_read_only": {
+          "const": true
+        },
+        "graph_reads_executed": {
+          "const": 0
+        },
+        "provider_or_llm_calls": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        }
+      }
+    },
+    {
+      "title": "Execution response",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "tool_operation",
+        "request_checkpoint_sha256",
+        "execution_status",
+        "phase_log",
+        "scheduled_graph_reads",
+        "max_source_links_per_read",
+        "returned_card_count",
+        "evidence_cards",
+        "tool_result",
+        "stateless_replay_only",
+        "execution_state_persisted",
+        "human_review_required",
+        "graph_writes_performed",
+        "provider_or_llm_calls",
+        "human_approval_recorded",
+        "source_rights_verified",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.12.0"
+        },
+        "tool_operation": {
+          "enum": [
+            "source_context",
+            "compare_contexts",
+            "review_dossier"
+          ]
+        },
+        "request_checkpoint_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "execution_status": {
+          "const": "COMPLETED_REVIEW_PREVIEW"
+        },
+        "phase_log": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "phase",
+              "status"
+            ],
+            "properties": {
+              "phase": {
+                "enum": [
+                  "INPUTS_CHECKED",
+                  "FIXED_READ_ONLY_RETRIEVAL",
+                  "EVIDENCE_CARDS_PROJECTED"
+                ]
+              },
+              "status": {
+                "const": "COMPLETED"
+              }
+            }
+          }
+        },
+        "scheduled_graph_reads": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "max_source_links_per_read": {
+          "const": 20
+        },
+        "returned_card_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "evidence_cards": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "$ref": "#/$defs/evidenceCard"
+          }
+        },
+        "tool_result": {
+          "type": "object"
+        },
+        "stateless_replay_only": {
+          "const": true
+        },
+        "execution_state_persisted": {
+          "const": false
+        },
+        "human_review_required": {
+          "const": true
+        },
+        "graph_writes_performed": {
+          "const": false
+        },
+        "provider_or_llm_calls": {
+          "const": false
+        },
+        "human_approval_recorded": {
+          "const": false
+        },
+        "source_rights_verified": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        }
+      }
+    }
+  ],
+  "x-research-release-boundaries": [
+    "no model-generated scholarly claim",
+    "no graph writes, unrestricted Cypher or autonomous tool dispatch",
+    "no persisted progress or truly resumable checkpoint",
+    "checkpoint is unkeyed request drift fingerprint, not identity proof",
+    "no independent source rights or licensed quotation validation",
+    "no DvirOS identity, workspace RBAC or durable human review"
+  ]
+}

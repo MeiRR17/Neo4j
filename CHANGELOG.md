@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.12.0] — 2026-11-18 (DRAFT — registered read-only research tool preview)
+
+- Added Neo-side static registry of three approved metadata-only research
+  operations: one-Passage source context, two/three-Passage comparison,
+  selected Evidence review dossier. No arbitrary query or graph write.
+- Added authenticated, separate default-OFF `agent-tools/catalog`,
+  `agent-tools/plan` and `agent-tools/execute` GET endpoints; requires
+  explicit old grounded-context flag plus new tool-runner operator flag.
+- Deterministic SHA256 request checkpoint and bounded plan with 1–3
+  fixed graph reads and 20 observed SOURCE_LINK rows per read. Exact
+  request drift fails closed before a graph query; checkpoint is NOT
+  a signature, durable idempotency key or resume state.
+- Added strict typed DTOs, metadata-only Evidence review cards and a
+  synchronous three-phase completion trace; no provider/LLM/cost claim.
+- Added focused authorization, drift, malicious projection, over-budget
+  and dispatch tests, versioned JSON contract, operator guide.
+- No actual DvirOS agent, persistent task, human approval, licensed source
+  text or workspace RBAC; upstream Draft PR chain/research/security
+  release gates remain HOLD, no main merge.
+
+
 ## [0.11.3] — 2026-11-18 (DRAFT — offline grounded Evidence dossier diff)
 
 - Added a bounded local-only semantic comparison of two v0.11.2 unsigned
