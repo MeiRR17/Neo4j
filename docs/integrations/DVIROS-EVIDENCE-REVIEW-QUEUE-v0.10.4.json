@@ -1,0 +1,96 @@
+{
+  "schema_version": "0.10.4",
+  "contract_kind": "dviros.research.evidence_review_queue",
+  "producer": "MeiRR17/Neo4j private offline utility",
+  "consumer": "Future DvirOS authenticated BFF/Postgres review inbox, not implemented here",
+  "action": "metadata-only offline signed human triage candidate generation",
+  "entrypoint": "scripts/study_review_queue_v0104.py",
+  "input_contract": "2–6 signed v0.10.0 study preview envelopes in strictly increasing locally reported capture order, all same directed Work pair",
+  "source_integrity": "v0.10.3 complete signed timeline is recomputed, including v0.10.2 bounded audit-window diffs and v0.10.0 packet HMACs",
+  "source_limits": {
+    "captures_max": 6,
+    "observed_evidence_per_capture_max": 100,
+    "candidate_count_max": 600,
+    "canonical_queue_max_bytes": 240000
+  },
+  "response_envelope": [
+    "queue",
+    "queue_sha256",
+    "queue_hmac_sha256"
+  ],
+  "queue_fields": [
+    "source_work_id",
+    "target_work_id",
+    "capture_count",
+    "timeline_sha256",
+    "timeline_chain_tip_sha256",
+    "candidate_count",
+    "items",
+    "unselected_window_candidate_count",
+    "selection_only_candidate_count",
+    "returned_state_candidate_count",
+    "requires_human_triage",
+    "reviewer_decisions_recorded",
+    "dviros_workspace_authorized",
+    "source_licenses_verified",
+    "research_release_status"
+  ],
+  "item_fields": [
+    "evidence_id",
+    "review_status",
+    "reason_codes",
+    "event_count",
+    "events",
+    "selected_in_initial_capture",
+    "selected_in_latest_capture",
+    "observed_in_initial_window",
+    "observed_in_latest_window",
+    "returned_to_prior_observed_state",
+    "unselected_window_drift",
+    "human_approved",
+    "source_rights_verified"
+  ],
+  "event_fields": [
+    "from_index",
+    "to_index",
+    "window_change_kind",
+    "changed_fields",
+    "selected_before",
+    "selected_after",
+    "observed_before",
+    "observed_after",
+    "reason_codes"
+  ],
+  "reasons": [
+    "OBSERVED_WINDOW_ADDED",
+    "OBSERVED_WINDOW_REMOVED",
+    "REVIEW_STATUS_CHANGED",
+    "SOURCE_METADATA_CHANGED",
+    "OTHER_METADATA_CHANGED",
+    "SELECTION_ADDED",
+    "SELECTION_REMOVED"
+  ],
+  "review_state": "PENDING_HUMAN_TRIAGE",
+  "safety": [
+    "No inline source text, notes or reviewer identities",
+    "Missing or added observed link != proven database deletion or insertion",
+    "Queue candidate != approved research evidence or human decision",
+    "Rights tags in original packets do not constitute verified license clearance",
+    "Hash-chain and HMAC do not establish independently trusted time or immutable graph snapshot",
+    "A clean queue only compares the bounded observed Work-pair windows and selection"
+  ],
+  "output": "owner-readable private JSON, create-only, no overwrite, offline verify with original complete input envelopes",
+  "consumer_must": [
+    "authenticate workspace user in DvirOS",
+    "authorize each workspace and saved study",
+    "retain full original signed source packets for replay",
+    "record real reviewers and decisions separately in DvirOS Postgres",
+    "maintain research HOLD and require explicit rights/scholarly signoff"
+  ],
+  "graph_writes_allowed": false,
+  "dviros_postgres_implemented": false,
+  "reviewer_decisions_recorded": false,
+  "source_licenses_verified": false,
+  "immutable_corpus_revision_verified": false,
+  "research_release_status": "HOLD"
+}
