@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.10.3] — 2026-11-18 (DRAFT — signed study observation timeline)
+
+- Added authenticated offline replay of 2–6 full v0.10.0 study packet
+  envelopes, checking the same directed Work pair and strictly increasing
+  locally reported observation times.
+- Recomputed complete bounded v0.10.2 audit-window metadata diffs across
+  each transition, including unselected citations and changes in review
+  status, edition and source references.
+- Added a chained SHA-256/HMAC timeline with drift-event totals, distinct
+  affected Evidence IDs and A→B→A intermediate-state return detection.\n- Require human review also for citation-selection changes when the underlying\n  bounded audit rows are otherwise identical.
+- Added a private, owner-only, create-once build/verify CLI, seven focused
+  tests, machine-readable DvirOS integration contract and operator guide.
+- No Neo4j writes, DvirOS Postgres/user workspace, source-rights review,
+  trusted clocks, immutable graph revision or scholarly release approval.
+  Stacked PR remains DRAFT and research release HOLD.
+
 ## [0.10.2] — 2026-11-18 (DRAFT — signed full audit-window drift)
 
 - Verify both original v0.10.0 HMAC-sealed study previews and their embedded
