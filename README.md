@@ -28,6 +28,7 @@ or a Learning_Modules feature.
 - [v0.11.1 cross-Passage grounded comparison (draft)](docs/operations/GROUNDED-COMPARE-v0.11.1.md)
 - [v0.11.2 grounded Evidence review dossier (draft)](docs/operations/GROUNDED-DOSSIER-v0.11.2.md)
 - [v0.11.3 offline grounded dossier diff (draft)](docs/operations/GROUNDED-DOSSIER-DIFF-v0.11.3.md)
+- [v0.12.0 registered read-only research tool runner (draft)](docs/operations/RESEARCH-TOOL-RUNNER-v0.12.0.md)
 - [Changelog](CHANGELOG.md)
 
 ## Service baseline and draft research search milestones
