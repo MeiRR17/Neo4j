@@ -47,7 +47,7 @@
         },
         "archive_filename": {
           "type": "string",
-          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,119}\\\\.dump$"
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{0,119}\\.dump$"
         },
         "archive_bytes": {
           "type": "integer",
