@@ -9,7 +9,7 @@
   each transition, including unselected citations and changes in review
   status, edition and source references.
 - Added a chained SHA-256/HMAC timeline with drift-event totals, distinct
-  affected Evidence IDs and A→B→A intermediate-state return detection.
+  affected Evidence IDs and A→B→A intermediate-state return detection.\n- Require human review also for citation-selection changes when the underlying\n  bounded audit rows are otherwise identical.
 - Added a private, owner-only, create-once build/verify CLI, six focused
   tests, machine-readable DvirOS integration contract and operator guide.
 - No Neo4j writes, DvirOS Postgres/user workspace, source-rights review,
