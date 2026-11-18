@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.11.3 unsigned offline Evidence dossier diff",
+  "description": "Metadata-only review selection and field-level changes between two self-checksummed v0.11.2 dossiers. No graph mutation inference, source authentication or independent rights verification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "comparison",
+    "comparison_sha256",
+    "comparison_digitally_signed"
+  ],
+  "properties": {
+    "comparison_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "comparison_digitally_signed": {
+      "const": false
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "passage_ids",
+        "query_sha256",
+        "before_dossier_sha256",
+        "after_dossier_sha256",
+        "before_selected_count",
+        "after_selected_count",
+        "newly_selected_evidence_ids",
+        "deselected_evidence_ids",
+        "changed_evidence",
+        "unchanged_evidence_ids",
+        "newly_selected_count",
+        "deselected_count",
+        "changed_count",
+        "unchanged_count",
+        "before_observed_windows",
+        "after_observed_windows",
+        "additional_matches_may_exist",
+        "selection_change_is_graph_mutation",
+        "all_metadata_human_review_required",
+        "input_dossiers_authenticated",
+        "graph_snapshot_verified",
+        "human_approval_recorded",
+        "source_rights_verified",
+        "generated_claim",
+        "research_release_status",
+        "note"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.11.3"
+        },
+        "contract_kind": {
+          "const": "dviros.research.unsigned_dossier_diff_draft"
+        },
+        "passage_ids": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^passage:"
+          }
+        },
+        "query_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "before_dossier_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "after_dossier_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "before_selected_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "after_selected_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8
+        },
+        "newly_selected_evidence_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^evidence:"
+          }
+        },
+        "deselected_evidence_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^evidence:"
+          }
+        },
+        "unchanged_evidence_ids": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^evidence:"
+          }
+        },
+        "changed_evidence": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidence_id",
+              "changed_fields",
+              "review_flags",
+              "human_review_required"
+            ],
+            "properties": {
+              "evidence_id": {
+                "type": "string",
+                "pattern": "^evidence:"
+              },
+              "changed_fields": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 12,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "field",
+                    "before",
+                    "after"
+                  ],
+                  "properties": {
+                    "field": {
+                      "enum": [
+                        "edge_id",
+                        "source_passage_id",
+                        "target_passage_id",
+                        "observed_in_passage_ids",
+                        "source_ref",
+                        "version_id",
+                        "rights_tag",
+                        "edge_review_status",
+                        "evidence_review_status",
+                        "match_basis",
+                        "triage_flags",
+                        "source_metadata_complete"
+                      ]
+                    },
+                    "before": {},
+                    "after": {}
+                  }
+                }
+              },
+              "review_flags": {
+                "type": "array",
+                "maxItems": 8,
+                "uniqueItems": true,
+                "items": {
+                  "enum": [
+                    "ANCHOR_ID_CHANGED",
+                    "SOURCE_REFERENCE_CHANGED",
+                    "VERSION_METADATA_CHANGED",
+                    "RIGHTS_METADATA_CHANGED",
+                    "REVIEW_STATUS_CHANGED",
+                    "OBSERVED_FOCUS_CHANGED",
+                    "TRIAGE_FLAGS_CHANGED",
+                    "METADATA_COMPLETENESS_CHANGED"
+                  ]
+                }
+              },
+              "human_review_required": {
+                "const": true
+              }
+            }
+          }
+        },
+        "newly_selected_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "deselected_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "changed_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "unchanged_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "before_observed_windows": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "object"
+          }
+        },
+        "after_observed_windows": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 3,
+          "items": {
+            "type": "object"
+          }
+        },
+        "additional_matches_may_exist": {
+          "type": "boolean"
+        },
+        "selection_change_is_graph_mutation": {
+          "const": false
+        },
+        "all_metadata_human_review_required": {
+          "const": true
+        },
+        "input_dossiers_authenticated": {
+          "const": false
+        },
+        "graph_snapshot_verified": {
+          "const": false
+        },
+        "human_approval_recorded": {
+          "const": false
+        },
+        "source_rights_verified": {
+          "const": false
+        },
+        "generated_claim": {
+          "type": "null"
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "x-cli": "python scripts/grounded_dossier_diff_v0113.py build/verify --before ... --after ... --output/--report ...",
+  "x-nonclaims": [
+    "no Graph database mutation inference",
+    "not a digital signature or independent source identity proof",
+    "no licensed quotation or human review decision",
+    "no LLM/provider or graph writes",
+    "no immutable or complete corpus snapshot"
+  ]
+}
