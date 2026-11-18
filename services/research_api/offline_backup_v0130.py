@@ -72,8 +72,10 @@ def _owner_only(path: Path, *, is_output: bool = False) -> None:
 def _regular_descriptor(path: Path) -> tuple[int, os.stat_result]:
     _parents_safe(path)
     _owner_only(path)
+    # O_NONBLOCK prevents a swapped FIFO/device from hanging the operator.
+    # fstat below still requires a single-link regular file.
     flags = os.O_RDONLY | getattr(os, "O_CLOEXEC", 0)
-    flags |= getattr(os, "O_NOFOLLOW", 0)
+    flags |= getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
     fd = os.open(path, flags)
     try:
         info = os.fstat(fd)
