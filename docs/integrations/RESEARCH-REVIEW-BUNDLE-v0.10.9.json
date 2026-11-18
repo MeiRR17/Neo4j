@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo signed cross-page Evidence review draft v0.10.9",
+  "description": "Metadata-only private handoff from multiple verified queue pages; no reviewer identity, license or approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bundle",
+    "bundle_sha256",
+    "bundle_hmac_sha256"
+  ],
+  "properties": {
+    "bundle_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "bundle_hmac_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "bundle": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "bundle_id",
+        "source_work_id",
+        "target_work_id",
+        "parent_queue_sha256",
+        "parent_matrix_sha256",
+        "all_filter_coverage_sha256",
+        "source_packet_sha256s",
+        "page_limit",
+        "selected_evidence_ids",
+        "selected_count",
+        "source_page_count",
+        "selected_rows",
+        "page_handoffs",
+        "review_state",
+        "human_review_approved",
+        "dviros_saved_review_created",
+        "source_licenses_verified",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.10.9"
+        },
+        "contract_kind": {
+          "const": "dviros.research.cross_page_review_draft"
+        },
+        "bundle_id": {
+          "type": "string",
+          "pattern": "^cross-page-review:[a-f0-9]{64}$"
+        },
+        "source_work_id": {
+          "type": "string"
+        },
+        "target_work_id": {
+          "type": "string"
+        },
+        "parent_queue_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "parent_matrix_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "all_filter_coverage_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "source_packet_sha256s": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        },
+        "page_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "selected_evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "selected_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "source_page_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "selected_rows": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": [
+              "evidence_id",
+              "reason_codes",
+              "matched_filters",
+              "selected_in_latest_capture",
+              "observed_in_latest_window",
+              "page_index",
+              "page_sha256",
+              "handoff_sha256",
+              "review_decision",
+              "human_approved",
+              "source_rights_verified"
+            ],
+            "properties": {
+              "evidence_id": {
+                "type": "string"
+              },
+              "reason_codes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "matched_filters": {
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "enum": [
+                    "all",
+                    "source_or_review",
+                    "membership",
+                    "selection",
+                    "other_metadata",
+                    "returned_state"
+                  ]
+                }
+              },
+              "selected_in_latest_capture": {
+                "type": "boolean"
+              },
+              "observed_in_latest_window": {
+                "type": "boolean"
+              },
+              "page_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 599
+              },
+              "page_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "handoff_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "review_decision": {
+                "const": "NOT_RECORDED"
+              },
+              "human_approved": {
+                "const": false
+              },
+              "source_rights_verified": {
+                "const": false
+              }
+            }
+          }
+        },
+        "page_handoffs": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": [
+              "page_index",
+              "page_sha256",
+              "selected_evidence_ids",
+              "handoff"
+            ],
+            "properties": {
+              "page_index": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 599
+              },
+              "page_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "selected_evidence_ids": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 12,
+                "uniqueItems": true,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "handoff": {
+                "type": "object",
+                "required": [
+                  "handoff",
+                  "handoff_sha256",
+                  "handoff_hmac_sha256"
+                ],
+                "properties": {
+                  "handoff_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "handoff_hmac_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$"
+                  },
+                  "handoff": {
+                    "type": "object",
+                    "required": [
+                      "schema_version",
+                      "selected_evidence_ids",
+                      "items",
+                      "parent_page_sha256",
+                      "research_release_status"
+                    ],
+                    "properties": {
+                      "schema_version": {
+                        "const": "0.10.6"
+                      },
+                      "parent_page_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "selected_evidence_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 12,
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "items": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 12
+                      },
+                      "research_release_status": {
+                        "const": "HOLD"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "review_state": {
+          "const": "DRAFT_NO_HUMAN_DECISION"
+        },
+        "dviros_workspace_authorization_verified": {
+          "const": false
+        },
+        "dviros_saved_review_created": {
+          "const": false
+        },
+        "human_review_approved": {
+          "const": false
+        },
+        "source_licenses_verified": {
+          "const": false
+        },
+        "immutable_graph_snapshot_verified": {
+          "const": false
+        },
+        "trusted_capture_times_verified": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        }
+      }
+    }
+  },
+  "x-trust-boundaries": [
+    "exact-six-filter-matrix-replay",
+    "all-signed-pages-verified",
+    "original-study-source-replay",
+    "page-scoped-signed-handoff-provenance",
+    "no-human-decisions",
+    "no-source-licensing",
+    "no-graph-writes"
+  ]
+}

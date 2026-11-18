@@ -23,6 +23,7 @@ or a Learning_Modules feature.
 - [v0.10.6 signed private review handoff (draft)](docs/operations/STUDY-REVIEW-HANDOFF-v0.10.6.md)
 - [v0.10.7 full signed review inbox coverage (draft)](docs/operations/STUDY-REVIEW-COVERAGE-v0.10.7.md)
 - [v0.10.8 signed cross-filter review matrix (draft)](docs/operations/STUDY-REVIEW-MATRIX-v0.10.8.md)
+- [v0.10.9 signed cross-page review bundle (draft)](docs/operations/STUDY-REVIEW-BUNDLE-v0.10.9.md)
 - [Changelog](CHANGELOG.md)
 
 ## Service baseline and draft research search milestones
