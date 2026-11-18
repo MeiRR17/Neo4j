@@ -74,7 +74,7 @@ def _run_docker(args: list[str], *, timeout: int = DOCKER_TIMEOUT,
         ["docker", *args], check=False, timeout=timeout,
         stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
+        stderr=subprocess.PIPE if capture else subprocess.DEVNULL,
         text=capture,
     )
 
@@ -185,9 +185,14 @@ def execute_isolated_restore_drill(
     token = secrets.token_hex(12)
     volume = VOLUME_PREFIX + token
     # Refuse even an astronomically unlikely collision: 'create' is idempotent.
-    inspection = _run_docker(["volume", "inspect", volume])
+    inspection = _run_docker(["volume", "inspect", volume], capture=True)
     if inspection.returncode == 0:
         raise RuntimeError("Drill volume identifier already exists.")
+    # Nonzero may mean daemon permission failure rather than 'not found'.
+    # Creation of an idempotent Docker volume must not follow such a failure.
+    diagnostic = (inspection.stderr or "").lower()
+    if "no such volume" not in diagnostic and "not found" not in diagnostic:
+        raise RuntimeError("Could not establish that drill volume is unused.")
     start = time.monotonic()
     created = False
     completed = False
@@ -198,9 +203,13 @@ def execute_isolated_restore_drill(
             "--label", LABEL + "=v0.13.1",
             "--name", volume,
         ], capture=True)
-        if made.returncode != 0 or made.stdout.strip() != volume:
+        if made.returncode != 0:
             raise RuntimeError("Could not create isolated restore volume.")
+        # A successful Docker create can still return unexpected output;
+        # mark ownership for cleanup before refusing to continue.
         created = True
+        if made.stdout.strip() != volume:
+            raise RuntimeError("Unexpected Docker volume creation result.")
         _load_dump(archive, volume)
         _check_restored_store(volume)
         # Hash a second time: no silently changed archive after streaming.
