@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.13.1] — 2026-11-18 (DRAFT — isolated offline restore drill)
+
+- Added operator-gated `isolated_restore_drill_v0131.py` plan/execute
+  workflow: validates the v0.13.0 SHA256 dump/manifest before Docker
+  access, then loads the supplied dump by stdin into a **new random**
+  Docker volume, runs offline Neo4j consistency check and removes the
+  isolated volume even on failure.
+- Fixed official `neo4j/neo4j-admin:2026.10.1` tool commands,
+  `--network none`, `--pull never`, no host live-data bind or ports,
+  bounded runtime, no shell and no provider/LLM calls.
+- Added create-once private 0600 result report with explicit
+  `offline_load_and_consistency_checked=true` only after actual
+  operator-run success. Report SHA256 is unsigned and neither online
+  service recovery nor RPO/RTO is proven.
+- Added 7 focused synthetic/mocked tests for preflight, isolation, safe
+  cleanup, invalid Docker volume probes and CLI gating, plus versioned
+  JSON contract, operations runbook and README/ROADMAP updates.
+- Full authenticated restored-DB smoke, constraints/schema, live source
+  count, reproducible corpus snapshot, recovery timeline and scholarly
+  release approvals remain HOLD. This Draft is stacked on #73; no main merge.
+
+
 ## [0.13.0] — 2026-11-18 (DRAFT — offline Neo4j dump integrity phase 1)
 
 - Added an operator-only offline Community dump integrity workflow for the
