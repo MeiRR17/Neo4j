@@ -153,6 +153,11 @@ def build_study_timeline(previews: object, *, secret: str) -> dict:
         "total_window_change_events": sum(
             x["window_change_count"] for x in transitions
         ),
+        "total_selection_change_events": sum(
+            len(step["selected_evidence_added"])
+            + len(step["selected_evidence_removed"])
+            for step in transitions
+        ),
         "unique_changed_evidence_ids": sorted(changed_evidence),
         "revisited_window_states": revisited,
         "has_observed_intermediate_drift": any(
@@ -208,7 +213,10 @@ def verify_study_timeline(
         "revisited_window_state_count": len(result["revisited_window_states"]),
         "all_source_previews_verified": True,
         "timeline_hmac_verified": True,
-        "requires_human_review": result["has_observed_intermediate_drift"],
+        "requires_human_review": bool(
+            result["has_observed_intermediate_drift"]
+            or result["total_selection_change_events"]
+        ),
         "immutable_corpus_revision_verified": False,
         "research_release_status": "HOLD",
     }
