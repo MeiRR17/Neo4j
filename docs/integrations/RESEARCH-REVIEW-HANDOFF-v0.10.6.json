@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DvirOS Neo-only signed Evidence review handoff v0.10.6",
+  "description": "Draft metadata-only transfer receipt. Human decisions/rights not authorized.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "handoff",
+    "handoff_sha256",
+    "handoff_hmac_sha256"
+  ],
+  "properties": {
+    "handoff_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "handoff_hmac_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "handoff": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "handoff_id",
+        "source_work_id",
+        "target_work_id",
+        "parent_queue_sha256",
+        "parent_page_sha256",
+        "source_capture_packet_sha256s",
+        "selected_evidence_ids",
+        "selected_count",
+        "items",
+        "review_state",
+        "human_review_approved",
+        "source_licenses_verified",
+        "immutable_graph_snapshot_verified",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.10.6"
+        },
+        "contract_kind": {
+          "const": "dviros.research.review_handoff_draft"
+        },
+        "handoff_id": {
+          "type": "string",
+          "pattern": "^review-handoff:[a-f0-9]{64}$"
+        },
+        "source_work_id": {
+          "type": "string"
+        },
+        "target_work_id": {
+          "type": "string"
+        },
+        "parent_queue_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "parent_page_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "source_capture_packet_sha256s": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 6,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "selected_evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "selected_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "review_state": {
+          "const": "DRAFT_NO_HUMAN_DECISION"
+        },
+        "human_review_approved": {
+          "const": false
+        },
+        "source_licenses_verified": {
+          "const": false
+        },
+        "immutable_graph_snapshot_verified": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "required": [
+              "evidence_id",
+              "queue_review_status",
+              "observation_history",
+              "last_observed_citation_metadata",
+              "source_metadata_is_current_observation",
+              "review_decision",
+              "human_approved",
+              "source_rights_verified"
+            ],
+            "properties": {
+              "evidence_id": {
+                "type": "string"
+              },
+              "queue_review_status": {
+                "const": "PENDING_HUMAN_TRIAGE"
+              },
+              "review_decision": {
+                "const": "NOT_RECORDED"
+              },
+              "human_approved": {
+                "const": false
+              },
+              "source_rights_verified": {
+                "const": false
+              },
+              "source_metadata_is_current_observation": {
+                "type": "boolean"
+              },
+              "last_observed_citation_metadata": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "observation_history": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 6,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "capture_index",
+                    "packet_sha256",
+                    "observed_in_audit",
+                    "selected_in_study",
+                    "citation_metadata"
+                  ],
+                  "properties": {
+                    "capture_index": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 5
+                    },
+                    "packet_sha256": {
+                      "type": "string",
+                      "pattern": "^[a-f0-9]{64}$"
+                    },
+                    "observed_in_audit": {
+                      "type": "boolean"
+                    },
+                    "selected_in_study": {
+                      "type": "boolean"
+                    },
+                    "citation_metadata": {
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-trust-boundaries": [
+    "no_graph_or_database_write",
+    "no_human_reviewer_decision",
+    "no_source_rights_authorization",
+    "no_immutable_graph_snapshot",
+    "draft_hmac_requires_original_source_replay"
+  ]
+}
