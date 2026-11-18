@@ -14,6 +14,9 @@ logs/
 local_staging/
 _local_data/
 private_research/
+private_backups/
+*.backup-manifest.json
+*.restore-drill.json
 local_research/
 *.snapshots.json
 
