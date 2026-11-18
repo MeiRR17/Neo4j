@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.10.9] — 2026-11-18 (DRAFT — cross-page signed Evidence review handoff)
+
+- Added 1–12 Evidence multi-page draft review bundling across one complete
+  v0.10.8 six-filter triage matrix; independently replay the full signed
+  source queue, original study packets, all six signed page coverage walks.
+- Bind selected Evidence to their exact originating v0.10.5 page SHA, cursor
+  and v0.10.6 nested page-handoff HMAC; preserve observed-vs-selected history
+  and explicitly historical metadata when a source link was removed.
+- Added independent sealed v0.10.9 bundle verification, private create-once
+  offline CLI, cross-page/denial/CLI focused tests and DvirOS transfer schema.
+- No user authorization, reviewer decisions, licensed texts, graph writes
+  or immutable corpus guarantees. Stacked Draft PR and scholarly HOLD.
+
+
 ## [0.10.8] — 2026-11-18 (DRAFT — signed six-filter review matrix)
 
 - Added offline reconciliation of all six complete v0.10.7 signed review
