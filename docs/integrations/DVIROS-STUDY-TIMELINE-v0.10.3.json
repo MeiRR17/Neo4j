@@ -15,6 +15,7 @@
     "chain_root_sha256",
     "chain_tip_sha256",
     "total_window_change_events",
+    "total_selection_change_events",
     "unique_changed_evidence_ids",
     "revisited_window_states",
     "has_observed_intermediate_drift"
@@ -45,7 +46,8 @@
     "authorize user/workspace in DvirOS",
     "retain original ordered source packets for replay",
     "store human decisions separately in DvirOS Postgres",
-    "treat metadata drift as review-needed, never an automatic approval"
+    "treat metadata drift as review-needed, never an automatic approval",
+    "require human assessment for selection-only changes even without audit row drift"
   ],
   "provider_writes_allowed": false,
   "dviros_persistence_implemented": false,
