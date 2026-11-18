@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.1] — 2026-11-18 (DRAFT — cross-Passage grounded metadata comparison)
+
+- Added default-OFF, private GET /v1/research/grounded-context/compare
+  for 2–3 canonical Passage IDs, reusing the strict v0.11.0 fixed read-only
+  Evidence projection and its 20-link bounded window per Passage.
+- Deduplicates one Evidence observed under multiple focus Passages, rejects
+  inconsistent Edge/source/version/rights/review metadata across windows,
+  and returns deterministic, exact-source-ref groups with bounded references.
+- Adds version/rights/review-status divergence, contested and missing-metadata
+  flags for **human triage only**; distinguishes full observed-window no-match
+  from truncated/partial-window uncertainty. Never generates text or a claim.
+- Added strict typed API/JSON contract, feature flag, 8 focused denial,
+  provenance and result-bounding tests plus operator guide.
+- No source-text rights, quotation validation, LLM calls, DvirOS human
+  workspace review, immutable graph snapshot or production approval.
+  Upstream stacked PR, security and scholarly release gates remain HOLD.
+
+
 ## [0.11.0] — 2026-11-18 (DRAFT — GraphRAG phase 1, metadata-only)
 
 - Added a default-OFF authenticated /v1/research/grounded-context API for
