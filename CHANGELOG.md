@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.11.3] — 2026-11-18 (DRAFT — offline grounded Evidence dossier diff)
+
+- Added a bounded local-only semantic comparison of two v0.11.2 unsigned
+  Evidence dossiers with the same Passage scope and research-query hash.
+  Detects selected/deselected IDs, stable Evidence and exact source/edge,
+  version, rights-tag, review-status and focus-membership metadata drift.
+- Validates both original strict dossier DTOs, canonical SHA256 digests,
+  selection identity/count/order, observation scopes and no-approval fields.
+  Returns deterministic field-level before/after deltas and triage flags.
+- Explicitly distinguishes **deselected from dossier** from **deleted from
+  graph**; input SHA256 is not a signature or provenance attestation.
+- Added private create-only build/verify CLI, seven focused behavior/security
+  tests, versioned JSON contract, and offline runbook.
+- No live graph/LLM use, licensed citations, human review persistence,
+  source rights or corpus snapshot claims. Upstream stacked Draft PRs and
+  scholarly/security release approval remain HOLD.
+
+
 ## [0.11.2] — 2026-11-18 (DRAFT — bounded grounded Evidence dossier)
 
 - Added default-OFF authenticated /v1/research/grounded-context/dossier
