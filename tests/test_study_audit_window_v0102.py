@@ -80,7 +80,12 @@ class StudyAuditWindowTests(unittest.TestCase):
 
     def test_addition_removal_and_selection_are_explicit(self):
         before = self.get()
-        removed = self.fixture.store.forward.pop()
+        old_selected = set(self.fixture.ids.split(","))
+        removed = next(
+            row for row in self.fixture.store.forward
+            if row["evidence_id"] not in old_selected
+        )
+        self.fixture.store.forward.remove(removed)
         self.fixture.store.forward.append(edge("audit-window-new"))
         after = self.get()
         report = compare_study_audit_windows(
