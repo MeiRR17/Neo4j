@@ -11,6 +11,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -66,7 +67,8 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(result, ensure_ascii=False, sort_keys=True,
                          separators=(",", ":")))
         return 0
-    except (OSError, ValueError, RuntimeError, TimeoutError):
+    except (OSError, ValueError, RuntimeError, TimeoutError,
+            subprocess.TimeoutExpired):
         print(
             "[FAIL] Private restored-service smoke refused or incomplete.",
             file=sys.stderr,
