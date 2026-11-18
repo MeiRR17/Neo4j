@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.13.1 operator-only isolated offline restore drill",
+  "description": "A verified v0.13.0 archive loaded and consistency-checked in a fresh disposable, network-isolated Docker volume; no end-to-end authenticated restore or RPO/RTO proof.",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "Preflight plan (no Docker calls)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "contract_kind",
+        "database",
+        "database_image",
+        "offline_admin_image",
+        "archive_filename",
+        "archive_bytes",
+        "archive_sha256",
+        "archive_integrity_verified",
+        "execution_enabled",
+        "docker_network_enabled",
+        "host_live_volume_mounted",
+        "existing_docker_volume_reused",
+        "isolated_load_and_consistency_checked",
+        "authenticated_restored_service_smoke_passed",
+        "rpo_rto_demonstrated",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.13.1"
+        },
+        "contract_kind": {
+          "const": "dviros.neo.isolated_offline_restore_drill"
+        },
+        "database": {
+          "const": "neo4j"
+        },
+        "database_image": {
+          "const": "neo4j:2026.10.1"
+        },
+        "offline_admin_image": {
+          "const": "neo4j/neo4j-admin:2026.10.1"
+        },
+        "archive_filename": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,119}\\.dump$"
+        },
+        "archive_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 549755813888
+        },
+        "archive_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "archive_integrity_verified": {
+          "const": true
+        },
+        "execution_enabled": {
+          "const": false
+        },
+        "docker_network_enabled": {
+          "const": false
+        },
+        "host_live_volume_mounted": {
+          "const": false
+        },
+        "existing_docker_volume_reused": {
+          "const": false
+        },
+        "isolated_load_and_consistency_checked": {
+          "const": false
+        },
+        "authenticated_restored_service_smoke_passed": {
+          "const": false
+        },
+        "rpo_rto_demonstrated": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        }
+      }
+    },
+    {
+      "title": "Private unsigned success receipt",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "report",
+        "report_sha256",
+        "report_digitally_signed"
+      ],
+      "properties": {
+        "report_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "report_digitally_signed": {
+          "const": false
+        },
+        "report": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "contract_kind",
+            "database",
+            "database_image",
+            "offline_admin_image",
+            "archive_filename",
+            "archive_bytes",
+            "archive_sha256",
+            "archive_integrity_verified",
+            "execution_enabled",
+            "docker_network_enabled",
+            "host_live_volume_mounted",
+            "existing_docker_volume_reused",
+            "isolated_load_and_consistency_checked",
+            "authenticated_restored_service_smoke_passed",
+            "rpo_rto_demonstrated",
+            "research_release_status",
+            "isolated_volume_created",
+            "isolated_volume_removed",
+            "offline_elapsed_seconds",
+            "end_to_end_restore_drill_passed"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "0.13.1"
+            },
+            "contract_kind": {
+              "const": "dviros.neo.isolated_offline_restore_drill"
+            },
+            "database": {
+              "const": "neo4j"
+            },
+            "database_image": {
+              "const": "neo4j:2026.10.1"
+            },
+            "offline_admin_image": {
+              "const": "neo4j/neo4j-admin:2026.10.1"
+            },
+            "archive_filename": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,119}\\.dump$"
+            },
+            "archive_bytes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 549755813888
+            },
+            "archive_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "archive_integrity_verified": {
+              "const": true
+            },
+            "execution_enabled": {
+              "const": true
+            },
+            "docker_network_enabled": {
+              "const": false
+            },
+            "host_live_volume_mounted": {
+              "const": false
+            },
+            "existing_docker_volume_reused": {
+              "const": false
+            },
+            "isolated_load_and_consistency_checked": {
+              "const": true
+            },
+            "authenticated_restored_service_smoke_passed": {
+              "const": false
+            },
+            "rpo_rto_demonstrated": {
+              "const": false
+            },
+            "research_release_status": {
+              "const": "HOLD"
+            },
+            "isolated_volume_created": {
+              "const": true
+            },
+            "isolated_volume_removed": {
+              "const": true
+            },
+            "offline_elapsed_seconds": {
+              "type": "number",
+              "minimum": 0
+            },
+            "end_to_end_restore_drill_passed": {
+              "const": false
+            }
+          }
+        }
+      }
+    }
+  ],
+  "x-cli": {
+    "plan": "python scripts/isolated_restore_drill_v0131.py plan --archive /private/neo4j.dump --manifest /private/manifest.json",
+    "execute": "python scripts/isolated_restore_drill_v0131.py execute --archive /private/neo4j.dump --manifest /private/manifest.json --output /private/drill.restore-drill.json --ack-isolated-volume",
+    "automatic_execution": false,
+    "no_git_repo_or_live_compose_mount": true
+  },
+  "x-runtime": {
+    "image": "neo4j/neo4j-admin:2026.10.1",
+    "docker_pull": "never",
+    "network": "none",
+    "temporary_volume_label": "dviros.neo.restore-drill=v0.13.1",
+    "fixed_commands": [
+      "neo4j-admin database load neo4j --from-stdin",
+      "neo4j-admin database check neo4j"
+    ],
+    "load_timeout_seconds": 7200,
+    "consistency_timeout_seconds": 1800,
+    "archive_stream_chunk_bytes": 1048576,
+    "report_owner_only_mode": "0600",
+    "report_reusable_as_production_release_approval": false
+  },
+  "x-limits": [
+    "Only runs on a host with local Docker and the matching pinned admin image",
+    "No online restored instance start, bearer-authenticated smoke or application schema/provenance checks",
+    "No verified dump source identity, trustworthy archive creation time or RPO/RTO measurement",
+    "Report SHA256 is not an HMAC or digital signature",
+    "Run is opt-in, network-free and never mounts live project Neo4j volume",
+    "Successful offline load+consistency is not a complete restore drill"
+  ]
+}
