@@ -27,7 +27,7 @@ from services.research_api.models import (
     IndexedSearchCapability, ProvenanceMetadataPage, AnalysisPage, EvidencePathPage,
     SourceLinkFrequency, SourceLinkAuthorChronology, WorkComparison,
     WorkComparisonReceipt, WorkLinkAuditPage, CheckedWorkLinkAuditPage,
-    WorkAuditExportEnvelope, StudyPacketEnvelope,
+    WorkAuditExportEnvelope, StudyPacketEnvelope, GroundedContextPreview,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -36,6 +36,7 @@ from services.research_api.metadata_search import search_metadata, validate_sear
 from services.research_api.search_index import search_indexed_metadata, indexed_capability
 from services.research_api.provenance import provenance_page, KINDS as PROVENANCE_KINDS
 from services.research_api.analytics import analysis_page
+from services.research_api.grounded_context_v0110 import grounded_context_preview
 from services.research_api.evidence_paths import evidence_path_page
 from services.research_api.metric_chronology import link_frequency, author_chronology
 from services.research_api.work_comparison import compare_works
@@ -345,6 +346,31 @@ def create_app(*, backend=None, token_path: Path | None = None,
             raise_http(422)
         try:
             return provenance_page(store, kind=kind, cursor=cursor, limit=limit)
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/research/grounded-context",
+             response_model=GroundedContextPreview, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def grounded_context(request: Request,
+                         passage_id: str = Query(...),
+                         query: str = Query(..., min_length=2, max_length=120),
+                         limit: int = Query(default=10, ge=1, le=10)):
+        # Feature disabled on all deployments by default; no DB call on OFF.
+        flag = os.getenv("DVIROS_ENABLE_GROUNDED_CONTEXT", "0")
+        if flag == "0":
+            raise_http(404)
+        if flag != "1":
+            raise_http(503)
+        names = [key for key, _ in request.query_params.multi_items()]
+        if (len(names) != len(set(names))
+                or set(names) - {"passage_id", "query", "limit"}
+                or not {"passage_id", "query"}.issubset(names)):
+            raise_http(422)
+        try:
+            return grounded_context_preview(
+                store, passage_id=passage_id, query=query, limit=limit,
+            )
         except (ValueError, TypeError):
             raise_http(422)
 
