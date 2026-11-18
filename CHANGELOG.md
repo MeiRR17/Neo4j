@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.11.0] — 2026-11-18 (DRAFT — GraphRAG phase 1, metadata-only)
+
+- Added a default-OFF authenticated /v1/research/grounded-context API for
+  deterministic, bounded Source Link metadata retrieval by canonical Passage
+  and Hebrew/English source-reference terms, without LLM or paid provider.
+- Reused the fixed read-only graph query and strict Edge/Evidence/Passage
+  projection validation; cap observations at 20 and returned candidates at
+  10 with exact source/version/rights/status anchors.
+- Explicit no-match vs incomplete-window uncertainty, zero source-text or
+  generated-answer output, true disabled-mode no-read behavior and strict
+  unsupported/duplicate query parameter denials.
+- Added typed OpenAPI response, focused contract/security/Hebrew tests,
+  versioned DvirOS metadata-only contract and operator runbook.
+- No licensed text, real AI generation, workspace RBAC, corpus snapshot or
+  scholarly/human rights approval. Feature remains OFF / main merge HOLD.
+
+
 ## [0.10.9] — 2026-11-18 (DRAFT — cross-page signed Evidence review handoff)
 
 - Added 1–12 Evidence multi-page draft review bundling across one complete

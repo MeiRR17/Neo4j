@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.11.0 feature-flagged Evidence-grounded context preview",
+  "description": "Private metadata-only source-link retrieval; no licensed text, model answer, claim approval or graph snapshot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "feature",
+    "passage_id",
+    "retrieval_status",
+    "contexts",
+    "matched_in_observed_window",
+    "candidate_limit",
+    "observed_window_limit",
+    "observed_window_truncated",
+    "additional_matches_may_exist",
+    "generated_answer",
+    "claim_approved",
+    "licensed_source_text_available",
+    "independent_source_rights_verified",
+    "graph_snapshot_verified",
+    "historical_influence_proven",
+    "research_release_status",
+    "note"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "0.11.0"
+    },
+    "feature": {
+      "const": "GRAPH_RAG_METADATA_CONTEXT_PREVIEW"
+    },
+    "passage_id": {
+      "type": "string",
+      "pattern": "^passage:"
+    },
+    "retrieval_status": {
+      "enum": [
+        "CANDIDATES_FOUND",
+        "NO_METADATA_MATCH",
+        "WINDOW_TRUNCATED_NO_MATCH"
+      ]
+    },
+    "contexts": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "edge_id",
+          "evidence_id",
+          "source_passage_id",
+          "target_passage_id",
+          "source_ref",
+          "version_id",
+          "rights_tag",
+          "edge_review_status",
+          "evidence_review_status",
+          "match_basis",
+          "observed_source_link_only",
+          "source_text_available",
+          "human_claim_approved",
+          "source_rights_verified"
+        ],
+        "properties": {
+          "edge_id": {
+            "type": "string",
+            "pattern": "^edge:"
+          },
+          "evidence_id": {
+            "type": "string",
+            "pattern": "^evidence:"
+          },
+          "source_passage_id": {
+            "type": "string",
+            "pattern": "^passage:"
+          },
+          "target_passage_id": {
+            "type": "string",
+            "pattern": "^passage:"
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 512
+          },
+          "version_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 256
+          },
+          "rights_tag": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 128
+          },
+          "edge_review_status": {
+            "enum": [
+              "unreviewed",
+              "approved",
+              "rejected",
+              "disputed"
+            ]
+          },
+          "evidence_review_status": {
+            "enum": [
+              "unreviewed",
+              "approved",
+              "rejected",
+              "disputed"
+            ]
+          },
+          "match_basis": {
+            "enum": [
+              "SOURCE_REF_EXACT_SUBSTRING",
+              "SOURCE_REF_ALL_TERMS"
+            ]
+          },
+          "observed_source_link_only": {
+            "const": true
+          },
+          "source_text_available": {
+            "const": false
+          },
+          "human_claim_approved": {
+            "const": false
+          },
+          "source_rights_verified": {
+            "const": false
+          }
+        }
+      }
+    },
+    "matched_in_observed_window": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 20
+    },
+    "candidate_limit": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10
+    },
+    "observed_window_limit": {
+      "const": 20
+    },
+    "observed_window_truncated": {
+      "type": "boolean"
+    },
+    "additional_matches_may_exist": {
+      "type": "boolean"
+    },
+    "generated_answer": {
+      "type": "null"
+    },
+    "claim_approved": {
+      "const": false
+    },
+    "licensed_source_text_available": {
+      "const": false
+    },
+    "independent_source_rights_verified": {
+      "const": false
+    },
+    "graph_snapshot_verified": {
+      "const": false
+    },
+    "historical_influence_proven": {
+      "const": false
+    },
+    "research_release_status": {
+      "const": "HOLD"
+    },
+    "note": {
+      "type": "string"
+    }
+  },
+  "x-request": {
+    "path": "/v1/research/grounded-context",
+    "method": "GET",
+    "authentication": "private bearer token",
+    "feature_flag": "DVIROS_ENABLE_GROUNDED_CONTEXT=1",
+    "disabled_by_default": true,
+    "query_params": {
+      "passage_id": "canonical Passage ID",
+      "query": "2–120 characters, at most 12 words",
+      "limit": "integer 1–10"
+    }
+  },
+  "x-no-claims": [
+    "no prompt evaluation or provider calls",
+    "no licensed passage text or quotes",
+    "no whole-corpus completeness assertion",
+    "no human/source-rights approval",
+    "no DvirOS workspace authorization",
+    "no causal historical influence"
+  ]
+}
