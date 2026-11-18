@@ -86,6 +86,27 @@ def build_review_handoff(
             evidence_windows[last_index][evidence_id]
             if last_index is not None else None
         )
+        # Reconstruct the complete bounded history from the original signed
+        # captures. Explicit null on removal prevents stale evidence from
+        # being presented as a current observation.
+        observation_history = [
+            {
+                "capture_index": index,
+                "packet_sha256": packet_digests[index],
+                "observed_in_audit": evidence_id in window,
+                "selected_in_study": (
+                    evidence_id in previews[index]["packet"][
+                        "selected_evidence_ids"
+                    ]
+                ),
+                "citation_metadata": (
+                    {field: window[evidence_id][field]
+                     for field in CITATION_FIELDS}
+                    if evidence_id in window else None
+                ),
+            }
+            for index, window in enumerate(evidence_windows)
+        ]
         # A selection-only candidate is still present in the bounded audit;
         # this fallback handles observed removals without making up a source.
         items.append({
@@ -93,6 +114,7 @@ def build_review_handoff(
             "queue_review_status": "PENDING_HUMAN_TRIAGE",
             "reason_codes": candidate["reason_codes"],
             "events": candidate["events"],
+            "observation_history": observation_history,
             "selected_in_latest_capture": candidate[
                 "selected_in_latest_capture"
             ],
