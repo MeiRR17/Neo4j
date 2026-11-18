@@ -181,7 +181,10 @@ class CrossPassageGroundingTests(unittest.TestCase):
     def test_inconsistent_cross_window_evidence_fails_closed(self):
         class DriftStore(Stub):
             def query(self, operation, params=None):
-                result = super().query(operation, params)
+                # Keep the two simulated observations independent: the
+                # base Stub returns a shared list, so mutation in place would
+                # incorrectly change *both* Passage windows.
+                result = deepcopy(super().query(operation, params))
                 if params and params["id"] == TARGET:
                     result[0]["version_id"] = "different-version"
                 return result
