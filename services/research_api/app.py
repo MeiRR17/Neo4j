@@ -28,7 +28,7 @@ from services.research_api.models import (
     SourceLinkFrequency, SourceLinkAuthorChronology, WorkComparison,
     WorkComparisonReceipt, WorkLinkAuditPage, CheckedWorkLinkAuditPage,
     WorkAuditExportEnvelope, StudyPacketEnvelope, GroundedContextPreview,
-    GroundedCrossPassagePreview,
+    GroundedCrossPassagePreview, GroundedEvidenceDossierEnvelope,
 )
 from services.research_api.queries import (
     DETAIL_KINDS, LIST_KINDS, VALID_EDGE_TYPES,
@@ -39,6 +39,7 @@ from services.research_api.provenance import provenance_page, KINDS as PROVENANC
 from services.research_api.analytics import analysis_page
 from services.research_api.grounded_context_v0110 import grounded_context_preview
 from services.research_api.grounded_compare_v0111 import compare_grounded_passage_contexts
+from services.research_api.grounded_dossier_v0112 import build_grounded_evidence_dossier
 from services.research_api.evidence_paths import evidence_path_page
 from services.research_api.metric_chronology import link_frequency, author_chronology
 from services.research_api.work_comparison import compare_works
@@ -398,6 +399,32 @@ def create_app(*, backend=None, token_path: Path | None = None,
         try:
             return compare_grounded_passage_contexts(
                 store, passage_ids=passage_ids, query=query, limit=limit,
+            )
+        except (ValueError, TypeError):
+            raise_http(422)
+
+    @app.get("/v1/research/grounded-context/dossier",
+             response_model=GroundedEvidenceDossierEnvelope, tags=["Research"],
+             dependencies=[Depends(require_service_token)])
+    def grounded_evidence_dossier(
+            request: Request,
+            passage_ids: str = Query(..., max_length=600),
+            query: str = Query(..., min_length=2, max_length=120),
+            evidence_ids: str = Query(..., min_length=1, max_length=1400)):
+        # Operator-only, read-only preview; disabled before any graph queries.
+        flag = os.getenv("DVIROS_ENABLE_GROUNDED_CONTEXT", "0")
+        if flag == "0":
+            raise_http(404)
+        if flag != "1":
+            raise_http(503)
+        keys = [key for key, _ in request.query_params.multi_items()]
+        if len(keys) != 3 or set(keys) != {
+                "passage_ids", "query", "evidence_ids"}:
+            raise_http(422)
+        try:
+            return build_grounded_evidence_dossier(
+                store, passage_ids=passage_ids, query=query,
+                evidence_ids=evidence_ids,
             )
         except (ValueError, TypeError):
             raise_http(422)
