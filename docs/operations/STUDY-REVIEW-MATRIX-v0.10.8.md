@@ -18,22 +18,37 @@ This is an **operational review routing view**, not a scholarly severity score, 
 
 ## Private offline CLI
 
-The operator must already have a complete set of v0.10.7 coverage receipts and their exact original v0.10.5 page sequences. The following command uses placeholders: `--coverage` occurs once per filter; `--page` repeats in cursor order within each filter. Supply **all six filters**, including signed empty views. Files must be owner-only private inputs. Example for just one filter's arguments (repeat corresponding arguments for the other five):
+The operator must already have all six v0.10.7 coverage receipts
+and their exact original v0.10.5 page sequences. The example below
+assumes each filter has exactly one terminal page; for filters spanning
+multiple pages, repeat `--page FILTER=PATH` in the original cursor order.
+All file paths are placeholders, not production data.
 
 ```sh
 python scripts/study_review_matrix_v0108.py build \
   --packet /private/capture-1.json --packet /private/capture-2.json \
   --queue /private/queue.json --limit 10 \
   --coverage all=/private/coverage-all.json \
-  --page all=/private/page-all-1.json \
-  --page all=/private/page-all-2.json \
-  --coverage source_or_review=/private/coverage-source-or-review.json \
-  --page source_or_review=/private/page-source-or-review.json \
-  # ... provide coverage and page inputs for the other four required filters ... \
+  --coverage source_or_review=/private/coverage-source.json \
+  --coverage membership=/private/coverage-membership.json \
+  --coverage selection=/private/coverage-selection.json \
+  --coverage other_metadata=/private/coverage-other.json \
+  --coverage returned_state=/private/coverage-returned.json \
+  --page all=/private/page-all.json \
+  --page source_or_review=/private/page-source.json \
+  --page membership=/private/page-membership.json \
+  --page selection=/private/page-selection.json \
+  --page other_metadata=/private/page-other.json \
+  --page returned_state=/private/page-returned.json \
+  --token-path /private/research-api-token \
   --output /private/six-filter-matrix.json
 ```
 
-The abbreviated command above intentionally omits four filters; **it will not succeed as shown**. Use `verify` in place of `build` with all the same source arguments plus `--report /private/six-filter-matrix.json`. `build` requires `--output` and fails rather than overwrite an existing path. CLI prints only an aggregate verification summary, never the token, source metadata or selected Evidence IDs.
+Use `verify` in place of `build` with the same source arguments and
+`--report /private/six-filter-matrix.json` in place of `--output`.
+The CLI creates the private report exactly once and refuses overwrites.
+Only a bounded aggregate verification summary is printed; token,
+source metadata, notes and specific Evidence IDs are not printed.
 
 ## Security and release boundaries
 
