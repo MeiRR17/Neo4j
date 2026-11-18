@@ -1,0 +1,53 @@
+{
+  "schema_version": "0.10.1",
+  "contract_kind": "dviros.research.study_packet_replay_diff",
+  "producer": "MeiRR17/Neo4j offline helper",
+  "consumer": "DvirOS authenticated BFF/Postgres, when implemented",
+  "entrypoint": "scripts/compare_study_packets_v0101.py",
+  "inputs": [
+    "previous private v0.10.0 signed study preview envelope",
+    "new private v0.10.0 signed study preview envelope",
+    "local protected service verification token"
+  ],
+  "result_fields": [
+    "comparison",
+    "comparison_sha256",
+    "comparison_hmac_sha256"
+  ],
+  "comparison_fields": [
+    "source_work_id",
+    "target_work_id",
+    "baseline_packet_id",
+    "current_packet_id",
+    "baseline_packet_sha256",
+    "current_packet_sha256",
+    "baseline_audit_manifest_sha256",
+    "current_audit_manifest_sha256",
+    "baseline_captured_at_unix",
+    "current_captured_at_unix",
+    "changes",
+    "metadata_changed",
+    "audit_receipt_changed"
+  ],
+  "change_kinds": [
+    "ADDED",
+    "REMOVED",
+    "MODIFIED"
+  ],
+  "bounded_evidence_per_packet": 12,
+  "zero_database_calls": true,
+  "provider_writes_allowed": false,
+  "output_policy": "private create-only; owner-only; max 24 KiB canonical comparison body",
+  "consumer_must": [
+    "authorize actor and workspace before accepting/recording comparison",
+    "retain both original authenticated envelopes for replay",
+    "verify both envelopes and exact comparison HMAC",
+    "treat changes as review prompts, not accepted research assertions",
+    "never infer rights clearance, human review, durable snapshots or completed Postgres persistence"
+  ],
+  "dviros_owned_workflow_implemented": false,
+  "human_review_decision_recorded": false,
+  "licensed_source_rights_verified": false,
+  "immutable_graph_snapshot_verified": false,
+  "research_release_status": "HOLD"
+}

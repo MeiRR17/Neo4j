@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.1] — 2026-11-18 (DRAFT — Neo-only replay comparison)
+
+- Added offline, fail-closed comparison of two authenticated v0.10.0
+  study previews, identifying added/removed Evidence IDs and exact changed
+  citation reference, edition, rights-tag and review-status fields.
+- Added domain-separated SHA-256/HMAC comparison receipt with strict
+  independent replay against both complete signed audit envelopes.
+- Added private create-only compare/verify CLI, focused regression/security
+  tests, versioned DvirOS boundary contract and research operator guide.
+- No DvirOS Postgres/BFF/UI, ownership authorization, immutable graph
+  revision, review approval or source rights verification implemented.
+  Main and public research release remain HOLD.
+
 ## [0.10.0] — 2026-11-12 (DRAFT — study packet phase 1)
 
 - Added private authenticated read-only study citation preview for
