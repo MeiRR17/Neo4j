@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.8] — 2026-11-18 (DRAFT — signed six-filter review matrix)
+
+- Added offline reconciliation of all six complete v0.10.7 signed review
+  coverage receipts, each replayed against its original v0.10.5 keyset pages,
+  the v0.10.4 queue and 2–6 v0.10.0 source previews.
+- Recompute each exact reason-family membership set independently from the
+  signed queue; expose per-Evidence matched filters, latest observed/selected
+  flags, overlapping specific-reason counts and zero-match views.
+- Added distinct SHA256/HMAC-sealed bounded matrix, strict owner-only
+  create-once build/verify CLI, targeted denial tests, versioned DvirOS
+  transfer schema and operator guide.
+- No DvirOS/Postgres, graph writes, real reviewer decisions, rights grants or
+  immutable corpus claims. CI and upstream Draft/security/research gates HOLD.
+
+
 ## [0.10.7] — 2026-11-18 (DRAFT — signed full review inbox coverage)
 
 - Added complete offline replay of a v0.10.5 filtered inbox keyset walk,
