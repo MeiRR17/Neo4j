@@ -1,0 +1,302 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Neo v0.12.1 private signed read-only research tool run envelope",
+  "description": "One completed bounded read-only tool execution, HMAC sealed under a local service secret. No researcher identity/rights/snapshot approval.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan",
+    "execution",
+    "signed_receipt"
+  ],
+  "properties": {
+    "plan": {
+      "type": "object",
+      "description": "Complete strict ResearchToolPlan v0.12.0 DTO; runtime verifies every field, canonical checkpoint, scope and graph read budget.",
+      "required": [
+        "schema_version",
+        "plan_status",
+        "operation",
+        "parameters",
+        "request_checkpoint_sha256",
+        "checkpoint_authenticates_reviewer",
+        "checkpoint_persists_execution_state",
+        "graph_read_only",
+        "graph_reads_executed",
+        "provider_or_llm_calls",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.12.0"
+        },
+        "plan_status": {
+          "const": "READY_TO_EXECUTE"
+        },
+        "operation": {
+          "enum": [
+            "source_context",
+            "compare_contexts",
+            "review_dossier"
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "request_checkpoint_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "checkpoint_authenticates_reviewer": {
+          "const": false
+        },
+        "checkpoint_persists_execution_state": {
+          "const": false
+        },
+        "graph_read_only": {
+          "const": true
+        },
+        "graph_reads_executed": {
+          "const": 0
+        },
+        "provider_or_llm_calls": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "description": "Complete strict v0.12.0 ResearchToolExecution DTO; model and nested operation-specific result are validated before HMAC.",
+      "required": [
+        "schema_version",
+        "tool_operation",
+        "request_checkpoint_sha256",
+        "execution_status",
+        "phase_log",
+        "scheduled_graph_reads",
+        "max_source_links_per_read",
+        "returned_card_count",
+        "evidence_cards",
+        "tool_result",
+        "stateless_replay_only",
+        "execution_state_persisted",
+        "human_review_required",
+        "graph_writes_performed",
+        "provider_or_llm_calls",
+        "human_approval_recorded",
+        "source_rights_verified",
+        "research_release_status"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "0.12.0"
+        },
+        "tool_operation": {
+          "enum": [
+            "source_context",
+            "compare_contexts",
+            "review_dossier"
+          ]
+        },
+        "request_checkpoint_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "execution_status": {
+          "const": "COMPLETED_REVIEW_PREVIEW"
+        },
+        "phase_log": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "scheduled_graph_reads": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "max_source_links_per_read": {
+          "const": 20
+        },
+        "returned_card_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "evidence_cards": {
+          "type": "array",
+          "maxItems": 12
+        },
+        "tool_result": {
+          "type": "object"
+        },
+        "stateless_replay_only": {
+          "const": true
+        },
+        "execution_state_persisted": {
+          "const": false
+        },
+        "human_review_required": {
+          "const": true
+        },
+        "graph_writes_performed": {
+          "const": false
+        },
+        "provider_or_llm_calls": {
+          "const": false
+        },
+        "human_approval_recorded": {
+          "const": false
+        },
+        "source_rights_verified": {
+          "const": false
+        },
+        "research_release_status": {
+          "const": "HOLD"
+        }
+      }
+    },
+    "signed_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receipt",
+        "receipt_sha256",
+        "receipt_hmac_sha256"
+      ],
+      "properties": {
+        "receipt_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "receipt_hmac_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "receipt": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "contract_kind",
+            "tool_operation",
+            "request_checkpoint_sha256",
+            "execution_sha256",
+            "scheduled_graph_reads",
+            "returned_card_count",
+            "ordered_evidence_ids",
+            "execution_status",
+            "provenance_scope",
+            "hmac_verified_by_local_service_secret",
+            "reviewer_identity_verified",
+            "durable_job_state_created",
+            "immutable_graph_snapshot_verified",
+            "independent_source_rights_verified",
+            "human_research_approval_recorded",
+            "research_release_status"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "0.12.1"
+            },
+            "contract_kind": {
+              "const": "dviros.neo.signed_read_only_tool_execution"
+            },
+            "tool_operation": {
+              "enum": [
+                "source_context",
+                "compare_contexts",
+                "review_dossier"
+              ]
+            },
+            "request_checkpoint_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "execution_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "scheduled_graph_reads": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            },
+            "returned_card_count": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 12
+            },
+            "ordered_evidence_ids": {
+              "type": "array",
+              "maxItems": 12,
+              "items": {
+                "type": "string",
+                "pattern": "^evidence:"
+              }
+            },
+            "execution_status": {
+              "const": "COMPLETED_REVIEW_PREVIEW"
+            },
+            "provenance_scope": {
+              "const": "single_bounded_read_only_observation"
+            },
+            "hmac_verified_by_local_service_secret": {
+              "const": true
+            },
+            "reviewer_identity_verified": {
+              "const": false
+            },
+            "durable_job_state_created": {
+              "const": false
+            },
+            "immutable_graph_snapshot_verified": {
+              "const": false
+            },
+            "independent_source_rights_verified": {
+              "const": false
+            },
+            "human_research_approval_recorded": {
+              "const": false
+            },
+            "research_release_status": {
+              "const": "HOLD"
+            }
+          }
+        }
+      }
+    }
+  },
+  "x-api": {
+    "method": "GET",
+    "path": "/v1/research/agent-tools/execute/signed",
+    "private_bearer_required": true,
+    "default_off_flags": [
+      "DVIROS_ENABLE_GROUNDED_CONTEXT=1",
+      "DVIROS_ENABLE_RESEARCH_TOOL_RUNNER=1"
+    ],
+    "signed_call_policy": "existing optional service signed-request enforcement",
+    "same_input_fields_as": "/v1/research/agent-tools/execute"
+  },
+  "x-signature": {
+    "algorithm": "HMAC-SHA256",
+    "key": "local research service bearer token",
+    "domain_separator": "dviros/neo/read-only-research-run/v0.12.1\\n",
+    "scope": "SHA256 of canonical full bounded typed execution and exact plan checkpoint",
+    "output_file_permissions": "owner-only",
+    "independent_reviewer_identity_verified": false,
+    "trusted_external_timestamp_verified": false
+  },
+  "x-offline_verifier": "python scripts/verify_research_tool_receipt_v0121.py --report private.json --token-path private-token",
+  "x-runtime_contract": "The Pydantic strict DTOs and operation-specific typed results perform additional exact validation; this schema is not a substitute for HMAC verification.",
+  "x-release_hold": [
+    "no durable job state or asynchronous agent",
+    "no independent source licensing",
+    "no immutable graph snapshot",
+    "no cross-system DvirOS RBAC",
+    "no scholarly claim approvals"
+  ]
+}
